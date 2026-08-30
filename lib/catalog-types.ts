@@ -55,6 +55,42 @@ export type Product = {
   images: ProductImage[];
 };
 
+/** Products as returned by the list endpoint (no images array). */
+export type ProductListItem = Omit<Product, "images">;
+
+export type BrandHit = {
+  id: string;
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+};
+
+export type CategoryHit = {
+  id: string;
+  slug: string;
+  nameEn: string;
+  nameBn: string;
+};
+
+export type SearchResult = {
+  query: string;
+  total: number;
+  products: ProductListItem[];
+  brands: BrandHit[];
+  categories: CategoryHit[];
+};
+
+export type Suggestion = {
+  products: {
+    id: string;
+    slug: string;
+    name: string;
+    primaryImage: string | null;
+    brandName: string;
+  }[];
+  brands: { slug: string; name: string }[];
+};
+
 export type Paginated<T> = {
   data: T[];
   total: number;

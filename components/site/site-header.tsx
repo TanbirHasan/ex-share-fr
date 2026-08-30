@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Bell,
-  GitCompareArrows,
-  Languages,
-  Menu,
-  PenLine,
-  Search,
-} from "lucide-react";
+import { Bell, GitCompareArrows, Languages, Menu, PenLine } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { SearchCommand } from "@/components/site/search-command";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/site/user-menu";
 import { Button } from "@/components/ui/button";
@@ -20,7 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -38,20 +31,6 @@ const nav = [
   { label: "Solutions", href: "/solutions" },
   { label: "Compare", href: "/compare" },
 ];
-
-function SearchBar({ className }: { className?: string }) {
-  return (
-    <form action="/search" className={cn("relative", className)}>
-      <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-      <Input
-        name="q"
-        placeholder="Search product, model, brand or problem…"
-        className="h-10 pl-9"
-        aria-label="Search"
-      />
-    </form>
-  );
-}
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -98,7 +77,7 @@ export function SiteHeader() {
 
         <BrandLogo className="shrink-0" />
 
-        <SearchBar className="mx-2 hidden max-w-xl flex-1 md:block" />
+        <SearchCommand className="mx-2 hidden max-w-xl flex-1 md:block" />
 
         <div className="ml-auto flex items-center gap-1">
           <DropdownMenu>
@@ -153,7 +132,7 @@ export function SiteHeader() {
 
       {/* Mobile search */}
       <div className="border-t p-3 md:hidden">
-        <SearchBar />
+        <SearchCommand />
       </div>
     </header>
   );
