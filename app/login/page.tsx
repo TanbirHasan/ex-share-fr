@@ -2,17 +2,23 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { ArrowRight, Loader2, Mail, MailCheck } from "lucide-react";
+import { toast } from "sonner";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { GoogleIcon } from "@/components/auth/google-icon";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
@@ -23,67 +29,92 @@ export default function LoginPage() {
         setSent(true);
       } else {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(body.error ?? "Something went wrong.");
+        toast.error(body.error ?? "Something went wrong.");
       }
     } catch {
-      setError("Network error. Is the backend running?");
+      toast.error("Network error. Is the backend running?");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <div className="w-full max-w-sm rounded-2xl border border-black/[.08] bg-white p-8 dark:border-white/[.12] dark:bg-zinc-950">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Sign in to ExperienceHub
-        </h1>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Reading is open to everyone. Sign in to contribute.
-        </p>
-
-        <button
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-black/[.12] bg-white text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 dark:border-white/[.16] dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
-        >
-          Continue with Google
-        </button>
-
-        <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wide text-zinc-400">
-          <span className="h-px flex-1 bg-black/[.08] dark:bg-white/[.12]" />
-          or
-          <span className="h-px flex-1 bg-black/[.08] dark:bg-white/[.12]" />
-        </div>
-
-        {sent ? (
-          <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">
-            Check your email for a sign-in link. In local development it is printed
-            in the Next.js server console.
+    <AuthShell
+      title="Sign in to ExperienceHub"
+      subtitle="Reading is open to everyone. Sign in to contribute your experience."
+    >
+      {sent ? (
+        <div className="rounded-xl border bg-card p-6 text-center">
+          <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <MailCheck className="size-5" />
+          </span>
+          <p className="mt-4 text-sm font-medium text-foreground">Check your inbox</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            We sent a sign-in link to <span className="font-medium text-foreground">{email}</span>.
+            In local development it is printed in the server console.
           </p>
-        ) : (
-          <form onSubmit={sendLink} className="flex flex-col gap-3">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="h-11 rounded-lg border border-black/[.12] bg-white px-3 text-sm text-zinc-900 outline-none focus:border-zinc-400 dark:border-white/[.16] dark:bg-zinc-900 dark:text-zinc-100"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="h-11 rounded-lg bg-zinc-900 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
-            >
-              {loading ? "Sending…" : "Send magic link"}
-            </button>
-          </form>
-        )}
+          <Button
+            variant="ghost"
+            className="mt-4"
+            onClick={() => setSent(false)}
+          >
+            Use a different email
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          <Button
+            variant="outline"
+            size="lg"
+            className="h-11 w-full"
+            disabled={googleLoading}
+            onClick={() => {
+              setGoogleLoading(true);
+              void signIn("google", { callbackUrl: "/dashboard" });
+            }}
+          >
+            {googleLoading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <GoogleIcon className="size-4" />
+            )}
+            Continue with Google
+          </Button>
 
-        {error && (
-          <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
-      </div>
-    </main>
+          <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <span className="h-px flex-1 bg-border" />
+            or
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <form onSubmit={sendLink} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email address</Label>
+              <div className="relative">
+                <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11 pl-9"
+                />
+              </div>
+            </div>
+            <Button type="submit" size="lg" className="h-11 w-full" disabled={loading}>
+              {loading ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+              Send magic link
+            </Button>
+          </form>
+
+          <p className="text-center text-xs text-muted-foreground">
+            By continuing you agree to our Terms and Content Policy.
+          </p>
+        </div>
+      )}
+    </AuthShell>
   );
 }

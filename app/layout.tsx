@@ -1,31 +1,48 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Providers from "./providers";
+import { THEME_STORAGE_KEY } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "ExperienceHub",
-  description: "Real product experiences from real owners in Bangladesh.",
+  title: {
+    default: "ExperienceHub — Real product experiences from Bangladesh",
+    template: "%s · ExperienceHub",
+  },
+  description:
+    "Honest reviews, common problems, and fixes that actually worked — from real owners in Bangladesh.",
 };
+
+// Runs before hydration so the correct theme class is on <html> with no flash.
+const themeInit = `(function(){try{var s=localStorage.getItem(${JSON.stringify(
+  THEME_STORAGE_KEY,
+)})||"system";var d=s==="dark"||(s==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var e=document.documentElement;e.classList.toggle("dark",d);e.style.colorScheme=d?"dark":"light";}catch(_){}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col bg-background">
+        <Script id="eh-theme-init" strategy="beforeInteractive">
+          {themeInit}
+        </Script>
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );

@@ -32,6 +32,7 @@ async function backendPost<T>(path: string, body: unknown): Promise<T | null> {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [

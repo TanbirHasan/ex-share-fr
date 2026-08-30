@@ -1,54 +1,62 @@
-"use client";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { AuthError } from "next-auth";
+import { ArrowRight, KeyRound, TriangleAlert } from "lucide-react";
+import { signIn } from "@/auth";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { Button } from "@/components/ui/button";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+export default async function VerifyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ email?: string; token?: string }>;
+}) {
+  const { email, token } = await searchParams;
 
-function Verifier() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const ran = useRef(false);
+  if (!email || !token) {
+    return (
+      <AuthShell title="Broken link" subtitle="This sign-in link is missing information.">
+        <div className="rounded-xl border bg-card p-6 text-center">
+          <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+            <TriangleAlert className="size-5" />
+          </span>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Request a fresh link and try again.
+          </p>
+          <Button asChild className="mt-4">
+            <Link href="/login">Back to sign in</Link>
+          </Button>
+        </div>
+      </AuthShell>
+    );
+  }
 
-  useEffect(() => {
-    if (ran.current) return;
-    ran.current = true;
-
-    const email = params.get("email");
-    const token = params.get("token");
-    if (!email || !token) {
-      setError("This link is missing information.");
-      return;
+  async function verify() {
+    "use server";
+    try {
+      await signIn("magic-link", { email, token, redirectTo: "/dashboard" });
+    } catch (error) {
+      if (error instanceof AuthError) {
+        redirect("/login?error=invalid-link");
+      }
+      throw error; // let the success redirect propagate
     }
-
-    void signIn("magic-link", { email, token, redirect: false }).then((res) => {
-      if (res?.ok) router.replace("/dashboard");
-      else setError("This sign-in link is invalid or has expired.");
-    });
-  }, [params, router]);
+  }
 
   return (
-    <div className="text-center">
-      {error ? (
-        <>
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          <a href="/login" className="mt-2 inline-block text-sm underline">
-            Back to sign in
-          </a>
-        </>
-      ) : (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Signing you in…</p>
-      )}
-    </div>
-  );
-}
-
-export default function VerifyPage() {
-  return (
-    <main className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <Suspense fallback={<p className="text-sm text-zinc-500">Loading…</p>}>
-        <Verifier />
-      </Suspense>
-    </main>
+    <AuthShell title="Confirm sign-in" subtitle={`Continue as ${email}`}>
+      <form action={verify} className="rounded-xl border bg-card p-6 text-center">
+        <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <KeyRound className="size-5" />
+        </span>
+        <p className="mt-4 text-sm text-muted-foreground">
+          For your security, confirm you opened this link yourself.
+        </p>
+        <Button type="submit" size="lg" className="mt-5 h-11 w-full">
+          <ArrowRight className="size-4" />
+          Continue
+        </Button>
+      </form>
+    </AuthShell>
   );
 }
