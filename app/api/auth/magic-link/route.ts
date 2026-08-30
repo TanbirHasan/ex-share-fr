@@ -1,0 +1,48 @@
+import { NextResponse } from "next/server";
+
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
+
+export async function POST(req: Request) {
+  let email = "";
+  try {
+    const body = (await req.json()) as { email?: unknown };
+    email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  } catch {
+    // ignore — handled below
+  }
+
+  if (!email || !email.includes("@")) {
+    return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+  }
+
+  const res = await fetch(`${BACKEND_URL}/internal/auth/magic-link/request`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+    },
+    body: JSON.stringify({ email }),
+    cache: "no-store",
+  });
+
+  if (res.status === 429) {
+    return NextResponse.json(
+      { error: "Too many sign-in links requested. Try again in a few minutes." },
+      { status: 429 },
+    );
+  }
+  if (!res.ok) {
+    return NextResponse.json({ error: "Could not send the sign-in link." }, { status: 502 });
+  }
+
+  const { token, expiresAt } = (await res.json()) as { token: string; expiresAt: string };
+  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const link = `${appUrl}/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+
+  // TODO: send this via a real email provider (e.g. Resend). For local dev, log it.
+  console.log(
+    `\n✉️  Magic sign-in link for ${email}\n   expires: ${expiresAt}\n   ${link}\n`,
+  );
+
+  return NextResponse.json({ ok: true });
+}
