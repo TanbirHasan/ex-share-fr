@@ -8,9 +8,9 @@ const columns = [
     links: [
       ["products", "/products"],
       ["brands", "/brands"],
-      ["reviews", "/reviews"],
+      ["stores", "/stores"],
       ["problems", "/problems"],
-      ["solutions", "/solutions"],
+      ["compare", "/compare"],
     ],
   },
   {

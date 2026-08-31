@@ -80,7 +80,38 @@
     "specifications": "স্পেসিফিকেশন",
     "noSpecs": "কোনো স্পেসিফিকেশন লিপিবদ্ধ নেই।",
     "warranty": "ওয়ারেন্টি",
-    "noWarranty": "কোনো ওয়ারেন্টি তথ্য লিপিবদ্ধ নেই।"
+    "noWarranty": "কোনো ওয়ারেন্টি তথ্য লিপিবদ্ধ নেই।",
+    "relatedHeading": "এই ক্যাটাগরির বিকল্প"
+  },
+  "prices": {
+    "heading": "দাম",
+    "lowestReported": "সর্বনিম্ন রিপোর্ট করা: {price}",
+    "noneReported": "এখনো কোনো দাম রিপোর্ট করা হয়নি।",
+    "reportCta": "আপনি যে দাম দেখেছেন জানান",
+    "pricePlaceholder": "দাম (৳)",
+    "storePlaceholder": "দোকান (ঐচ্ছিক)",
+    "submit": "সংরক্ষণ",
+    "cancel": "বাতিল",
+    "thanks": "ধন্যবাদ — যোগ করা হয়েছে",
+    "failed": "এটি সংরক্ষণ করা যায়নি।",
+    "source": {
+      "review": "একটি রিভিউ থেকে",
+      "manual": "রিপোর্ট করা"
+    }
+  },
+  "stores": {
+    "metaTitle": "দোকান",
+    "eyebrow": "দোকান",
+    "title": "দোকান ও বিক্রেতা",
+    "lede": "মানুষ কোথা থেকে কিনেছে — এবং পরে যে রেটিং দিয়েছে তা সহ।",
+    "empty": "এখনো কোনো দোকান নেই। মানুষ কোথা থেকে কিনেছে যোগ করলে এখানে দেখাবে।",
+    "reviewCount": "{count, plural, other {#টি রিভিউ}}",
+    "noReviews": "এখনো কোনো রিভিউ নেই",
+    "notFound": "দোকান পাওয়া যায়নি",
+    "avgRating": "গড় রেটিং",
+    "reviewsFromHere": "এখান থেকে রিভিউ",
+    "noReviewsYet": "এখনো কোনো রিভিউতে এই দোকানের উল্লেখ নেই।",
+    "recentReviews": "সাম্প্রতিক রিভিউ"
   },
   "enums": {
     "ownership": {
@@ -444,6 +475,8 @@
   },
   "buttons": {
     "helpful": "উপকারী",
+    "follow": "ফলো করুন",
+    "following": "ফলো করছেন",
     "couldNotVote": "আপনার ভোট রেকর্ড করা যায়নি।",
     "removeFromSaved": "সেভ থেকে সরান",
     "saveProduct": "পণ্য সেভ করুন",
@@ -669,6 +702,8 @@
     "links": {
       "products": "পণ্য",
       "brands": "ব্র্যান্ড",
+      "stores": "দোকান",
+      "compare": "তুলনা",
       "reviews": "রিভিউ",
       "problems": "সমস্যা",
       "solutions": "সমাধান",
@@ -691,6 +726,7 @@
       "myQuestions": "আমার প্রশ্ন",
       "serviceReports": "সার্ভিস রিপোর্ট",
       "savedProducts": "সেভ করা পণ্য",
+      "following": "ফলো করছেন",
       "catalog": "ক্যাটালগ",
       "categoriesBrands": "ক্যাটাগরি ও ব্র্যান্ড",
       "productRequests": "পণ্যের অনুরোধ",
@@ -717,6 +753,7 @@
       "questions": "প্রশ্ন",
       "service": "সার্ভিস",
       "saved": "সেভ করা",
+      "following": "ফলো করছেন",
       "catalog": "ক্যাটালগ",
       "taxonomy": "ক্যাটাগরি ও ব্র্যান্ড",
       "requests": "পণ্যের অনুরোধ",
@@ -851,6 +888,15 @@
       "userId": "ইউজার আইডি",
       "memberSince": "সদস্য হয়েছেন",
       "backendRejected": "ব্যাকএন্ড অনুরোধ প্রত্যাখ্যান করেছে (স্ট্যাটাস {status})। দুটি অ্যাপ একই AUTH_SHARED_SECRET শেয়ার করে এবং API চালু আছে কিনা দেখুন।"
+    },
+    "following": {
+      "title": "ফলো করছেন",
+      "lede": "আপনি যেসব পণ্য ও সমস্যা দেখছেন।",
+      "empty": "আপনি এখনো কিছু ফলো করছেন না।",
+      "browseProducts": "পণ্য দেখুন",
+      "productsHeading": "পণ্য",
+      "problemsHeading": "সমস্যা",
+      "noRatings": "এখনো কোনো রেটিং নেই"
     },
     "pages": {
       "browseProducts": "পণ্য দেখুন",

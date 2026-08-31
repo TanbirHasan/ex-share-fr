@@ -69,6 +69,7 @@ export type Review = {
   cons: string[];
   purchasePrice: number | null;
   purchaseStore: string | null;
+  store: { slug: string; name: string } | null;
   contentLang: "bn" | "en";
   status: string;
   helpfulCount: number;

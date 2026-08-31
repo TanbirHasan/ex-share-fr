@@ -80,7 +80,38 @@
     "specifications": "Specifications",
     "noSpecs": "No specifications recorded.",
     "warranty": "Warranty",
-    "noWarranty": "No warranty information recorded."
+    "noWarranty": "No warranty information recorded.",
+    "relatedHeading": "Alternatives in this category"
+  },
+  "prices": {
+    "heading": "Price",
+    "lowestReported": "Lowest reported: {price}",
+    "noneReported": "No prices reported yet.",
+    "reportCta": "Report a price you’ve seen",
+    "pricePlaceholder": "Price (৳)",
+    "storePlaceholder": "Store (optional)",
+    "submit": "Save",
+    "cancel": "Cancel",
+    "thanks": "Thanks — added",
+    "failed": "Couldn’t save that.",
+    "source": {
+      "review": "From a review",
+      "manual": "Reported"
+    }
+  },
+  "stores": {
+    "metaTitle": "Stores",
+    "eyebrow": "Stores",
+    "title": "Stores & sellers",
+    "lede": "Where people bought — with the ratings they left afterwards.",
+    "empty": "No stores yet. They show up as people add where they bought.",
+    "reviewCount": "{count, plural, one {# review} other {# reviews}}",
+    "noReviews": "No reviews yet",
+    "notFound": "Store not found",
+    "avgRating": "avg rating",
+    "reviewsFromHere": "reviews from here",
+    "noReviewsYet": "No reviews mention this store yet.",
+    "recentReviews": "Recent reviews"
   },
   "enums": {
     "ownership": {
@@ -444,6 +475,8 @@
   },
   "buttons": {
     "helpful": "Helpful",
+    "follow": "Follow",
+    "following": "Following",
     "couldNotVote": "Could not record your vote.",
     "removeFromSaved": "Remove from saved",
     "saveProduct": "Save product",
@@ -669,6 +702,8 @@
     "links": {
       "products": "Products",
       "brands": "Brands",
+      "stores": "Stores",
+      "compare": "Compare",
       "reviews": "Reviews",
       "problems": "Problems",
       "solutions": "Solutions",
@@ -691,6 +726,7 @@
       "myQuestions": "My questions",
       "serviceReports": "Service reports",
       "savedProducts": "Saved products",
+      "following": "Following",
       "catalog": "Catalog",
       "categoriesBrands": "Categories & brands",
       "productRequests": "Product requests",
@@ -717,6 +753,7 @@
       "questions": "Questions",
       "service": "Service",
       "saved": "Saved",
+      "following": "Following",
       "catalog": "Catalog",
       "taxonomy": "Categories & brands",
       "requests": "Product requests",
@@ -851,6 +888,15 @@
       "userId": "User ID",
       "memberSince": "Member since",
       "backendRejected": "Backend rejected the request (status {status}). Check that both apps share the same AUTH_SHARED_SECRET and the API is running."
+    },
+    "following": {
+      "title": "Following",
+      "lede": "Products and problems you’re watching.",
+      "empty": "You’re not following anything yet.",
+      "browseProducts": "Browse products",
+      "productsHeading": "Products",
+      "problemsHeading": "Problems",
+      "noRatings": "No ratings yet"
     },
     "pages": {
       "browseProducts": "Browse products",

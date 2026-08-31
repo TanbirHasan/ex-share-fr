@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ChevronRight, LifeBuoy, ShieldCheck, TriangleAlert, Wrench } from "lucide-react";
 import { auth } from "@/auth";
+import { FollowButton } from "@/components/site/follow-button";
 import { ProblemReportButton } from "@/components/site/problem-report-button";
 import { ReportButton } from "@/components/site/report-button";
 import { SolutionCard } from "@/components/site/solution-card";
@@ -90,6 +91,7 @@ export default async function ProblemPage({
           hasReported={p.viewerHasReported}
           signedIn={signedIn}
         />
+        <FollowButton kind="problem" id={p.id} />
         <ReportButton targetType="problem" targetId={p.id} />
       </div>
 

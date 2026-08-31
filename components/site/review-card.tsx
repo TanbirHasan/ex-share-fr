@@ -96,11 +96,15 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
 
       <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
         <span className={cn("font-medium", baClass)}>{baLabel}</span>
-        {review.purchaseStore && (
+        {review.store ? (
+          <Link href={`/stores/${review.store.slug}`} className="text-muted-foreground hover:underline">
+            {t("boughtAt", { store: review.store.name })}
+          </Link>
+        ) : review.purchaseStore ? (
           <span className="text-muted-foreground">
             {t("boughtAt", { store: review.purchaseStore })}
           </span>
-        )}
+        ) : null}
         <span className="ml-auto flex items-center gap-3">
           <ReportButton targetType="review" targetId={review.id} />
           <HelpfulButton

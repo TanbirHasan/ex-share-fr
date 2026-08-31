@@ -12,9 +12,12 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { CompareButton } from "@/components/site/compare-button";
+import { FollowButton } from "@/components/site/follow-button";
+import { PricePanel } from "@/components/site/price-panel";
 import { ProductProblems } from "@/components/site/product-problems";
 import { RecentlyViewed } from "@/components/site/recently-viewed";
 import { RecentTracker } from "@/components/site/recent-tracker";
+import { RelatedProducts } from "@/components/site/related-products";
 import { ProductQA } from "@/components/site/product-qa";
 import { SaveButton } from "@/components/site/save-button";
 import { RatingStars } from "@/components/site/rating-stars";
@@ -177,6 +180,7 @@ export default async function ProductPage({
               </Link>
             </Button>
             <SaveButton productId={p.id} className="h-9 px-3" />
+            <FollowButton kind="product" id={p.id} className="h-9 px-3" />
             <CompareButton slug={p.slug} name={p.name} className="h-9 px-3" />
           </div>
         </div>
@@ -192,6 +196,8 @@ export default async function ProductPage({
         </div>
 
         <div className="space-y-10">
+          <PricePanel productId={p.id} slug={p.slug} />
+
           <Section title={t("specifications")}>
             {specEntries.length ? (
               <dl className="divide-y rounded-xl border bg-card text-sm">
@@ -221,6 +227,7 @@ export default async function ProductPage({
       </div>
     </div>
 
+    <RelatedProducts productId={p.id} />
     <RecentlyViewed excludeId={p.id} className="border-t" />
     </>
   );

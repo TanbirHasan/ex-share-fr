@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   LifeBuoy,
   MessageSquareText,
+  Rss,
   ScrollText,
   SearchX,
   ShieldCheck,
@@ -49,6 +50,7 @@ const contributions: Item[] = [
   { key: "myQuestions", href: "/dashboard/questions", icon: HelpCircle },
   { key: "serviceReports", href: "/dashboard/service", icon: Headset },
   { key: "savedProducts", href: "/dashboard/saved", icon: Bookmark },
+  { key: "following", href: "/dashboard/following", icon: Rss },
 ];
 
 const admin: Item[] = [
