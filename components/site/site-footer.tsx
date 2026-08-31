@@ -25,7 +25,8 @@ const columns = [
   {
     heading: "about" as const,
     links: [
-      ["howItWorks", "/about"],
+      ["howItWorks", "/how-it-works"],
+      ["about", "/about"],
       ["contentPolicy", "/policy"],
       ["terms", "/terms"],
       ["privacy", "/privacy"],

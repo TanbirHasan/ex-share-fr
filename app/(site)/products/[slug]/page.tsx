@@ -164,7 +164,7 @@ export default async function ProductPage({
             <QuickStat
               icon={TriangleAlert}
               label={t("problems")}
-              value="0"
+              value={p.problemCount.toLocaleString()}
             />
           </dl>
 

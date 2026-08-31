@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
 import { activeContentLang } from "@/lib/content-lang";
 
-export type ReviewFormState = { ok: boolean; error?: string };
+export type ReviewFormState = { ok: boolean; error?: string; pending?: boolean };
 
 function str(fd: FormData, k: string) {
   const v = String(fd.get(k) ?? "").trim();
@@ -74,11 +74,17 @@ export async function submitReview(
     contentLang: await activeContentLang(),
   };
 
+  let pending = false;
   try {
     if (reviewId) {
       await apiSend(`/api/v1/reviews/${reviewId}`, "PATCH", body);
     } else {
-      await apiSend(`/api/v1/products/${productId}/reviews`, "POST", body);
+      const created = await apiSend<{ status?: string }>(
+        `/api/v1/products/${productId}/reviews`,
+        "POST",
+        body,
+      );
+      pending = created.status === "pending";
     }
   } catch (e) {
     return {
@@ -89,5 +95,5 @@ export async function submitReview(
 
   revalidatePath(`/products/${slug}`);
   revalidatePath("/dashboard/reviews");
-  return { ok: true };
+  return { ok: true, pending };
 }

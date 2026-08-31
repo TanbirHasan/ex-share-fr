@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Check, ThumbsUp, X } from "lucide-react";
+import { ModerationBadge } from "@/components/dashboard/moderation-badge";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
 import type { Paginated } from "@/lib/catalog-types";
@@ -35,12 +36,15 @@ export default async function MySolutionsPage() {
         <ul className="space-y-3">
           {data.data.map((s) => (
             <li key={s.id} className="rounded-xl border bg-card p-4">
-              <Link
-                href={`/problems/${s.problem.slug}`}
-                className="text-sm font-medium hover:underline"
-              >
-                {s.problem.title}
-              </Link>
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href={`/problems/${s.problem.slug}`}
+                  className="text-sm font-medium hover:underline"
+                >
+                  {s.problem.title}
+                </Link>
+                <ModerationBadge status={s.status} />
+              </div>
               <p className="text-xs text-muted-foreground">
                 {s.product.name} · {formatDate(s.createdAt)}
               </p>

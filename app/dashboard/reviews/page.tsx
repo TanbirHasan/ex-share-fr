@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ImageOff, Pencil, Star } from "lucide-react";
 import { DeleteReviewButton } from "@/components/dashboard/delete-review-button";
+import { ModerationBadge } from "@/components/dashboard/moderation-badge";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
 import type { Paginated } from "@/lib/catalog-types";
@@ -48,12 +49,15 @@ export default async function MyReviewsPage() {
               </span>
 
               <div className="min-w-0 flex-1">
-                <Link
-                  href={`/products/${r.product.slug}`}
-                  className="text-sm font-medium hover:underline"
-                >
-                  {r.product.name}
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    href={`/products/${r.product.slug}`}
+                    className="text-sm font-medium hover:underline"
+                  >
+                    {r.product.name}
+                  </Link>
+                  <ModerationBadge status={r.status} />
+                </div>
                 <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1 font-medium text-foreground">
                     <Star className="size-3.5 fill-amber-400 text-amber-400" />

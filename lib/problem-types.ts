@@ -86,20 +86,28 @@ export type ProblemDetail = {
   title: string;
   description: string;
   contentLang: "bn" | "en";
+  status: "pending" | "approved" | "rejected";
   reportCount: number;
   createdAt: string;
   product: ProductRef;
   reporter: Person | null;
   viewerHasReported: boolean;
+  viewerPendingSolution: boolean;
   whenStarted: Record<string, number>;
   warrantyBreakdown: Record<string, number>;
   repairCost: { min: number; max: number; median: number; count: number } | null;
   solutions: Solution[];
 };
 
-export type MyProblem = ProblemListItem & { viewerIsCreator: boolean };
+type ModerationStatus = "pending" | "approved" | "rejected";
+
+export type MyProblem = ProblemListItem & {
+  viewerIsCreator: boolean;
+  status: ModerationStatus;
+};
 
 export type MySolution = Solution & {
+  status: ModerationStatus;
   problem: { id: string; slug: string; title: string };
   product: ProductRef;
 };

@@ -195,6 +195,12 @@ export default async function ProblemPage({
           </p>
         )}
 
+        {p.viewerPendingSolution && (
+          <p className="mt-3 rounded-xl border border-dashed bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-400">
+            {t("yourSolutionPending")}
+          </p>
+        )}
+
         <div className="mt-4">
           <SolutionForm problemId={p.id} slug={p.slug} signedIn={signedIn} />
         </div>

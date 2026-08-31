@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
+import { ContributeIntro } from "@/components/site/contribute-intro";
 import { ServiceForm } from "@/components/site/service-form";
 import { ApiError, apiGet } from "@/lib/api";
 import { apiFetch } from "@/lib/backend";
@@ -74,6 +75,12 @@ export default async function ServicePage({
       </p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight">{product.name}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{t("serviceLede")}</p>
+
+      {!existing && (
+        <div className="mt-6">
+          <ContributeIntro />
+        </div>
+      )}
 
       <div className="mt-8">
         <ServiceForm

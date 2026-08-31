@@ -6,7 +6,7 @@ import { ApiError, apiSend } from "@/lib/api";
 import { activeContentLang } from "@/lib/content-lang";
 import type { ProblemDetail } from "@/lib/problem-types";
 
-export type ProblemFormState = { ok: boolean; error?: string; slug?: string };
+export type ProblemFormState = { ok: boolean; error?: string; slug?: string; pending?: boolean };
 
 function str(fd: FormData, k: string) {
   const v = String(fd.get(k) ?? "").trim();
@@ -55,7 +55,7 @@ export async function submitProblem(
     );
     revalidatePath("/problems");
     revalidatePath("/dashboard/problems");
-    return { ok: true, slug: problem.slug };
+    return { ok: true, slug: problem.slug, pending: problem.status === "pending" };
   } catch (e) {
     return fail(e);
   }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { LifeBuoy, Users } from "lucide-react";
+import { ModerationBadge } from "@/components/dashboard/moderation-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
@@ -46,11 +47,14 @@ export default async function MyProblemsPage() {
                   <span className="truncate text-xs text-muted-foreground">
                     {p.product.name}
                   </span>
-                  {p.viewerIsCreator && (
-                    <Badge variant="outline" className="ml-auto text-xs">
-                      {t("youStartedThis")}
-                    </Badge>
-                  )}
+                  <span className="ml-auto flex items-center gap-2">
+                    <ModerationBadge status={p.status} />
+                    {p.viewerIsCreator && (
+                      <Badge variant="outline" className="text-xs">
+                        {t("youStartedThis")}
+                      </Badge>
+                    )}
+                  </span>
                 </div>
                 <p className="mt-2 font-medium">{p.title}</p>
                 <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">

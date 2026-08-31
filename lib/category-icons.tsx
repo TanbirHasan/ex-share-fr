@@ -1,10 +1,12 @@
 import {
   AirVent,
   Boxes,
+  CookingPot,
   Fan,
   Headphones,
   Microwave,
   Refrigerator,
+  Scissors,
   Smartphone,
   Tv,
   WashingMachine,
@@ -23,8 +25,11 @@ const map: Record<string, LucideIcon> = {
   microwave: Microwave,
   mobile: Smartphone,
   smartphone: Smartphone,
+  "mobile-phone": Smartphone,
   audio: Headphones,
   headphones: Headphones,
+  "air-fryer": CookingPot,
+  "sewing-machine": Scissors,
 };
 
 export function categoryIcon(slug: string): LucideIcon {

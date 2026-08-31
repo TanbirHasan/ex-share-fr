@@ -64,11 +64,15 @@ export function ReviewForm({
   );
 
   useEffect(() => {
-    if (state.ok) {
+    if (!state.ok) return;
+    if (state.pending) {
+      toast.success(t("reviewPending"), { description: t("reviewPendingHint"), duration: 8000 });
+      router.push("/dashboard/reviews");
+    } else {
       toast.success(existing ? t("reviewUpdated") : t("reviewPublished"));
       router.push(`/products/${product.slug}`);
-      router.refresh();
     }
+    router.refresh();
   }, [state, existing, product.slug, router, t]);
 
   const canSubmit = rating > 0 && duration !== "" && buyAgain !== "";

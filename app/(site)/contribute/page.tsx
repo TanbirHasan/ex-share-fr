@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { PenLine, Search } from "lucide-react";
 import { auth } from "@/auth";
+import { ContributeIntro } from "@/components/site/contribute-intro";
 import { ReviewForm } from "@/components/site/review-form";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
@@ -91,6 +92,12 @@ export default async function ContributePage({
       <p className="mt-1 text-sm text-muted-foreground">
         {product.brand.name} · {localizedName(locale, product.category)}
       </p>
+
+      {!existing && (
+        <div className="mt-6">
+          <ContributeIntro />
+        </div>
+      )}
 
       <div className="mt-8">
         <ReviewForm

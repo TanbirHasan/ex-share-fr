@@ -35,17 +35,18 @@ export async function addSolution(
   problemId: string,
   slug: string,
   body: string,
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ ok: boolean; error?: string; pending?: boolean }> {
   const session = await auth();
   if (!session?.user) return { ok: false, error: "Sign in to add a solution." };
   if (body.trim().length < 10) return { ok: false, error: "Add a bit more detail." };
   try {
-    await apiSend(`/api/v1/problems/${problemId}/solutions`, "POST", {
-      body: body.trim(),
-      contentLang: await activeContentLang(),
-    });
+    const detail = await apiSend<ProblemDetail>(
+      `/api/v1/problems/${problemId}/solutions`,
+      "POST",
+      { body: body.trim(), contentLang: await activeContentLang() },
+    );
     revalidatePath(`/problems/${slug}`);
-    return { ok: true };
+    return { ok: true, pending: detail.viewerPendingSolution };
   } catch (e) {
     return { ok: false, error: e instanceof ApiError ? e.message : "Could not add your solution." };
   }

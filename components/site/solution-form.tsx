@@ -43,7 +43,14 @@ export function SolutionForm({
       const res = await addSolution(problemId, slug, body);
       if (res.ok) {
         setBody("");
-        toast.success(t("solutionAdded"));
+        if (res.pending) {
+          toast.success(t("solutionPending"), {
+            description: t("solutionPendingHint"),
+            duration: 8000,
+          });
+        } else {
+          toast.success(t("solutionAdded"));
+        }
         router.refresh();
       } else {
         toast.error(res.error ?? t("couldNotAdd"));

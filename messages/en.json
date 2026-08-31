@@ -442,7 +442,14 @@
     "serviceOpenProductPage": "Open a product page and choose “Rate the service”.",
     "editServiceExperience": "Edit your service experience",
     "serviceExperience": "Customer service experience",
-    "serviceLede": "How was dealing with the brand’s after-sales service?"
+    "serviceLede": "How was dealing with the brand’s after-sales service?",
+    "intro": {
+      "title": "New here?",
+      "good": "Write from real use — how long you've owned it, what broke, what you'd tell a friend.",
+      "moderated": "Your first few contributions are checked by a moderator before they appear publicly.",
+      "reputation": "Helpful contributions build your reputation and unlock instant publishing.",
+      "more": "How ExperienceHub works"
+    }
   },
   "requestForm": {
     "metaTitle": "Request a product",
@@ -486,7 +493,9 @@
     "uploadPhoto": "Add photo",
     "removePhoto": "Remove photo",
     "photoAdded": "Photo added",
-    "photoFailed": "Couldn’t upload that photo."
+    "photoFailed": "Couldn’t upload that photo.",
+    "reviewPending": "Thanks — your review is in review",
+    "reviewPendingHint": "First contributions are checked by a moderator before they appear publicly, usually within a day. You can see it on your dashboard meanwhile."
   },
   "problemForm": {
     "kindOfProblem": "What kind of problem is it?",
@@ -505,7 +514,9 @@
     "notePlaceholder": "How the repair went, how long it took…",
     "reportProblem": "Report problem",
     "cancel": "Cancel",
-    "problemReported": "Problem reported — thank you"
+    "problemReported": "Problem reported — thank you",
+    "problemPending": "Thanks — your report is in review",
+    "problemPendingHint": "First contributions are checked by a moderator before they appear publicly, usually within a day. You can see it on your dashboard meanwhile."
   },
   "serviceForm": {
     "overallHow": "Overall, how was the service?",
@@ -527,7 +538,9 @@
     "thanksSharing": "Thanks for sharing this",
     "saveChanges": "Save changes",
     "publish": "Publish",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "pending": "Thanks — your report is in review",
+    "pendingHint": "First contributions are checked by a moderator before they appear publicly, usually within a day. You can see it on your dashboard meanwhile."
   },
   "translate": {
     "translate": "Translate",
@@ -600,7 +613,7 @@
     "reportedProblems": "Reported problems",
     "reportedProblemsCount": "Reported problems ({count})",
     "reportAProblem": "Report a problem",
-    "noProblemsYet": "No problems reported yet.",
+    "noProblemsYet": "No problems reported yet — that's a good sign.",
     "hitFaultReport": "Hit a fault? Report it.",
     "reportCount": "{count, plural, one {# report} other {# reports}}",
     "solutionCount": "{count, plural, one {# solution} other {# solutions}}",
@@ -632,7 +645,8 @@
     "optional": "Optional.",
     "addReport": "Add report",
     "thanksAddedCount": "Thanks — added to the count",
-    "couldNotSaveReport": "Could not save your report."
+    "couldNotSaveReport": "Could not save your report.",
+    "yourSolutionPending": "Your solution is waiting for a moderator to approve it. It'll show here once it's live."
   },
   "qa": {
     "heading": "Questions & answers",
@@ -673,7 +687,9 @@
     "couldNotAdd": "Could not add your solution.",
     "shareAFix": "Share a fix",
     "fixPlaceholder": "What worked for you? Be specific — steps, parts, rough cost, who did it.",
-    "postSolution": "Post solution"
+    "postSolution": "Post solution",
+    "solutionPending": "Thanks — your solution is in review",
+    "solutionPendingHint": "First contributions are checked by a moderator before they appear publicly, usually within a day."
   },
   "comments": {
     "comments": "Comments",
@@ -696,7 +712,7 @@
     "writeReview": "Write a review",
     "editYourReview": "Edit your review",
     "noReviewsYet": "No reviews yet.",
-    "beFirstSignedIn": "Own it? Be the first to share your experience.",
+    "beFirstSignedIn": "Own it? Be the first — your experience helps the next buyer decide.",
     "beFirstLink": "Be the first to review it.",
     "outOfFive": "/ 5",
     "reviewCount": "{count, plural, one {# review} other {# reviews}}",
@@ -799,7 +815,8 @@
       "howItWorks": "How it works",
       "contentPolicy": "Content policy",
       "terms": "Terms",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "about": "About"
     }
   },
   "dashboard": {
@@ -1013,7 +1030,9 @@
       "serviceEmpty": "Nothing here yet.",
       "savedTitle": "Saved products",
       "savedCount": "{count, plural, one {# product} other {# products}} you’ve saved for later.",
-      "savedEmpty": "Nothing saved yet. Tap the bookmark on any product to keep it here."
+      "savedEmpty": "Nothing saved yet. Tap the bookmark on any product to keep it here.",
+      "statusPending": "Pending review",
+      "statusRejected": "Not approved"
     },
     "delete": {
       "reviewDeleted": "Review deleted",
@@ -1120,5 +1139,31 @@
     "confirmSubtitle": "Continue as {email}",
     "confirmBody": "For your security, confirm you opened this link yourself.",
     "continue": "Continue"
+  },
+  "howItWorks": {
+    "metaTitle": "How it works",
+    "eyebrow": "How it works",
+    "title": "Real ownership experience, from people in Bangladesh",
+    "intro": "ExperienceHub collects what actually happens after you buy — how products hold up, what goes wrong, and how it gets fixed — so the next buyer decides with real information.",
+    "steps": {
+      "searchTitle": "Search for a product",
+      "searchBody": "Find the exact model you're considering. Every product page gathers ratings, reported problems, fixes and real prices in one place.",
+      "readTitle": "Read real experiences",
+      "readBody": "See how long owners have had it, what they'd buy again, the faults people hit, and what service centres charged to fix them.",
+      "contributeTitle": "Add your own",
+      "contributeBody": "Own something? Share a review, report a fault, post a fix that worked, or log a service-centre visit. It takes a couple of minutes.",
+      "buildTitle": "The picture gets sharper",
+      "buildBody": "Every contribution sharpens the ratings and problem trends other people rely on. Small notes add up to something genuinely useful."
+    },
+    "trustTitle": "What happens to your contribution",
+    "trustIntro": "A couple of things worth knowing before you post.",
+    "trust": {
+      "moderationTitle": "First posts are checked",
+      "moderationBody": "Your first few contributions are reviewed by a moderator before they appear publicly — usually within a day. You'll find them under your dashboard while they wait.",
+      "reputationTitle": "Reputation is earned",
+      "reputationBody": "Helpful, genuine contributions build your reputation over time. Once you've shown you're reliable, your posts publish instantly."
+    },
+    "ctaBrowse": "Browse products",
+    "ctaContribute": "Share an experience"
   }
 }

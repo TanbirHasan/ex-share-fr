@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
 import { activeContentLang } from "@/lib/content-lang";
 
-export type ServiceFormState = { ok: boolean; error?: string };
+export type ServiceFormState = { ok: boolean; error?: string; pending?: boolean };
 
 function str(fd: FormData, k: string) {
   const v = String(fd.get(k) ?? "").trim();
@@ -56,11 +56,17 @@ export async function submitServiceExperience(
     contentLang: await activeContentLang(),
   };
 
+  let pending = false;
   try {
     if (serviceId) {
       await apiSend(`/api/v1/service/${serviceId}`, "PATCH", body);
     } else {
-      await apiSend(`/api/v1/products/${productId}/service`, "POST", body);
+      const created = await apiSend<{ status?: string }>(
+        `/api/v1/products/${productId}/service`,
+        "POST",
+        body,
+      );
+      pending = created.status === "pending";
     }
   } catch (e) {
     return {
@@ -71,5 +77,5 @@ export async function submitServiceExperience(
 
   revalidatePath(`/products/${slug}`);
   revalidatePath("/dashboard/service");
-  return { ok: true };
+  return { ok: true, pending };
 }

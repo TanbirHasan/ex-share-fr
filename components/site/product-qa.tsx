@@ -34,7 +34,10 @@ export async function ProductQA({ product }: { product: Product }) {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm text-muted-foreground">{t("noQuestionsYet")}</p>
+        <div className="mt-3 flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">
+          <HelpCircle className="mt-0.5 size-4 shrink-0" />
+          <p>{t("noQuestionsYet")}</p>
+        </div>
       )}
     </section>
   );

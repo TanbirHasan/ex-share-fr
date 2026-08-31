@@ -60,11 +60,15 @@ export function ServiceForm({
   const [tech, setTech] = useState(existing?.technicianRating ?? 0);
 
   useEffect(() => {
-    if (state.ok) {
+    if (!state.ok) return;
+    if (state.pending) {
+      toast.success(t("pending"), { description: t("pendingHint"), duration: 8000 });
+      router.push("/dashboard/service");
+    } else {
       toast.success(existing ? t("updated") : t("thanksSharing"));
       router.push(`/products/${product.slug}`);
-      router.refresh();
     }
+    router.refresh();
   }, [state, existing, product.slug, router, t]);
 
   const canSubmit = rating > 0 && responseTime && channel && outcome && warranty;

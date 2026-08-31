@@ -45,11 +45,15 @@ export function ReportProblemForm({
   }));
 
   useEffect(() => {
-    if (state.ok && state.slug) {
+    if (!state.ok || !state.slug) return;
+    if (state.pending) {
+      toast.success(t("problemPending"), { description: t("problemPendingHint"), duration: 8000 });
+      router.push("/dashboard/problems");
+    } else {
       toast.success(t("problemReported"));
       router.push(`/problems/${state.slug}`);
-      router.refresh();
     }
+    router.refresh();
   }, [state, router, t]);
 
   return (
