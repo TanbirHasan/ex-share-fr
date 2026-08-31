@@ -81,7 +81,19 @@
     "noSpecs": "কোনো স্পেসিফিকেশন লিপিবদ্ধ নেই।",
     "warranty": "ওয়ারেন্টি",
     "noWarranty": "কোনো ওয়ারেন্টি তথ্য লিপিবদ্ধ নেই।",
-    "relatedHeading": "এই ক্যাটাগরির বিকল্প"
+    "relatedHeading": "এই ক্যাটাগরির বিকল্প",
+    "tabReviews": "রিভিউ",
+    "tabProblems": "সমস্যা",
+    "tabQa": "প্রশ্নোত্তর",
+    "tabService": "সার্ভিস",
+    "shareExperience": "আপনার অভিজ্ঞতা জানান",
+    "menuWriteReview": "রিভিউ লিখুন",
+    "menuReportProblem": "সমস্যা জানান",
+    "menuRateService": "মেরামত / সার্ভিসের অভিজ্ঞতা জানান",
+    "wouldBuyAgainInline": "{pct}% আবার কিনবেন",
+    "problemsInline": "{count, plural, one {# টি সমস্যা রিপোর্ট} other {# টি সমস্যা রিপোর্ট}}",
+    "communityEmptyTitle": "এখনও কোনো কমিউনিটি কার্যকলাপ নেই",
+    "communityEmptyBody": "{name} সম্পর্কে প্রথম হয়ে আপনার অভিজ্ঞতা জানান — একটি রিভিউ, কোনো সমস্যা, বা মেরামতের গল্প।"
   },
   "errorPages": {
     "notFoundTitle": "পৃষ্ঠা পাওয়া যায়নি",

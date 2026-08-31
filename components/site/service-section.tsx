@@ -59,7 +59,13 @@ function Dist({
   );
 }
 
-export async function ServiceSection({ product }: { product: Product }) {
+export async function ServiceSection({
+  product,
+  chromeless = false,
+}: {
+  product: Product;
+  chromeless?: boolean;
+}) {
   const [session, t, tEnum] = await Promise.all([
     auth(),
     getTranslations("service"),
@@ -80,17 +86,28 @@ export async function ServiceSection({ product }: { product: Product }) {
 
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight">
-          {s.count > 0 ? t("headingCount", { count: s.count }) : t("heading")}
-        </h2>
-        <Button asChild size="sm" variant={mine ? "outline" : "default"}>
-          <Link href={`/contribute/service?product=${product.slug}`}>
-            <Headset className="size-4" />
-            {mine ? t("editYours") : t("rateService")}
-          </Link>
-        </Button>
-      </div>
+      {!chromeless ? (
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {s.count > 0 ? t("headingCount", { count: s.count }) : t("heading")}
+          </h2>
+          <Button asChild size="sm" variant={mine ? "outline" : "default"}>
+            <Link href={`/contribute/service?product=${product.slug}`}>
+              <Headset className="size-4" />
+              {mine ? t("editYours") : t("rateService")}
+            </Link>
+          </Button>
+        </div>
+      ) : mine ? (
+        <div className="mb-3 flex justify-end">
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/contribute/service?product=${product.slug}`}>
+              <Headset className="size-4" />
+              {t("editYours")}
+            </Link>
+          </Button>
+        </div>
+      ) : null}
 
       {s.count === 0 ? (
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">

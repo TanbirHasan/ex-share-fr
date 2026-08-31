@@ -54,10 +54,15 @@ export type Product = {
   updatedAt: string;
   images: ProductImage[];
   problemCount: number;
+  questionCount: number;
+  serviceCount: number;
 };
 
-/** Products as returned by the list endpoint (no images array, no problem count). */
-export type ProductListItem = Omit<Product, "images" | "problemCount">;
+/** Products as returned by the list endpoint (no images array, no community counts). */
+export type ProductListItem = Omit<
+  Product,
+  "images" | "problemCount" | "questionCount" | "serviceCount"
+>;
 
 export type BrandHit = {
   id: string;

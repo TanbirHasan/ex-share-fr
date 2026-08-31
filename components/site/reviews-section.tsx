@@ -18,7 +18,13 @@ function topTags(reviews: Review[], key: "pros" | "cons", n = 4) {
     .map(([tag, count]) => ({ tag, count }));
 }
 
-export async function ReviewsSection({ product }: { product: Product }) {
+export async function ReviewsSection({
+  product,
+  chromeless = false,
+}: {
+  product: Product;
+  chromeless?: boolean;
+}) {
   const [session, t, tEnum] = await Promise.all([
     auth(),
     getTranslations("reviews"),
@@ -44,19 +50,30 @@ export async function ReviewsSection({ product }: { product: Product }) {
 
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight">
-          {product.ratingCount > 0
-            ? t("headingCount", { count: product.ratingCount })
-            : t("heading")}
-        </h2>
-        <Button asChild size="sm" variant={mine ? "outline" : "default"}>
-          <Link href={`/contribute?product=${product.slug}`}>
-            <PenLine className="size-4" />
-            {mine ? t("editYourReview") : t("writeReview")}
-          </Link>
-        </Button>
-      </div>
+      {!chromeless ? (
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {product.ratingCount > 0
+              ? t("headingCount", { count: product.ratingCount })
+              : t("heading")}
+          </h2>
+          <Button asChild size="sm" variant={mine ? "outline" : "default"}>
+            <Link href={`/contribute?product=${product.slug}`}>
+              <PenLine className="size-4" />
+              {mine ? t("editYourReview") : t("writeReview")}
+            </Link>
+          </Button>
+        </div>
+      ) : mine ? (
+        <div className="mb-3 flex justify-end">
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/contribute?product=${product.slug}`}>
+              <PenLine className="size-4" />
+              {t("editYourReview")}
+            </Link>
+          </Button>
+        </div>
+      ) : null}
 
       {product.ratingCount === 0 ? (
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">

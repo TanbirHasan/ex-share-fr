@@ -81,7 +81,19 @@
     "noSpecs": "No specifications recorded.",
     "warranty": "Warranty",
     "noWarranty": "No warranty information recorded.",
-    "relatedHeading": "Alternatives in this category"
+    "relatedHeading": "Alternatives in this category",
+    "tabReviews": "Reviews",
+    "tabProblems": "Problems",
+    "tabQa": "Q&A",
+    "tabService": "Service",
+    "shareExperience": "Share your experience",
+    "menuWriteReview": "Write a review",
+    "menuReportProblem": "Report a problem",
+    "menuRateService": "Rate a repair / service visit",
+    "wouldBuyAgainInline": "{pct}% would buy again",
+    "problemsInline": "{count, plural, one {# reported problem} other {# reported problems}}",
+    "communityEmptyTitle": "No community activity yet",
+    "communityEmptyBody": "Be the first to share your experience with the {name} — a review, a fault you hit, or a repair story."
   },
   "errorPages": {
     "notFoundTitle": "Page not found",

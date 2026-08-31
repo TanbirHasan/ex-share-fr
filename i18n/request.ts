@@ -10,5 +10,8 @@ export default getRequestConfig(async () => {
   return {
     locale,
     messages: (await import(`../messages/${locale}.json`)).default,
+    // Default reference point for `format.relativeTime(...)` calls that don't
+    // pass one explicitly. Stable per request (avoids the next-intl fallback warning).
+    now: new Date(),
   };
 });

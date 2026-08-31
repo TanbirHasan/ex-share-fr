@@ -7,7 +7,13 @@ import { apiFetch } from "@/lib/backend";
 import type { Product } from "@/lib/catalog-types";
 import type { Question } from "@/lib/qa-types";
 
-export async function ProductQA({ product }: { product: Product }) {
+export async function ProductQA({
+  product,
+  chromeless = false,
+}: {
+  product: Product;
+  chromeless?: boolean;
+}) {
   const [session, t] = await Promise.all([auth(), getTranslations("qa")]);
   const signedIn = Boolean(session?.user);
 
@@ -18,12 +24,14 @@ export async function ProductQA({ product }: { product: Product }) {
 
   return (
     <section>
-      <div className="mb-3 flex items-center gap-2">
-        <HelpCircle className="size-5 text-primary" />
-        <h2 className="text-lg font-semibold tracking-tight">
-          {list.total > 0 ? t("headingCount", { count: list.total }) : t("heading")}
-        </h2>
-      </div>
+      {!chromeless && (
+        <div className="mb-3 flex items-center gap-2">
+          <HelpCircle className="size-5 text-primary" />
+          <h2 className="text-lg font-semibold tracking-tight">
+            {list.total > 0 ? t("headingCount", { count: list.total }) : t("heading")}
+          </h2>
+        </div>
+      )}
 
       <AskQuestionBox productId={product.id} slug={product.slug} signedIn={signedIn} />
 

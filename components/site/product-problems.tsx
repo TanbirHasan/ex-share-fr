@@ -10,9 +10,11 @@ import type { ProblemListItem } from "@/lib/problem-types";
 export async function ProductProblems({
   productId,
   productSlug,
+  chromeless = false,
 }: {
   productId: string;
   productSlug: string;
+  chromeless?: boolean;
 }) {
   const [t, list] = await Promise.all([
     getTranslations("problems"),
@@ -25,19 +27,21 @@ export async function ProductProblems({
 
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight">
-          {list.total > 0
-            ? t("reportedProblemsCount", { count: list.total })
-            : t("reportedProblems")}
-        </h2>
-        <Button asChild size="sm" variant="outline">
-          <Link href={`/contribute/problem?product=${productSlug}`}>
-            <TriangleAlert className="size-4" />
-            {t("reportAProblem")}
-          </Link>
-        </Button>
-      </div>
+      {!chromeless && (
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {list.total > 0
+              ? t("reportedProblemsCount", { count: list.total })
+              : t("reportedProblems")}
+          </h2>
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/contribute/problem?product=${productSlug}`}>
+              <TriangleAlert className="size-4" />
+              {t("reportAProblem")}
+            </Link>
+          </Button>
+        </div>
+      )}
 
       {list.data.length === 0 ? (
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">

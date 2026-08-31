@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { Bell, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export function NotificationBell({ className }: { className?: string }) {
   const { status } = useSession();
   const t = useTranslations("notifications");
   const format = useFormatter();
+  const now = useNow({ updateInterval: POLL_MS });
   const text = useNotificationText();
 
   const [count, setCount] = useState(0);
@@ -135,7 +136,7 @@ export function NotificationBell({ className }: { className?: string }) {
                       <div className="min-w-0 flex-1">
                         <p className="text-sm leading-snug text-foreground">{text(n)}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                          {format.relativeTime(new Date(n.createdAt))}
+                          {format.relativeTime(new Date(n.createdAt), now)}
                         </p>
                       </div>
                       {!n.readAt && (

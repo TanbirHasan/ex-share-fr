@@ -5,7 +5,6 @@ import { getLocale, getTranslations } from "next-intl/server";
 import {
   ChevronRight,
   ImageOff,
-  MessageSquareText,
   PenLine,
   ShieldCheck,
   ThumbsUp,
@@ -14,6 +13,8 @@ import {
 import { CompareButton } from "@/components/site/compare-button";
 import { FollowButton } from "@/components/site/follow-button";
 import { PricePanel } from "@/components/site/price-panel";
+import { ProductCommunity } from "@/components/site/product-community";
+import { ProductContributeMenu } from "@/components/site/product-contribute-menu";
 import { ProductProblems } from "@/components/site/product-problems";
 import { RecentlyViewed } from "@/components/site/recently-viewed";
 import { RecentTracker } from "@/components/site/recent-tracker";
@@ -24,7 +25,6 @@ import { RatingStars } from "@/components/site/rating-stars";
 import { ServiceSection } from "@/components/site/service-section";
 import { ReviewsSection } from "@/components/site/reviews-section";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
 import { ApiError, apiGet } from "@/lib/api";
 import type { Product } from "@/lib/catalog-types";
@@ -73,6 +73,8 @@ export default async function ProductPage({
   if (!p) notFound();
 
   const specEntries = Object.entries(p.spec ?? {});
+  const communityTotal =
+    p.ratingCount + p.problemCount + p.questionCount + p.serviceCount;
 
   return (
     <>
@@ -140,8 +142,23 @@ export default async function ProductPage({
             </p>
           )}
 
-          <div className="mt-4">
+          {/* Rating + community facts, on one line */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
             <RatingStars value={p.ratingAvg} count={p.ratingCount} />
+            {p.ratingCount > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <span aria-hidden>·</span>
+                <ThumbsUp className="size-3.5" />
+                {t("wouldBuyAgainInline", { pct: p.wouldBuyAgainPct })}
+              </span>
+            )}
+            {p.problemCount > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <span aria-hidden>·</span>
+                <TriangleAlert className="size-3.5" />
+                {t("problemsInline", { count: p.problemCount })}
+              </span>
+            )}
           </div>
 
           <p className="mt-4 text-2xl font-semibold tabular-nums">
@@ -149,36 +166,8 @@ export default async function ProductPage({
           </p>
           <p className="text-xs text-muted-foreground">{t("typicalPrice")}</p>
 
-          {/* Community quick facts */}
-          <dl className="mt-6 grid grid-cols-3 gap-3">
-            <QuickStat
-              icon={ThumbsUp}
-              label={t("wouldBuyAgain")}
-              value={p.ratingCount ? `${p.wouldBuyAgainPct}%` : "—"}
-            />
-            <QuickStat
-              icon={MessageSquareText}
-              label={t("reviews")}
-              value={p.ratingCount.toLocaleString()}
-            />
-            <QuickStat
-              icon={TriangleAlert}
-              label={t("problems")}
-              value={p.problemCount.toLocaleString()}
-            />
-          </dl>
-
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <Button asChild>
-              <Link href={`/contribute?product=${p.slug}`}>
-                <PenLine className="size-4" /> {t("writeReview")}
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href={`/contribute/problem?product=${p.slug}`}>
-                <TriangleAlert className="size-4" /> {t("reportProblem")}
-              </Link>
-            </Button>
+            <ProductContributeMenu slug={p.slug} />
             <SaveButton productId={p.id} className="h-9 px-3" />
             <FollowButton kind="product" id={p.id} className="h-9 px-3" />
             <CompareButton slug={p.slug} name={p.name} className="h-9 px-3" />
@@ -188,11 +177,52 @@ export default async function ProductPage({
 
       {/* Sections */}
       <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-        <div className="space-y-10">
-          <ReviewsSection product={p} />
-          <ProductProblems productId={p.id} productSlug={p.slug} />
-          <ProductQA product={p} />
-          <ServiceSection product={p} />
+        <div className="space-y-5">
+          {communityTotal === 0 && (
+            <div className="rounded-xl border border-dashed bg-card p-8 text-center">
+              <span className="mx-auto flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <PenLine className="size-5" />
+              </span>
+              <h2 className="mt-4 text-base font-semibold">{t("communityEmptyTitle")}</h2>
+              <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+                {t("communityEmptyBody", { name: p.name })}
+              </p>
+              <div className="mt-5 flex justify-center">
+                <ProductContributeMenu slug={p.slug} />
+              </div>
+            </div>
+          )}
+
+          <ProductCommunity
+            tabs={[
+              {
+                key: "reviews",
+                label: t("tabReviews"),
+                count: p.ratingCount,
+                panel: <ReviewsSection product={p} chromeless />,
+              },
+              {
+                key: "problems",
+                label: t("tabProblems"),
+                count: p.problemCount,
+                panel: (
+                  <ProductProblems productId={p.id} productSlug={p.slug} chromeless />
+                ),
+              },
+              {
+                key: "qa",
+                label: t("tabQa"),
+                count: p.questionCount,
+                panel: <ProductQA product={p} chromeless />,
+              },
+              {
+                key: "service",
+                label: t("tabService"),
+                count: p.serviceCount,
+                panel: <ServiceSection product={p} chromeless />,
+              },
+            ]}
+          />
         </div>
 
         <div className="space-y-10">
@@ -230,24 +260,6 @@ export default async function ProductPage({
     <RelatedProducts productId={p.id} />
     <RecentlyViewed excludeId={p.id} className="border-t" />
     </>
-  );
-}
-
-function QuickStat({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl border bg-card p-3">
-      <Icon className="size-4 text-primary" />
-      <dd className="mt-1.5 text-lg font-semibold tabular-nums">{value}</dd>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-    </div>
   );
 }
 
