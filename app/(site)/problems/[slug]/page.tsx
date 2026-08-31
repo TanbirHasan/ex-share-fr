@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronRight, LifeBuoy, ShieldCheck, TriangleAlert, Wrench } from "lucide-react";
 import { auth } from "@/auth";
 import { ProblemReportButton } from "@/components/site/problem-report-button";
+import { ReportButton } from "@/components/site/report-button";
 import { SolutionCard } from "@/components/site/solution-card";
 import { SolutionForm } from "@/components/site/solution-form";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +87,7 @@ export default async function ProblemPage({
           hasReported={p.viewerHasReported}
           signedIn={signedIn}
         />
+        <ReportButton targetType="problem" targetId={p.id} />
       </div>
 
       <p className="mt-5 text-sm whitespace-pre-line text-foreground/90">{p.description}</p>

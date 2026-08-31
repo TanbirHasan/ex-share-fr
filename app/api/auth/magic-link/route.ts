@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sendMagicLink } from "@/lib/email";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
 
@@ -39,10 +40,7 @@ export async function POST(req: Request) {
   const appUrl = process.env.APP_URL ?? "http://localhost:3000";
   const link = `${appUrl}/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 
-  // TODO: send this via a real email provider (e.g. Resend). For local dev, log it.
-  console.log(
-    `\n✉️  Magic sign-in link for ${email}\n   expires: ${expiresAt}\n   ${link}\n`,
-  );
+  await sendMagicLink(email, link, expiresAt);
 
   return NextResponse.json({ ok: true });
 }

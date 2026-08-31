@@ -29,12 +29,20 @@ const popularSearches = [
   "Washing Machine",
 ];
 
-const stats = [
-  { label: "Reviews", value: "12,458", icon: Star },
-  { label: "Problems reported", value: "2,187", icon: TriangleAlert },
-  { label: "Solutions shared", value: "3,645", icon: Lightbulb },
-  { label: "Contributors", value: "8,921", icon: ThumbsUp },
-];
+type Stats = {
+  reviews: number;
+  problems: number;
+  solutions: number;
+  contributors: number;
+  products: number;
+};
+
+const statCards = [
+  { key: "reviews", label: "Reviews", icon: Star },
+  { key: "problems", label: "Problems reported", icon: TriangleAlert },
+  { key: "solutions", label: "Solutions shared", icon: Lightbulb },
+  { key: "contributors", label: "Contributors", icon: ThumbsUp },
+] as const;
 
 const valueProps = [
   { icon: ThumbsUp, title: "Real experiences", body: "Honest, long-term feedback from people who own the product." },
@@ -44,10 +52,14 @@ const valueProps = [
 ];
 
 export default async function HomePage() {
-  const [categories, trending] = await Promise.all([
+  const [categories, trending, stats] = await Promise.all([
     apiGet<Category[]>("/api/v1/categories").catch(() => [] as Category[]),
     apiGet<Paginated<ProductListItem>>("/api/v1/products?sort=trending&limit=4").catch(
       () => ({ data: [], total: 0, limit: 4, offset: 0 }) as Paginated<ProductListItem>,
+    ),
+    apiGet<Stats>("/api/v1/stats").catch(
+      () =>
+        ({ reviews: 0, problems: 0, solutions: 0, contributors: 0, products: 0 }) as Stats,
     ),
   ]);
 
@@ -108,11 +120,11 @@ export default async function HomePage() {
                 </Badge>
               </div>
               <dl className="mt-5 grid grid-cols-2 gap-4">
-                {stats.map(({ label, value, icon: Icon }) => (
-                  <div key={label} className="rounded-xl border bg-muted/40 p-4">
+                {statCards.map(({ key, label, icon: Icon }) => (
+                  <div key={key} className="rounded-xl border bg-muted/40 p-4">
                     <Icon className="size-4 text-primary" />
                     <dd className="mt-2 text-xl font-semibold text-foreground tabular-nums">
-                      {value}
+                      {stats[key].toLocaleString()}
                     </dd>
                     <dt className="text-xs text-muted-foreground">{label}</dt>
                   </div>

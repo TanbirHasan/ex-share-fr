@@ -10,8 +10,11 @@ import {
   ThumbsUp,
   TriangleAlert,
 } from "lucide-react";
+import { CompareButton } from "@/components/site/compare-button";
 import { ProductProblems } from "@/components/site/product-problems";
+import { SaveButton } from "@/components/site/save-button";
 import { RatingStars } from "@/components/site/rating-stars";
+import { ServiceSection } from "@/components/site/service-section";
 import { ReviewsSection } from "@/components/site/reviews-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -145,7 +148,7 @@ export default async function ProductPage({
             />
           </dl>
 
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap items-center gap-2">
             <Button asChild>
               <Link href={`/contribute?product=${p.slug}`}>
                 <PenLine className="size-4" /> Write a review
@@ -156,6 +159,8 @@ export default async function ProductPage({
                 <TriangleAlert className="size-4" /> Report a problem
               </Link>
             </Button>
+            <SaveButton productId={p.id} className="h-9 px-3" />
+            <CompareButton slug={p.slug} name={p.name} className="h-9 px-3" />
           </div>
         </div>
       </div>
@@ -165,6 +170,7 @@ export default async function ProductPage({
         <div className="space-y-10">
           <ReviewsSection product={p} />
           <ProductProblems productId={p.id} productSlug={p.slug} />
+          <ServiceSection product={p} />
         </div>
 
         <div className="space-y-10">

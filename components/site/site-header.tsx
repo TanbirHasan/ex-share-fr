@@ -26,10 +26,9 @@ import { cn } from "@/lib/utils";
 const nav = [
   { label: "Products", href: "/products" },
   { label: "Brands", href: "/brands" },
-  { label: "Reviews", href: "/reviews" },
   { label: "Problems", href: "/problems" },
-  { label: "Solutions", href: "/solutions" },
   { label: "Compare", href: "/compare" },
+  { label: "Help me choose", href: "/help-me-choose" },
 ];
 
 export function SiteHeader() {

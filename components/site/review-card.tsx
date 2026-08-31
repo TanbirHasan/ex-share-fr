@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import { HelpfulButton } from "@/components/site/helpful-button";
+import { ReportButton } from "@/components/site/report-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/format";
 import { ownershipLabel, type Review } from "@/lib/review-types";
@@ -70,7 +71,8 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
         {review.purchaseStore && (
           <span className="text-muted-foreground">Bought at {review.purchaseStore}</span>
         )}
-        <span className="ml-auto">
+        <span className="ml-auto flex items-center gap-3">
+          <ReportButton targetType="review" targetId={review.id} />
           <HelpfulButton
             reviewId={review.id}
             count={review.helpfulCount}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, Loader2, ThumbsUp, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { deleteSolution, setConfirmation, voteSolution } from "@/app/(site)/problems-actions";
+import { ReportButton } from "@/components/site/report-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
@@ -150,6 +151,10 @@ export function SolutionCard({
           Helpful{s.helpful > 0 ? ` · ${s.helpful}` : ""}
         </button>
       </footer>
+
+      <div className="mt-2 flex justify-end">
+        <ReportButton targetType="solution" targetId={solution.id} />
+      </div>
     </article>
   );
 }
