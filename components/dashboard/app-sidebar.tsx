@@ -6,14 +6,20 @@ import { useTranslations } from "next-intl";
 import {
   Bookmark,
   Boxes,
+  ClipboardList,
+  GitMerge,
   Headset,
   HelpCircle,
+  Inbox,
   LayoutDashboard,
   LifeBuoy,
   MessageSquareText,
+  ScrollText,
+  SearchX,
   ShieldCheck,
   Star,
   Tags,
+  Users,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { NavUser } from "@/components/dashboard/nav-user";
@@ -48,7 +54,13 @@ const contributions: Item[] = [
 const admin: Item[] = [
   { key: "catalog", href: "/dashboard/catalog", icon: Boxes },
   { key: "categoriesBrands", href: "/dashboard/taxonomy", icon: Tags },
+  { key: "productRequests", href: "/dashboard/requests", icon: Inbox },
+  { key: "pending", href: "/dashboard/pending", icon: ClipboardList },
   { key: "moderation", href: "/dashboard/moderation", icon: ShieldCheck },
+  { key: "users", href: "/dashboard/users", icon: Users },
+  { key: "mergeDuplicates", href: "/dashboard/merge", icon: GitMerge },
+  { key: "searchInsights", href: "/dashboard/insights", icon: SearchX },
+  { key: "auditLog", href: "/dashboard/audit", icon: ScrollText },
 ];
 
 export function AppSidebar({
