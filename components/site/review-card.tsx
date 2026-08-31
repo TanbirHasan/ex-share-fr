@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { CommentThread } from "@/components/site/comment-thread";
 import { HelpfulButton } from "@/components/site/helpful-button";
+import { TranslatableText } from "@/components/site/translatable-text";
 import { ReportButton } from "@/components/site/report-button";
 import { ReputationChip } from "@/components/site/reputation-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -82,7 +83,15 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
       )}
 
       {review.comment && (
-        <p className="mt-3 text-sm whitespace-pre-line text-foreground/90">{review.comment}</p>
+        <div className="mt-3">
+          <TranslatableText
+            text={review.comment}
+            targetType="review"
+            targetId={review.id}
+            sourceLang={review.contentLang}
+            className="text-sm whitespace-pre-line text-foreground/90"
+          />
+        </div>
       )}
 
       <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">

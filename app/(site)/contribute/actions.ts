@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 
 export type ReviewFormState = { ok: boolean; error?: string };
 
@@ -70,6 +71,7 @@ export async function submitReview(
     comment: reviewId ? (str(fd, "comment") ?? "") : str(fd, "comment"),
     purchasePrice: int(fd, "purchasePrice"),
     purchaseStore: reviewId ? (str(fd, "purchaseStore") ?? "") : str(fd, "purchaseStore"),
+    contentLang: await activeContentLang(),
   };
 
   try {

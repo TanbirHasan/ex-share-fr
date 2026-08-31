@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 
 export async function postComment(
   targetType: "review" | "solution",
@@ -17,6 +18,7 @@ export async function postComment(
       targetType,
       targetId,
       body: body.trim(),
+      contentLang: await activeContentLang(),
     });
     return { ok: true };
   } catch (e) {

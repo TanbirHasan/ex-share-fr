@@ -6,14 +6,16 @@ import { ArrowRight, KeyRound, TriangleAlert } from "lucide-react";
 import { signIn } from "@/auth";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
+import { safeCallbackUrl } from "@/lib/safe-redirect";
 
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string; token?: string }>;
+  searchParams: Promise<{ email?: string; token?: string; callbackUrl?: string }>;
 }) {
-  const { email, token } = await searchParams;
+  const { email, token, callbackUrl } = await searchParams;
   const t = await getTranslations("auth");
+  const redirectTo = safeCallbackUrl(callbackUrl);
 
   if (!email || !token) {
     return (
@@ -34,7 +36,7 @@ export default async function VerifyPage({
   async function verify() {
     "use server";
     try {
-      await signIn("magic-link", { email, token, redirectTo: "/dashboard" });
+      await signIn("magic-link", { email, token, redirectTo });
     } catch (error) {
       if (error instanceof AuthError) {
         redirect("/login?error=invalid-link");

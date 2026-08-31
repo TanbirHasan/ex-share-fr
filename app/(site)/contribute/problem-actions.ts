@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 import type { ProblemDetail } from "@/lib/problem-types";
 
 export type ProblemFormState = { ok: boolean; error?: string; slug?: string };
@@ -50,7 +51,7 @@ export async function submitProblem(
     const problem = await apiSend<ProblemDetail>(
       `/api/v1/products/${productId}/problems`,
       "POST",
-      { category, title, description, report },
+      { category, title, description, report, contentLang: await activeContentLang() },
     );
     revalidatePath("/problems");
     revalidatePath("/dashboard/problems");

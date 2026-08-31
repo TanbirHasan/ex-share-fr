@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 import type { ProblemDetail } from "@/lib/problem-types";
 
 type SolNumbers = {
@@ -39,7 +40,10 @@ export async function addSolution(
   if (!session?.user) return { ok: false, error: "Sign in to add a solution." };
   if (body.trim().length < 10) return { ok: false, error: "Add a bit more detail." };
   try {
-    await apiSend(`/api/v1/problems/${problemId}/solutions`, "POST", { body: body.trim() });
+    await apiSend(`/api/v1/problems/${problemId}/solutions`, "POST", {
+      body: body.trim(),
+      contentLang: await activeContentLang(),
+    });
     revalidatePath(`/problems/${slug}`);
     return { ok: true };
   } catch (e) {

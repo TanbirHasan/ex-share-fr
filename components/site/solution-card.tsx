@@ -10,6 +10,7 @@ import { deleteSolution, setConfirmation, voteSolution } from "@/app/(site)/prob
 import { CommentThread } from "@/components/site/comment-thread";
 import { ReportButton } from "@/components/site/report-button";
 import { ReputationChip } from "@/components/site/reputation-chip";
+import { TranslatableText } from "@/components/site/translatable-text";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
@@ -117,7 +118,15 @@ export function SolutionCard({
         )}
       </header>
 
-      <p className="mt-3 text-sm whitespace-pre-line text-foreground/90">{solution.body}</p>
+      <div className="mt-3">
+        <TranslatableText
+          text={solution.body}
+          targetType="solution"
+          targetId={solution.id}
+          sourceLang={solution.contentLang}
+          className="text-sm whitespace-pre-line text-foreground/90"
+        />
+      </div>
 
       <footer className="mt-3 flex flex-wrap items-center gap-2">
         <button

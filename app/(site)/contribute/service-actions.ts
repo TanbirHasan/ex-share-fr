@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 
 export type ServiceFormState = { ok: boolean; error?: string };
 
@@ -52,6 +53,7 @@ export async function submitServiceExperience(
     cost: int(fd, "cost"),
     durationDays: int(fd, "durationDays"),
     comment: serviceId ? (str(fd, "comment") ?? "") : str(fd, "comment"),
+    contentLang: await activeContentLang(),
   };
 
   try {

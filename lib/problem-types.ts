@@ -85,6 +85,7 @@ export type ProblemDetail = {
   category: ProblemCategory;
   title: string;
   description: string;
+  contentLang: "bn" | "en";
   reportCount: number;
   createdAt: string;
   product: ProductRef;

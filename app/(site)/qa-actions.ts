@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { ApiError, apiSend } from "@/lib/api";
+import { activeContentLang } from "@/lib/content-lang";
 
 type Res = { ok: boolean; error?: string };
 
@@ -23,7 +24,10 @@ export async function askQuestion(
   if (g) return g;
   if (body.trim().length < 5) return { ok: false, error: "Ask a fuller question." };
   try {
-    await apiSend(`/api/v1/products/${productId}/questions`, "POST", { body: body.trim() });
+    await apiSend(`/api/v1/products/${productId}/questions`, "POST", {
+      body: body.trim(),
+      contentLang: await activeContentLang(),
+    });
     revalidatePath(`/products/${slug}`);
     revalidatePath("/dashboard/questions");
     return { ok: true };
@@ -41,7 +45,10 @@ export async function postAnswer(
   if (g) return g;
   if (body.trim().length < 5) return { ok: false, error: "Add a bit more detail." };
   try {
-    await apiSend(`/api/v1/questions/${questionId}/answers`, "POST", { body: body.trim() });
+    await apiSend(`/api/v1/questions/${questionId}/answers`, "POST", {
+      body: body.trim(),
+      contentLang: await activeContentLang(),
+    });
     revalidatePath(`/products/${slug}`);
     return { ok: true };
   } catch (e) {

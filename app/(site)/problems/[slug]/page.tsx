@@ -8,6 +8,7 @@ import { ProblemReportButton } from "@/components/site/problem-report-button";
 import { ReportButton } from "@/components/site/report-button";
 import { SolutionCard } from "@/components/site/solution-card";
 import { SolutionForm } from "@/components/site/solution-form";
+import { TranslatableText } from "@/components/site/translatable-text";
 import { Badge } from "@/components/ui/badge";
 import { ApiError } from "@/lib/api";
 import { apiFetch } from "@/lib/backend";
@@ -92,7 +93,15 @@ export default async function ProblemPage({
         <ReportButton targetType="problem" targetId={p.id} />
       </div>
 
-      <p className="mt-5 text-sm whitespace-pre-line text-foreground/90">{p.description}</p>
+      <div className="mt-5">
+        <TranslatableText
+          text={p.description}
+          targetType="problem"
+          targetId={p.id}
+          sourceLang={p.contentLang}
+          className="text-sm whitespace-pre-line text-foreground/90"
+        />
+      </div>
 
       {/* Report aggregates */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2">

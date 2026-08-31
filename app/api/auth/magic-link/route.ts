@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
 import { sendMagicLink } from "@/lib/email";
+import { safeCallbackUrl } from "@/lib/safe-redirect";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
 
 export async function POST(req: Request) {
   let email = "";
+  let callbackUrl = "/dashboard";
   try {
-    const body = (await req.json()) as { email?: unknown };
+    const body = (await req.json()) as { email?: unknown; callbackUrl?: unknown };
     email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    callbackUrl = safeCallbackUrl(
+      typeof body.callbackUrl === "string" ? body.callbackUrl : null,
+    );
   } catch {
     // ignore — handled below
   }
@@ -38,7 +43,10 @@ export async function POST(req: Request) {
 
   const { token, expiresAt } = (await res.json()) as { token: string; expiresAt: string };
   const appUrl = process.env.APP_URL ?? "http://localhost:3000";
-  const link = `${appUrl}/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+  let link = `${appUrl}/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+  if (callbackUrl !== "/dashboard") {
+    link += `&callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }
 
   await sendMagicLink(email, link, expiresAt);
 

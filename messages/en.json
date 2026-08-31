@@ -36,6 +36,15 @@
     "browseByCategory": "Browse by category",
     "viewAll": "View all",
     "trending": "Trending products",
+    "recentActivity": "Recent community activity",
+    "recentActivitySub": "The latest from real owners across Bangladesh.",
+    "recentlyViewed": "Recently viewed",
+    "anonUser": "ExperienceHub user",
+    "activityVerb": {
+      "review": "Reviewed",
+      "problem": "Reported a problem",
+      "solution": "Shared a solution"
+    },
     "ctaTitle": "Own one of these products?",
     "ctaBody": "Your experience helps the next person choose with confidence.",
     "ctaButton": "Share your experience",
@@ -386,6 +395,13 @@
     "saveChanges": "Save changes",
     "publish": "Publish",
     "cancel": "Cancel"
+  },
+  "translate": {
+    "translate": "Translate",
+    "showOriginal": "Show original",
+    "translating": "Translating…",
+    "machineNote": "Machine translation",
+    "failed": "Couldn’t translate this right now."
   },
   "report": {
     "report": "Report",

@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { CompareButton } from "@/components/site/compare-button";
 import { ProductProblems } from "@/components/site/product-problems";
+import { RecentlyViewed } from "@/components/site/recently-viewed";
+import { RecentTracker } from "@/components/site/recent-tracker";
 import { ProductQA } from "@/components/site/product-qa";
 import { SaveButton } from "@/components/site/save-button";
 import { RatingStars } from "@/components/site/rating-stars";
@@ -70,7 +72,9 @@ export default async function ProductPage({
   const specEntries = Object.entries(p.spec ?? {});
 
   return (
+    <>
     <div className="mx-auto max-w-6xl px-6 py-8">
+      <RecentTracker product={p} />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/products" className="hover:text-foreground">
@@ -216,6 +220,9 @@ export default async function ProductPage({
         </div>
       </div>
     </div>
+
+    <RecentlyViewed excludeId={p.id} className="border-t" />
+    </>
   );
 }
 

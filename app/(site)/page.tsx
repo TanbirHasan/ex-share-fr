@@ -12,11 +12,14 @@ import {
   ThumbsUp,
   TriangleAlert,
 } from "lucide-react";
+import { ActivityFeed } from "@/components/site/activity-feed";
 import { ProductCard } from "@/components/site/product-card";
+import { RecentlyViewed } from "@/components/site/recently-viewed";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import type { ActivityItem } from "@/lib/activity-types";
 import { apiGet } from "@/lib/api";
 import { categoryIcon } from "@/lib/category-icons";
 import type { Category, Paginated, ProductListItem } from "@/lib/catalog-types";
@@ -53,7 +56,7 @@ const valueProps = [
 ] as const;
 
 export default async function HomePage() {
-  const [t, tStats, categories, trending, stats] = await Promise.all([
+  const [t, tStats, categories, trending, stats, activity] = await Promise.all([
     getTranslations("home"),
     getTranslations("stats"),
     apiGet<Category[]>("/api/v1/categories").catch(() => [] as Category[]),
@@ -64,6 +67,7 @@ export default async function HomePage() {
       () =>
         ({ reviews: 0, problems: 0, solutions: 0, contributors: 0, products: 0 }) as Stats,
     ),
+    apiGet<ActivityItem[]>("/api/v1/activity?limit=9").catch(() => [] as ActivityItem[]),
   ]);
 
   return (
@@ -184,6 +188,12 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Recently viewed (per-visitor, from localStorage) */}
+      <RecentlyViewed />
+
+      {/* Recent community activity */}
+      <ActivityFeed items={activity} />
 
       {/* Value props */}
       <section className="mx-auto max-w-7xl px-6 py-16">
