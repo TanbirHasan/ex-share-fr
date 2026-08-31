@@ -1,0 +1,76 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "brands": "Brands",
+    "problems": "Problems",
+    "compare": "Compare",
+    "helpMeChoose": "Help me choose"
+  },
+  "header": {
+    "searchPlaceholder": "Search product, model, brand or problem…",
+    "shareExperience": "Share Experience",
+    "signIn": "Sign in",
+    "notifications": "Notifications"
+  },
+  "home": {
+    "eyebrow": "Real People → Real Experiences → Better Decisions",
+    "titleLead": "Find products.",
+    "titleAccent": "Learn from real experiences.",
+    "subtitle": "Read honest reviews, discover common problems, and find helpful solutions from real owners across Bangladesh.",
+    "searchButton": "Search",
+    "popular": "Popular:",
+    "communityGlance": "Community at a glance",
+    "live": "Live",
+    "browseByCategory": "Browse by category",
+    "viewAll": "View all",
+    "trending": "Trending products",
+    "ctaTitle": "Own one of these products?",
+    "ctaBody": "Your experience helps the next person choose with confidence.",
+    "ctaButton": "Share your experience",
+    "valueProps": {
+      "realTitle": "Real experiences",
+      "realBody": "Honest, long-term feedback from people who own the product.",
+      "problemsTitle": "Common problems",
+      "problemsBody": "Know the faults and when they start — before you buy.",
+      "solutionsTitle": "Helpful solutions",
+      "solutionsBody": "Fixes ranked by the people they actually worked for.",
+      "decisionsTitle": "Better decisions",
+      "decisionsBody": "Compare on reliability and after-sales, not just specs."
+    },
+    "searchPlaceholder": "Search product, model, brand or problem…"
+  },
+  "stats": {
+    "reviews": "Reviews",
+    "problems": "Problems reported",
+    "solutions": "Solutions shared",
+    "contributors": "Contributors"
+  },
+  "footer": {
+    "blurb": "A community knowledge base of real product ownership experiences in Bangladesh.",
+    "explore": "Explore",
+    "contribute": "Contribute",
+    "about": "About",
+    "tagline": "Experience Shared. Decisions Improved.",
+    "built": "Built in Bangladesh.",
+    "links": {
+      "products": "Products",
+      "brands": "Brands",
+      "reviews": "Reviews",
+      "problems": "Problems",
+      "solutions": "Solutions",
+      "shareExperience": "Share an experience",
+      "reportProblem": "Report a problem",
+      "addSolution": "Add a solution",
+      "requestProduct": "Request a product",
+      "howItWorks": "How it works",
+      "contentPolicy": "Content policy",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "language": "Language"
+  }
+}

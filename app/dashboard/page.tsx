@@ -50,6 +50,14 @@ export default async function DashboardOverview() {
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back, {firstName}</h1>
           <p className="text-sm text-muted-foreground">
             Your contributions and account at a glance.
+            {session?.user?.id && (
+              <>
+                {" "}
+                <Link href={`/u/${session.user.id}`} className="text-primary hover:underline">
+                  View public profile
+                </Link>
+              </>
+            )}
           </p>
         </div>
         <Button asChild>

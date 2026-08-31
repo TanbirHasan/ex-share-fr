@@ -2,18 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, GitCompareArrows, Languages, Menu, PenLine } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Bell, GitCompareArrows, Menu, PenLine } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { SearchCommand } from "@/components/site/search-command";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/site/user-menu";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -24,15 +20,19 @@ import {
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { label: "Products", href: "/products" },
-  { label: "Brands", href: "/brands" },
-  { label: "Problems", href: "/problems" },
-  { label: "Compare", href: "/compare" },
-  { label: "Help me choose", href: "/help-me-choose" },
-];
+  { key: "products", href: "/products" },
+  { key: "brands", href: "/brands" },
+  { key: "problems", href: "/problems" },
+  { key: "compare", href: "/compare" },
+  { key: "helpMeChoose", href: "/help-me-choose" },
+] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const th = useTranslations("header");
+
+  const items = [{ key: "home" as const, href: "/" }, ...nav];
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
@@ -51,7 +51,7 @@ export function SiteHeader() {
               </SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col p-2">
-              {[{ label: "Home", href: "/" }, ...nav].map((item) => (
+              {items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -60,14 +60,14 @@ export function SiteHeader() {
                     pathname === item.href && "bg-muted text-foreground",
                   )}
                 >
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               ))}
             </nav>
             <div className="p-3">
               <Button asChild className="w-full">
                 <Link href="/contribute">
-                  <PenLine className="size-4" /> Share Experience
+                  <PenLine className="size-4" /> {th("shareExperience")}
                 </Link>
               </Button>
             </div>
@@ -79,28 +79,21 @@ export function SiteHeader() {
         <SearchCommand className="mx-2 hidden max-w-xl flex-1 md:block" />
 
         <div className="ml-auto flex items-center gap-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="hidden gap-1.5 sm:flex">
-                <Languages className="size-4" />
-                EN
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>English</DropdownMenuItem>
-              <DropdownMenuItem>বাংলা</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <LanguageSwitcher />
           <ThemeToggle />
 
-          <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Notifications">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden sm:flex"
+            aria-label={th("notifications")}
+          >
             <Bell className="size-4" />
           </Button>
 
           <Button asChild className="mx-1 hidden lg:flex">
             <Link href="/contribute">
-              <PenLine className="size-4" /> Share Experience
+              <PenLine className="size-4" /> {th("shareExperience")}
             </Link>
           </Button>
 
@@ -111,18 +104,21 @@ export function SiteHeader() {
       {/* Secondary nav */}
       <div className="hidden border-t lg:block">
         <nav className="mx-auto flex h-11 max-w-7xl items-center gap-1 px-6 text-sm">
-          <NavLink href="/" active={pathname === "/"}>
-            Home
-          </NavLink>
-          {nav.map((item) => (
-            <NavLink key={item.href} href={item.href} active={pathname.startsWith(item.href)}>
-              {item.label === "Compare" ? (
+          {items.map((item) => (
+            <NavLink
+              key={item.href}
+              href={item.href}
+              active={
+                item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+              }
+            >
+              {item.key === "compare" ? (
                 <span className="flex items-center gap-1.5">
                   <GitCompareArrows className="size-3.5" />
-                  {item.label}
+                  {t(item.key)}
                 </span>
               ) : (
-                item.label
+                t(item.key)
               )}
             </NavLink>
           ))}

@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
+import { CommentThread } from "@/components/site/comment-thread";
 import { HelpfulButton } from "@/components/site/helpful-button";
 import { ReportButton } from "@/components/site/report-button";
+import { ReputationChip } from "@/components/site/reputation-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/format";
 import { ownershipLabel, type Review } from "@/lib/review-types";
@@ -29,7 +32,12 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
           <AvatarFallback className="text-xs">{initials}</AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{name}</p>
+          <p className="flex items-center gap-1.5 truncate text-sm font-medium">
+            <Link href={`/u/${review.author.id}`} className="hover:underline">
+              {name}
+            </Link>
+            <ReputationChip score={review.author.reputation} />
+          </p>
           <p className="text-xs text-muted-foreground">
             Owned {ownershipLabel(review.ownershipDuration).toLowerCase()} ·{" "}
             {formatDate(review.createdAt)}
@@ -81,6 +89,8 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
           />
         </span>
       </footer>
+
+      <CommentThread targetType="review" targetId={review.id} />
     </article>
   );
 }

@@ -6,6 +6,7 @@ import {
   Bookmark,
   Boxes,
   Headset,
+  HelpCircle,
   LayoutDashboard,
   LifeBuoy,
   MessageSquareText,
@@ -38,6 +39,7 @@ const contributions: Item[] = [
   { title: "My reviews", href: "/dashboard/reviews", icon: Star },
   { title: "My problems", href: "/dashboard/problems", icon: MessageSquareText },
   { title: "My solutions", href: "/dashboard/solutions", icon: LifeBuoy },
+  { title: "My questions", href: "/dashboard/questions", icon: HelpCircle },
   { title: "Service reports", href: "/dashboard/service", icon: Headset },
   { title: "Saved products", href: "/dashboard/saved", icon: Bookmark },
 ];

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   ArrowRight,
   BadgeCheck,
@@ -38,21 +39,23 @@ type Stats = {
 };
 
 const statCards = [
-  { key: "reviews", label: "Reviews", icon: Star },
-  { key: "problems", label: "Problems reported", icon: TriangleAlert },
-  { key: "solutions", label: "Solutions shared", icon: Lightbulb },
-  { key: "contributors", label: "Contributors", icon: ThumbsUp },
+  { key: "reviews", icon: Star },
+  { key: "problems", icon: TriangleAlert },
+  { key: "solutions", icon: Lightbulb },
+  { key: "contributors", icon: ThumbsUp },
 ] as const;
 
 const valueProps = [
-  { icon: ThumbsUp, title: "Real experiences", body: "Honest, long-term feedback from people who own the product." },
-  { icon: TriangleAlert, title: "Common problems", body: "Know the faults and when they start — before you buy." },
-  { icon: Lightbulb, title: "Helpful solutions", body: "Fixes ranked by the people they actually worked for." },
-  { icon: BadgeCheck, title: "Better decisions", body: "Compare on reliability and after-sales, not just specs." },
-];
+  { icon: ThumbsUp, key: "real" },
+  { icon: TriangleAlert, key: "problems" },
+  { icon: Lightbulb, key: "solutions" },
+  { icon: BadgeCheck, key: "decisions" },
+] as const;
 
 export default async function HomePage() {
-  const [categories, trending, stats] = await Promise.all([
+  const [t, tStats, categories, trending, stats] = await Promise.all([
+    getTranslations("home"),
+    getTranslations("stats"),
     apiGet<Category[]>("/api/v1/categories").catch(() => [] as Category[]),
     apiGet<Paginated<ProductListItem>>("/api/v1/products?sort=trending&limit=4").catch(
       () => ({ data: [], total: 0, limit: 4, offset: 0 }) as Paginated<ProductListItem>,
@@ -71,33 +74,29 @@ export default async function HomePage() {
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
               <Sparkles className="size-3.5 text-primary" />
-              Real People → Real Experiences → Better Decisions
+              {t("eyebrow")}
             </span>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Find products.{" "}
-              <span className="text-primary">Learn from real experiences.</span>
+              {t("titleLead")} <span className="text-primary">{t("titleAccent")}</span>
             </h1>
-            <p className="mt-4 max-w-lg text-lg text-muted-foreground">
-              Read honest reviews, discover common problems, and find helpful
-              solutions from real owners across Bangladesh.
-            </p>
+            <p className="mt-4 max-w-lg text-lg text-muted-foreground">{t("subtitle")}</p>
 
             <form action="/search" className="mt-7 flex max-w-xl gap-2">
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   name="q"
-                  placeholder="Search product, model, brand or problem…"
+                  placeholder={t("searchPlaceholder")}
                   className="h-12 pl-10 text-base"
                 />
               </div>
               <Button type="submit" size="lg" className="h-12 px-6">
-                Search
+                {t("searchButton")}
               </Button>
             </form>
 
             <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Popular:</span>
+              <span className="text-muted-foreground">{t("popular")}</span>
               {popularSearches.map((s) => (
                 <Link
                   key={s}
@@ -113,20 +112,22 @@ export default async function HomePage() {
           <Card className="self-start">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground">Community at a glance</h2>
+                <h2 className="text-sm font-semibold text-foreground">
+                  {t("communityGlance")}
+                </h2>
                 <Badge variant="secondary" className="gap-1">
                   <span className="size-1.5 rounded-full bg-emerald-500" />
-                  Live
+                  {t("live")}
                 </Badge>
               </div>
               <dl className="mt-5 grid grid-cols-2 gap-4">
-                {statCards.map(({ key, label, icon: Icon }) => (
+                {statCards.map(({ key, icon: Icon }) => (
                   <div key={key} className="rounded-xl border bg-muted/40 p-4">
                     <Icon className="size-4 text-primary" />
                     <dd className="mt-2 text-xl font-semibold text-foreground tabular-nums">
                       {stats[key].toLocaleString()}
                     </dd>
-                    <dt className="text-xs text-muted-foreground">{label}</dt>
+                    <dt className="text-xs text-muted-foreground">{tStats(key)}</dt>
                   </div>
                 ))}
               </dl>
@@ -138,7 +139,11 @@ export default async function HomePage() {
       {/* Categories */}
       {categories.length > 0 && (
         <section className="mx-auto max-w-7xl px-6 py-14">
-          <SectionHeading title="Browse by category" href="/products" cta="View all" />
+          <SectionHeading
+            title={t("browseByCategory")}
+            href="/products"
+            cta={t("viewAll")}
+          />
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {categories.map((c) => {
               const Icon = categoryIcon(c.slug);
@@ -167,9 +172,9 @@ export default async function HomePage() {
         <section className="border-y bg-muted/30">
           <div className="mx-auto max-w-7xl px-6 py-14">
             <SectionHeading
-              title="Trending products"
+              title={t("trending")}
               href="/products?sort=trending"
-              cta="View all"
+              cta={t("viewAll")}
             />
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {trending.data.map((p) => (
@@ -183,13 +188,17 @@ export default async function HomePage() {
       {/* Value props */}
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {valueProps.map(({ icon: Icon, title, body }) => (
-            <div key={title}>
+          {valueProps.map(({ icon: Icon, key }) => (
+            <div key={key}>
               <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Icon className="size-5" />
               </span>
-              <h3 className="mt-4 text-sm font-semibold text-foreground">{title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+              <h3 className="mt-4 text-sm font-semibold text-foreground">
+                {t(`valueProps.${key}Title`)}
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t(`valueProps.${key}Body`)}
+              </p>
             </div>
           ))}
         </div>
@@ -203,10 +212,8 @@ export default async function HomePage() {
               <div className="flex items-start gap-4">
                 <CheckCircle2 className="size-7 shrink-0" />
                 <div>
-                  <h3 className="text-xl font-semibold">Own one of these products?</h3>
-                  <p className="mt-1 text-sm text-primary-foreground/85">
-                    Your experience helps the next person choose with confidence.
-                  </p>
+                  <h3 className="text-xl font-semibold">{t("ctaTitle")}</h3>
+                  <p className="mt-1 text-sm text-primary-foreground/85">{t("ctaBody")}</p>
                 </div>
               </div>
               <Button
@@ -216,7 +223,7 @@ export default async function HomePage() {
                 className="shrink-0 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
               >
                 <Link href="/contribute">
-                  Share your experience <ArrowRight className="size-4" />
+                  {t("ctaButton")} <ArrowRight className="size-4" />
                 </Link>
               </Button>
             </CardContent>

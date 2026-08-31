@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   LogOut,
@@ -32,6 +33,7 @@ function initials(name?: string | null, email?: string | null) {
 
 export function UserMenu() {
   const { data: session, status } = useSession();
+  const t = useTranslations("header");
 
   if (status === "loading") {
     return <Skeleton className="size-9 rounded-full" />;
@@ -40,7 +42,7 @@ export function UserMenu() {
   if (!session?.user) {
     return (
       <Button asChild size="sm" className="h-9">
-        <Link href="/login">Sign in</Link>
+        <Link href="/login">{t("signIn")}</Link>
       </Button>
     );
   }

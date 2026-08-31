@@ -54,6 +54,7 @@ export type ReviewAuthor = {
   id: string;
   name: string | null;
   avatarUrl: string | null;
+  reputation: number;
 };
 
 export type Review = {

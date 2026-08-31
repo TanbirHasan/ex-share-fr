@@ -61,7 +61,7 @@ export type Solution = {
   helpfulCount: number;
   createdAt: string;
   updatedAt: string;
-  author: Person;
+  author: Person & { reputation: number };
   viewerConfirmed: "worked" | "didnt" | "none";
   viewerHasVoted: boolean;
   viewerCanEdit: boolean;

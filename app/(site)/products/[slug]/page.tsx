@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { CompareButton } from "@/components/site/compare-button";
 import { ProductProblems } from "@/components/site/product-problems";
+import { ProductQA } from "@/components/site/product-qa";
 import { SaveButton } from "@/components/site/save-button";
 import { RatingStars } from "@/components/site/rating-stars";
 import { ServiceSection } from "@/components/site/service-section";
@@ -170,6 +171,7 @@ export default async function ProductPage({
         <div className="space-y-10">
           <ReviewsSection product={p} />
           <ProductProblems productId={p.id} productSlug={p.slug} />
+          <ProductQA product={p} />
           <ServiceSection product={p} />
         </div>
 

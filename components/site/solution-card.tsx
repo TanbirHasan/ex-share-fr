@@ -4,8 +4,11 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Loader2, ThumbsUp, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 import { deleteSolution, setConfirmation, voteSolution } from "@/app/(site)/problems-actions";
+import { CommentThread } from "@/components/site/comment-thread";
 import { ReportButton } from "@/components/site/report-button";
+import { ReputationChip } from "@/components/site/reputation-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format";
@@ -90,7 +93,12 @@ export function SolutionCard({
           <AvatarFallback className="text-xs">{initials}</AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{name}</p>
+          <p className="flex items-center gap-1.5 truncate text-sm font-medium">
+            <Link href={`/u/${solution.author.id}`} className="hover:underline">
+              {name}
+            </Link>
+            <ReputationChip score={solution.author.reputation} />
+          </p>
           <p className="text-xs text-muted-foreground">{formatDate(solution.createdAt)}</p>
         </div>
         {solution.viewerCanEdit && (
@@ -155,6 +163,8 @@ export function SolutionCard({
       <div className="mt-2 flex justify-end">
         <ReportButton targetType="solution" targetId={solution.id} />
       </div>
+
+      <CommentThread targetType="solution" targetId={solution.id} />
     </article>
   );
 }

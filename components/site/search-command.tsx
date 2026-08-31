@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ImageOff, Search, Store } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,7 @@ import type { Suggestion } from "@/lib/catalog-types";
 
 export function SearchCommand({ className }: { className?: string }) {
   const router = useRouter();
+  const t = useTranslations("header");
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Suggestion>({ products: [], brands: [] });
@@ -76,7 +78,7 @@ export function SearchCommand({ className }: { className?: string }) {
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder="Search product, model, brand or problem…"
+          placeholder={t("searchPlaceholder")}
           className="h-10 pl-9"
           aria-label="Search"
         />

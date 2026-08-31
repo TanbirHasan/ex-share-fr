@@ -127,6 +127,10 @@
   html {
     @apply font-sans;
   }
+  /* Latin uses Geist; Bengali glyphs fall through to Noto Sans Bengali. */
+  body {
+    font-family: var(--font-sans), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
