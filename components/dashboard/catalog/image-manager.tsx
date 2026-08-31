@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ImagePlus, Loader2, Star, Trash2 } from "lucide-react";
+import { ImagePlus, Loader2, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { addImage, deleteImage } from "@/app/dashboard/(admin)/catalog/actions";
+import { uploadProductImage } from "@/app/dashboard/(admin)/catalog/upload-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ProductImage } from "@/lib/catalog-types";
@@ -21,6 +22,18 @@ export function ImageManager({
   const t = useTranslations("catalog.images");
   const [url, setUrl] = useState("");
   const [pending, start] = useTransition();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function upload(file: File) {
+    const fd = new FormData();
+    fd.set("file", file);
+    start(async () => {
+      const res = await uploadProductImage(productId, fd);
+      if (res.ok) toast.success(t("imageAdded"));
+      else toast.error(res.error ?? t("uploadFailed"));
+      if (fileRef.current) fileRef.current.value = "";
+    });
+  }
 
   function add() {
     const value = url.trim();
@@ -46,6 +59,28 @@ export function ImageManager({
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) upload(f);
+          }}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileRef.current?.click()}
+          disabled={pending}
+        >
+          {pending ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+          {t("upload")}
+        </Button>
+      </div>
+
       <div className="flex gap-2">
         <Input
           placeholder={t("urlPlaceholder")}

@@ -13,6 +13,7 @@ import {
   StarRatingInput,
   TagPicker,
 } from "@/components/site/review-inputs";
+import { ReviewPhotosEditor } from "@/components/site/review-photos-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -154,6 +155,10 @@ export function ReviewForm({
         >
           {t("addPurchaseDetails")}
         </button>
+      )}
+
+      {existing && (
+        <ReviewPhotosEditor reviewId={existing.id} images={existing.images} />
       )}
 
       {state.error && (

@@ -91,8 +91,23 @@ export default async function AuditPage({
                 <TableCell className="text-xs text-muted-foreground">
                   {e.targetType ? `${e.targetType} ${e.targetId?.slice(0, 8) ?? ""}` : "—"}
                 </TableCell>
-                <TableCell className="max-w-xs truncate text-xs text-muted-foreground">
-                  {Object.keys(e.meta).length ? JSON.stringify(e.meta) : "—"}
+                <TableCell className="max-w-xs text-xs text-muted-foreground">
+                  {Object.keys(e.meta).length === 0 ? (
+                    "—"
+                  ) : (
+                    <span className="flex flex-wrap gap-1">
+                      {Object.entries(e.meta)
+                        .filter(([, v]) => v != null && v !== "")
+                        .map(([k, v]) => (
+                          <span
+                            key={k}
+                            className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]"
+                          >
+                            {k}: {String(v).length > 40 ? `${String(v).slice(0, 40)}…` : String(v)}
+                          </span>
+                        ))}
+                    </span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

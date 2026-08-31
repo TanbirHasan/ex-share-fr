@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { TrendingDown } from "lucide-react";
+import { PriceAlertControl } from "@/components/site/price-alert-control";
 import { ReportPrice } from "@/components/site/report-price";
 import { apiGet } from "@/lib/api";
 
@@ -16,6 +17,7 @@ type Prices = {
   current: { min: number | null; max: number | null };
   lowest: { price: number; storeName: string | null; observedAt: string } | null;
   points: Point[];
+  viewerAlert: { targetPrice: number } | null;
 };
 
 const taka = (n: number) => `৳${n.toLocaleString("en-US")}`;
@@ -72,7 +74,14 @@ export async function PricePanel({
           </ul>
         )}
 
-        <ReportPrice productId={productId} slug={slug} />
+        <div className="flex flex-wrap items-center gap-x-4">
+          <ReportPrice productId={productId} slug={slug} />
+          <PriceAlertControl
+            productId={productId}
+            slug={slug}
+            current={data.viewerAlert}
+          />
+        </div>
       </div>
     </section>
   );

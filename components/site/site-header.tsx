@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Bell, GitCompareArrows, Menu, PenLine } from "lucide-react";
+import { GitCompareArrows, Menu, PenLine } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { NotificationBell } from "@/components/site/notification-bell";
 import { SearchCommand } from "@/components/site/search-command";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/site/user-menu";
@@ -82,14 +83,7 @@ export function SiteHeader() {
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden sm:flex"
-            aria-label={th("notifications")}
-          >
-            <Bell className="size-4" />
-          </Button>
+          <NotificationBell className="hidden sm:flex" />
 
           <Button asChild className="mx-1 hidden lg:flex">
             <Link href="/contribute">

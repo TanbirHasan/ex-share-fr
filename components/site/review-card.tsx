@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { CommentThread } from "@/components/site/comment-thread";
 import { HelpfulButton } from "@/components/site/helpful-button";
+import { ReviewPhotoStrip } from "@/components/site/review-photo-strip";
 import { TranslatableText } from "@/components/site/translatable-text";
 import { ReportButton } from "@/components/site/report-button";
 import { ReputationChip } from "@/components/site/reputation-chip";
@@ -93,6 +94,8 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
           />
         </div>
       )}
+
+      {review.images.length > 0 && <ReviewPhotoStrip images={review.images} />}
 
       <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
         <span className={cn("font-medium", baClass)}>{baLabel}</span>

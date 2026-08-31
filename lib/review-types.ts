@@ -70,6 +70,7 @@ export type Review = {
   purchasePrice: number | null;
   purchaseStore: string | null;
   store: { slug: string; name: string } | null;
+  images: { id: string; url: string }[];
   contentLang: "bn" | "en";
   status: string;
   helpfulCount: number;

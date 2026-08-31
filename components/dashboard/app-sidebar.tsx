@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
+  Bell,
   Bookmark,
   Boxes,
   ClipboardList,
@@ -41,6 +42,7 @@ type Item = { key: string; href: string; icon: typeof Star };
 
 const overview: Item[] = [
   { key: "overview", href: "/dashboard", icon: LayoutDashboard },
+  { key: "notifications", href: "/dashboard/notifications", icon: Bell },
 ];
 
 const contributions: Item[] = [

@@ -83,6 +83,75 @@
     "noWarranty": "No warranty information recorded.",
     "relatedHeading": "Alternatives in this category"
   },
+  "errorPages": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "That page doesn’t exist or has moved.",
+    "errorTitle": "Something went wrong",
+    "errorBody": "An unexpected error occurred. Try again in a moment.",
+    "retry": "Try again",
+    "home": "Go home"
+  },
+  "legal": {
+    "disclaimer": "ExperienceHub is a community project and this is starter text, not legal advice.",
+    "about": {
+      "title": "About ExperienceHub",
+      "p1": "ExperienceHub is a community knowledge base of real product ownership experiences in Bangladesh — honest reviews, the problems owners actually hit, and the fixes that worked.",
+      "p2": "Anyone can read. Sign in to add a review, report a problem, share a solution, or ask the owners a question. Content from brand-new accounts is briefly held for review; after that it publishes straight away.",
+      "p3": "It's built and run by one person, in the open, as an experiment. Feedback and corrections are welcome."
+    },
+    "policy": {
+      "title": "Content policy",
+      "p1": "Write from your own experience. Reviews should reflect a product you've actually used; problems should be faults you hit yourself.",
+      "p2": "No spam or advertising, no fake or planted content, nothing offensive or abusive, and no personal information about other people.",
+      "p3": "Anyone can flag content. Moderators review flags and can hide content that breaks these rules; repeat offenders can be suspended."
+    },
+    "terms": {
+      "title": "Terms of use",
+      "p1": "Use the site lawfully and in good faith. You keep ownership of what you post, but you grant ExperienceHub the right to display and distribute it on the platform.",
+      "p2": "Information here is community-contributed and provided as-is — verify anything important (prices, warranty terms, specifications) with the seller or manufacturer before you rely on it.",
+      "p3": "Accounts that abuse the platform may be suspended or removed. These terms may change; continued use means you accept the current version."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "p1": "Signing in stores your name, email and profile photo from your sign-in provider. That's used to identify you and attribute your contributions.",
+      "p2": "Your searches are logged (without linking to you personally where possible) so we can see which products people look for and can't find. Uploaded images are stored on the server that runs the site.",
+      "p3": "We don't sell your data or run third-party ad tracking. You can ask for your account and its content to be deleted."
+    }
+  },
+  "notifications": {
+    "aria": "Notifications",
+    "someone": "Someone",
+    "kind": {
+      "review": "review",
+      "solution": "solution",
+      "problem": "problem"
+    },
+    "text": {
+      "answer_received": "{actor} answered your question",
+      "comment_received": "{actor} commented on your {kind}",
+      "helpful_vote": "{actor} found your {kind} helpful",
+      "solution_worked": "{actor} confirmed your solution worked",
+      "content_approved": "Your {kind} was published",
+      "content_rejected": "Your {kind} wasn’t published",
+      "content_removed": "Your {kind} was removed by a moderator",
+      "followed_new_review": "New review on {title}",
+      "followed_new_problem": "New problem: {title}",
+      "followed_new_solution": "New solution for {title}",
+      "price_drop": "{title} dropped to {price}"
+    },
+    "bell": {
+      "title": "Notifications",
+      "empty": "You’re all caught up.",
+      "markAllRead": "Mark all read",
+      "viewAll": "View all"
+    },
+    "page": {
+      "title": "Notifications",
+      "lede": "Replies, votes, and updates on what you follow.",
+      "empty": "Nothing yet. Follow a product or answer a question to get started.",
+      "markAllRead": "Mark all read"
+    }
+  },
   "prices": {
     "heading": "Price",
     "lowestReported": "Lowest reported: {price}",
@@ -94,6 +163,14 @@
     "cancel": "Cancel",
     "thanks": "Thanks — added",
     "failed": "Couldn’t save that.",
+    "alertCta": "Alert me if the price drops",
+    "alertPlaceholder": "Notify below (৳)",
+    "alertSave": "Set alert",
+    "alertSet": "Alert set",
+    "alertCleared": "Alert removed",
+    "alertActive": "Alerting below {price}",
+    "alertEdit": "change",
+    "alertRemove": "remove",
     "source": {
       "review": "From a review",
       "manual": "Reported"
@@ -322,6 +399,8 @@
     "images": {
       "urlPlaceholder": "https://…/photo.jpg",
       "add": "Add",
+      "upload": "Upload image",
+      "uploadFailed": "Upload failed.",
       "imageAdded": "Image added",
       "couldNotAdd": "Could not add image",
       "imageRemoved": "Image removed",
@@ -401,7 +480,13 @@
     "reviewPublished": "Review published — thank you!",
     "saveChanges": "Save changes",
     "publishReview": "Publish review",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "photos": "Photos",
+    "photosHint": "Up to 4 photos of the product — JPG, PNG, WebP or GIF.",
+    "uploadPhoto": "Add photo",
+    "removePhoto": "Remove photo",
+    "photoAdded": "Photo added",
+    "photoFailed": "Couldn’t upload that photo."
   },
   "problemForm": {
     "kindOfProblem": "What kind of problem is it?",
@@ -720,6 +805,7 @@
   "dashboard": {
     "nav": {
       "overview": "Overview",
+      "notifications": "Notifications",
       "myReviews": "My reviews",
       "myProblems": "My problems",
       "mySolutions": "My solutions",
@@ -747,6 +833,7 @@
     },
     "crumbs": {
       "dashboard": "Dashboard",
+      "notifications": "Notifications",
       "reviews": "Reviews",
       "problems": "Problems",
       "solutions": "Solutions",
@@ -891,11 +978,14 @@
     },
     "following": {
       "title": "Following",
-      "lede": "Products and problems you’re watching.",
+      "lede": "Products and problems you’re watching, and your price alerts.",
       "empty": "You’re not following anything yet.",
       "browseProducts": "Browse products",
       "productsHeading": "Products",
       "problemsHeading": "Problems",
+      "alertsHeading": "Price alerts",
+      "alertBelow": "Alert below {price}",
+      "alertLowest": "lowest seen {price}",
       "noRatings": "No ratings yet"
     },
     "pages": {
