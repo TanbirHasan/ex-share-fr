@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ export function Pager({
   totalPages: number;
   params: Record<string, string | undefined>;
 }) {
+  const t = useTranslations("common");
   if (totalPages <= 1) return null;
 
   const href = (p: number) => {
@@ -32,25 +34,25 @@ export function Pager({
     <nav className="flex items-center justify-between pt-2">
       {page > 1 ? (
         <Link href={href(page - 1)} className={cn(base, "hover:bg-muted")}>
-          <ChevronLeft className="size-4" /> Previous
+          <ChevronLeft className="size-4" /> {t("previous")}
         </Link>
       ) : (
         <span className={cn(base, "text-muted-foreground opacity-50")}>
-          <ChevronLeft className="size-4" /> Previous
+          <ChevronLeft className="size-4" /> {t("previous")}
         </span>
       )}
 
       <span className="text-sm text-muted-foreground">
-        Page {page} of {totalPages}
+        {t("pageOf", { page, totalPages })}
       </span>
 
       {page < totalPages ? (
         <Link href={href(page + 1)} className={cn(base, "hover:bg-muted")}>
-          Next <ChevronRight className="size-4" />
+          {t("next")} <ChevronRight className="size-4" />
         </Link>
       ) : (
         <span className={cn(base, "text-muted-foreground opacity-50")}>
-          Next <ChevronRight className="size-4" />
+          {t("next")} <ChevronRight className="size-4" />
         </span>
       )}
     </nav>

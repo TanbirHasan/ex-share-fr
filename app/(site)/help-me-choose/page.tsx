@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Check, ImageOff, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,21 +12,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Locale } from "@/i18n/config";
 import { apiGet } from "@/lib/api";
 import type { Category } from "@/lib/catalog-types";
 import { formatPrice } from "@/lib/format";
+import { localized, localizedName } from "@/lib/i18n-content";
 import {
   PRIORITIES,
-  priorityLabel,
   type Recommendation,
   type RecommendResult,
 } from "@/lib/recommend-types";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Help me choose",
-  description: "Answer three questions and get product picks scored from real owner experiences.",
-};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("helpMeChoose");
+  return {
+    title: t("metaTitle"),
+    description:
+      "Answer three questions and get product picks scored from real owner experiences.",
+  };
+}
 
 export default async function HelpMeChoosePage({
   searchParams,
@@ -37,7 +44,12 @@ export default async function HelpMeChoosePage({
   const budgetMax = sp.budgetMax ?? "";
   const priority = sp.priority ?? "balanced";
 
-  const categories = await apiGet<Category[]>("/api/v1/categories").catch(() => [] as Category[]);
+  const [t, tEnum, locale, categories] = await Promise.all([
+    getTranslations("helpMeChoose"),
+    getTranslations("enums"),
+    getLocale() as Promise<Locale>,
+    apiGet<Category[]>("/api/v1/categories").catch(() => [] as Category[]),
+  ]);
 
   let rec: Recommendation | null = null;
   if (category) {
@@ -51,15 +63,12 @@ export default async function HelpMeChoosePage({
       <header>
         <p className="inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-primary uppercase">
           <Sparkles className="size-3.5" />
-          Help me choose
+          {t("eyebrow")}
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-          Let the community narrow it down
+          {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Pick a category, set a budget, and tell us what matters. We rank the options
-          using owner ratings, reported problems and after-sales experiences.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{t("lede")}</p>
       </header>
 
       <form
@@ -69,33 +78,33 @@ export default async function HelpMeChoosePage({
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-1.5">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t("category")}</Label>
             <Select name="category" defaultValue={category || undefined}>
               <SelectTrigger id="category" className="w-full">
-                <SelectValue placeholder="Pick one" />
+                <SelectValue placeholder={t("pickOne")} />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.slug}>
-                    {c.nameEn}
+                    {localizedName(locale, c)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="budgetMax">Max budget (৳)</Label>
+            <Label htmlFor="budgetMax">{t("maxBudget")}</Label>
             <Input
               id="budgetMax"
               name="budgetMax"
               type="number"
               min={0}
               defaultValue={budgetMax}
-              placeholder="Optional"
+              placeholder={t("optional")}
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="priority">What matters most?</Label>
+            <Label htmlFor="priority">{t("whatMatters")}</Label>
             <Select name="priority" defaultValue={priority}>
               <SelectTrigger id="priority" className="w-full">
                 <SelectValue />
@@ -103,7 +112,7 @@ export default async function HelpMeChoosePage({
               <SelectContent>
                 {PRIORITIES.map((p) => (
                   <SelectItem key={p.value} value={p.value}>
-                    {p.label}
+                    {tEnum(`priority.${p.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -111,13 +120,13 @@ export default async function HelpMeChoosePage({
           </div>
         </div>
         <Button type="submit" className="mt-4">
-          Show picks
+          {t("showPicks")}
         </Button>
       </form>
 
       {!category && (
         <p className="mt-10 text-center text-sm text-muted-foreground">
-          Pick a category above to get started.
+          {t("pickCategoryToStart")}
         </p>
       )}
 
@@ -125,26 +134,31 @@ export default async function HelpMeChoosePage({
         <div className="mt-8">
           {rec.category == null ? (
             <p className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-              We don&apos;t have that category.
+              {t("noSuchCategory")}
             </p>
           ) : rec.results.length === 0 ? (
             <p className="rounded-xl border border-dashed bg-card p-6 text-sm text-muted-foreground">
-              Nothing in {rec.category.nameEn}
-              {rec.budgetMax ? ` under ৳${rec.budgetMax.toLocaleString()}` : ""} yet.
+              {t("nothingIn", {
+                category: localized(locale, rec.category.nameEn, rec.category.nameBn),
+                budget: rec.budgetMax
+                  ? t("underBudget", { amount: rec.budgetMax.toLocaleString() })
+                  : "",
+              })}
             </p>
           ) : (
             <>
               <p className="text-sm text-muted-foreground">
-                Top picks for <span className="font-medium text-foreground">{rec.category.nameEn}</span>
-                {rec.budgetMax ? ` under ৳${rec.budgetMax.toLocaleString()}` : ""}, optimised for{" "}
-                <span className="font-medium text-foreground">
-                  {priorityLabel(rec.priority).toLowerCase()}
-                </span>
-                .
+                {t("topPicksFor", {
+                  category: localized(locale, rec.category.nameEn, rec.category.nameBn),
+                  budget: rec.budgetMax
+                    ? t("underBudget", { amount: rec.budgetMax.toLocaleString() })
+                    : "",
+                  priority: tEnum(`priority.${rec.priority}`).toLowerCase(),
+                })}
               </p>
               <div className="mt-4 space-y-3">
                 {rec.results.map((r, i) => (
-                  <ResultCard key={r.product.id} rank={i + 1} result={r} />
+                  <ResultCard key={r.product.id} rank={i + 1} result={r} matchLabel={t("match")} />
                 ))}
               </div>
             </>
@@ -155,7 +169,15 @@ export default async function HelpMeChoosePage({
   );
 }
 
-function ResultCard({ rank, result }: { rank: number; result: RecommendResult }) {
+function ResultCard({
+  rank,
+  result,
+  matchLabel,
+}: {
+  rank: number;
+  result: RecommendResult;
+  matchLabel: string;
+}) {
   const p = result.product;
   return (
     <div className="flex gap-4 rounded-xl border bg-card p-4">
@@ -192,7 +214,9 @@ function ResultCard({ rank, result }: { rank: number; result: RecommendResult })
       </div>
       <div className="shrink-0 text-right">
         <div className="text-lg font-semibold tabular-nums">{result.score}</div>
-        <div className="text-[10px] tracking-wide text-muted-foreground uppercase">match</div>
+        <div className="text-[10px] tracking-wide text-muted-foreground uppercase">
+          {matchLabel}
+        </div>
       </div>
     </div>
   );

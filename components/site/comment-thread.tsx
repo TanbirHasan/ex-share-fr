@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { Loader2, MessageCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ export function CommentThread({
   targetType: "review" | "solution";
   targetId: string;
 }) {
+  const t = useTranslations("comments");
   const { status } = useSession();
   const signedIn = status === "authenticated";
   const [open, setOpen] = useState(false);
@@ -52,7 +54,7 @@ export function CommentThread({
         setBody("");
         await load();
       } else {
-        toast.error(res.error ?? "Could not post your comment.");
+        toast.error(res.error ?? t("couldNotPost"));
       }
     });
   }
@@ -61,17 +63,17 @@ export function CommentThread({
     start(async () => {
       const res = await removeComment(id);
       if (res.ok) await load();
-      else toast.error(res.error ?? "Could not delete.");
+      else toast.error(res.error ?? t("couldNotDelete"));
     });
   }
 
   const count = comments?.length ?? 0;
   const label =
     comments === null
-      ? "Comments"
+      ? t("comments")
       : count === 0
-        ? "Add a comment"
-        : `${count} comment${count === 1 ? "" : "s"}`;
+        ? t("addComment")
+        : t("count", { count });
 
   return (
     <div className="mt-2 border-t pt-2">
@@ -81,19 +83,19 @@ export function CommentThread({
         className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
         <MessageCircle className="size-3.5" />
-        {open ? "Hide comments" : label}
+        {open ? t("hide") : label}
       </button>
 
       {open && (
         <div className="mt-3 space-y-3">
           {comments === null ? (
-            <p className="text-xs text-muted-foreground">Loading…</p>
+            <p className="text-xs text-muted-foreground">{t("loading")}</p>
           ) : count === 0 ? (
-            <p className="text-xs text-muted-foreground">No comments yet.</p>
+            <p className="text-xs text-muted-foreground">{t("none")}</p>
           ) : (
             <ul className="space-y-3">
               {comments.map((c) => {
-                const name = c.author.name?.trim() || "ExperienceHub user";
+                const name = c.author.name?.trim() || t("anonUser");
                 return (
                   <li key={c.id} className="flex gap-2.5">
                     <Avatar className="size-7 border">
@@ -114,7 +116,7 @@ export function CommentThread({
                             type="button"
                             onClick={() => del(c.id)}
                             disabled={busy}
-                            aria-label="Delete comment"
+                            aria-label={t("deleteComment")}
                             className="ml-auto text-muted-foreground hover:text-destructive"
                           >
                             <Trash2 className="size-3" />
@@ -138,19 +140,22 @@ export function CommentThread({
                 onChange={(e) => setBody(e.target.value)}
                 rows={2}
                 maxLength={2000}
-                placeholder="Add a comment…"
+                placeholder={t("placeholder")}
                 className="text-sm"
               />
               <Button size="sm" onClick={submit} disabled={busy || body.trim().length < 1}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : "Post"}
+                {busy ? <Loader2 className="size-4 animate-spin" /> : t("post")}
               </Button>
             </div>
           ) : (
             <p className="text-xs text-muted-foreground">
-              <Link href="/login" className="text-primary hover:underline">
-                Sign in
-              </Link>{" "}
-              to comment.
+              {t.rich("signInToComment", {
+                link: (chunks) => (
+                  <Link href="/login" className="text-primary hover:underline">
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           )}
         </div>

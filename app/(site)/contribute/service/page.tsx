@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { ServiceForm } from "@/components/site/service-form";
 import { ApiError, apiGet } from "@/lib/api";
@@ -9,7 +10,11 @@ import type { Product } from "@/lib/catalog-types";
 import type { ServiceExperience } from "@/lib/service-types";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Rate the customer service" };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("contribute");
+  return { title: t("serviceMetaTitle") };
+}
 
 export default async function ServicePage({
   searchParams,
@@ -17,7 +22,11 @@ export default async function ServicePage({
   searchParams: Promise<{ product?: string }>;
 }) {
   const { product: slug } = await searchParams;
-  const session = await auth();
+  const [session, t, tCommon] = await Promise.all([
+    auth(),
+    getTranslations("contribute"),
+    getTranslations("common"),
+  ]);
 
   if (!session?.user) {
     const target = `/contribute/service${slug ? `?product=${encodeURIComponent(slug)}` : ""}`;
@@ -27,9 +36,9 @@ export default async function ServicePage({
   if (!slug) {
     return (
       <div className="mx-auto max-w-md px-6 py-24 text-center text-sm text-muted-foreground">
-        Open a product page and choose “Rate the service”.{" "}
+        {t("serviceOpenProductPage")}{" "}
         <Link href="/products" className="text-primary hover:underline">
-          Browse products
+          {tCommon("browseProducts")}
         </Link>
       </div>
     );
@@ -42,7 +51,7 @@ export default async function ServicePage({
     if (e instanceof ApiError && e.status === 404) {
       return (
         <div className="mx-auto max-w-md px-6 py-24 text-center text-sm text-muted-foreground">
-          That product doesn&apos;t exist.
+          {t("productDoesntExist")}
         </div>
       );
     }
@@ -61,12 +70,10 @@ export default async function ServicePage({
         ← {product.name}
       </Link>
       <p className="mt-4 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        {existing ? "Edit your service experience" : "Customer service experience"}
+        {existing ? t("editServiceExperience") : t("serviceExperience")}
       </p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight">{product.name}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        How was dealing with the brand&apos;s after-sales service?
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">{t("serviceLede")}</p>
 
       <div className="mt-8">
         <ServiceForm

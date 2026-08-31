@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { addProblemReport } from "@/app/(site)/contribute/problem-actions";
@@ -27,17 +28,28 @@ export function ProblemReportButton({
   signedIn: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("problems");
+  const tEnum = useTranslations("enums");
   const [open, setOpen] = useState(false);
   const [whenStarted, setWhenStarted] = useState("");
   const [warranty, setWarranty] = useState("");
   const [cost, setCost] = useState("");
   const [pending, start] = useTransition();
 
+  const startedOptions = PROBLEM_STARTED.map((o) => ({
+    value: o.value,
+    label: tEnum(`problemStarted.${o.value}`),
+  }));
+  const warrantyOptions = WARRANTY_COVERED.map((o) => ({
+    value: o.value,
+    label: tEnum(`warrantyCovered.${o.value}`),
+  }));
+
   if (hasReported) {
     return (
       <span className="inline-flex items-center gap-1.5 text-sm text-emerald-700 dark:text-emerald-400">
         <CheckCircle2 className="size-4" />
-        You reported this
+        {t("youReportedThis")}
       </span>
     );
   }
@@ -51,10 +63,10 @@ export function ProblemReportButton({
       });
       if (res.ok) {
         setOpen(false);
-        toast.success("Thanks — added to the count");
+        toast.success(t("thanksAddedCount"));
         router.refresh();
       } else {
-        toast.error(res.error ?? "Could not save your report.");
+        toast.error(res.error ?? t("couldNotSaveReport"));
       }
     });
   }
@@ -66,22 +78,22 @@ export function ProblemReportButton({
         variant="outline"
         onClick={() => (signedIn ? setOpen(true) : router.push("/login"))}
       >
-        <Plus className="size-4" />I have this too
+        <Plus className="size-4" />{t("iHaveThisToo")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add your report</DialogTitle>
+            <DialogTitle>{t("addYourReport")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-5">
-            <FormField label="When did it start?" hint="Optional.">
-              <ChipGroup options={PROBLEM_STARTED} value={whenStarted} onChange={setWhenStarted} />
+            <FormField label={t("whenDidItStart")} hint={t("optional")}>
+              <ChipGroup options={startedOptions} value={whenStarted} onChange={setWhenStarted} />
             </FormField>
-            <FormField label="Covered by warranty?" hint="Optional.">
-              <ChipGroup options={WARRANTY_COVERED} value={warranty} onChange={setWarranty} />
+            <FormField label={t("coveredByWarranty")} hint={t("optional")}>
+              <ChipGroup options={warrantyOptions} value={warranty} onChange={setWarranty} />
             </FormField>
-            <FormField label="Repair cost (৳)" hint="Optional.">
+            <FormField label={t("repairCostField")} hint={t("optional")}>
               <Input
                 type="number"
                 min={0}
@@ -93,7 +105,7 @@ export function ProblemReportButton({
           <DialogFooter>
             <Button onClick={submit} disabled={pending}>
               {pending && <Loader2 className="size-4 animate-spin" />}
-              Add report
+              {t("addReport")}
             </Button>
           </DialogFooter>
         </DialogContent>

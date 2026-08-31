@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { CommentThread } from "@/components/site/comment-thread";
 import { HelpfulButton } from "@/components/site/helpful-button";
@@ -6,23 +7,33 @@ import { ReportButton } from "@/components/site/report-button";
 import { ReputationChip } from "@/components/site/reputation-chip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/format";
-import { ownershipLabel, type Review } from "@/lib/review-types";
+import { type Review } from "@/lib/review-types";
 import { cn } from "@/lib/utils";
 
-const buyAgain: Record<string, { label: string; className: string }> = {
-  yes: { label: "Would buy again", className: "text-emerald-700 dark:text-emerald-400" },
-  maybe: { label: "Might buy again", className: "text-amber-700 dark:text-amber-400" },
-  no: { label: "Would not buy again", className: "text-red-700 dark:text-red-400" },
+const buyAgainClass: Record<string, string> = {
+  yes: "text-emerald-700 dark:text-emerald-400",
+  maybe: "text-amber-700 dark:text-amber-400",
+  no: "text-red-700 dark:text-red-400",
+};
+const buyAgainKey: Record<string, string> = {
+  yes: "wouldBuyAgain",
+  maybe: "mightBuyAgain",
+  no: "wouldNotBuyAgain",
 };
 
 export function ReviewCard({ review, canVote }: { review: Review; canVote: boolean }) {
-  const name = review.author.name?.trim() || "ExperienceHub user";
+  const t = useTranslations("reviews");
+  const tEnum = useTranslations("enums");
+  const name = review.author.name?.trim() || t("anonUser");
   const initials = name
     .split(/\s+/)
     .slice(0, 2)
     .map((s) => s[0]?.toUpperCase())
     .join("");
-  const ba = buyAgain[review.wouldBuyAgain];
+  const baClass = buyAgainClass[review.wouldBuyAgain];
+  const baLabel = buyAgainKey[review.wouldBuyAgain]
+    ? t(buyAgainKey[review.wouldBuyAgain])
+    : "";
 
   return (
     <article className="rounded-xl border bg-card p-4">
@@ -39,7 +50,7 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
             <ReputationChip score={review.author.reputation} />
           </p>
           <p className="text-xs text-muted-foreground">
-            Owned {ownershipLabel(review.ownershipDuration).toLowerCase()} ·{" "}
+            {t("ownedFor", { duration: tEnum(`ownership.${review.ownershipDuration}`) })} ·{" "}
             {formatDate(review.createdAt)}
           </p>
         </div>
@@ -75,9 +86,11 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
       )}
 
       <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-        <span className={cn("font-medium", ba?.className)}>{ba?.label}</span>
+        <span className={cn("font-medium", baClass)}>{baLabel}</span>
         {review.purchaseStore && (
-          <span className="text-muted-foreground">Bought at {review.purchaseStore}</span>
+          <span className="text-muted-foreground">
+            {t("boughtAt", { store: review.purchaseStore })}
+          </span>
         )}
         <span className="ml-auto flex items-center gap-3">
           <ReportButton targetType="review" targetId={review.id} />

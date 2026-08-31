@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { submitReview } from "@/app/(site)/contribute/actions";
@@ -34,7 +35,18 @@ export function ReviewForm({
   existing: Review | null;
 }) {
   const router = useRouter();
+  const t = useTranslations("reviewForm");
+  const tEnum = useTranslations("enums");
   const [state, formAction, pending] = useActionState(submitReview, { ok: false });
+
+  const durationOptions = OWNERSHIP_DURATIONS.map((o) => ({
+    value: o.value,
+    label: tEnum(`ownership.${o.value}`),
+  }));
+  const buyAgainOptions = BUY_AGAIN_OPTIONS.map((o) => ({
+    value: o.value,
+    label: tEnum(`buyAgain.${o.value}`),
+  }));
 
   const [rating, setRating] = useState(existing?.rating ?? 0);
   const [duration, setDuration] = useState<OwnershipDuration | "">(
@@ -52,11 +64,11 @@ export function ReviewForm({
 
   useEffect(() => {
     if (state.ok) {
-      toast.success(existing ? "Review updated" : "Review published — thank you!");
+      toast.success(existing ? t("reviewUpdated") : t("reviewPublished"));
       router.push(`/products/${product.slug}`);
       router.refresh();
     }
-  }, [state, existing, product.slug, router]);
+  }, [state, existing, product.slug, router, t]);
 
   const canSubmit = rating > 0 && duration !== "" && buyAgain !== "";
 
@@ -72,19 +84,19 @@ export function ReviewForm({
       <input type="hidden" name="pros" value={JSON.stringify(pros)} />
       <input type="hidden" name="cons" value={JSON.stringify(cons)} />
 
-      <FormField label="Overall rating" required>
+      <FormField label={t("overallRating")} required>
         <StarRatingInput value={rating} onChange={setRating} />
       </FormField>
 
-      <FormField label="How long have you owned it?" required>
-        <ChipGroup options={OWNERSHIP_DURATIONS} value={duration} onChange={setDuration} />
+      <FormField label={t("ownedHowLong")} required>
+        <ChipGroup options={durationOptions} value={duration} onChange={setDuration} />
       </FormField>
 
-      <FormField label="Rate the details" hint="Optional — tap a star, tap again to clear.">
+      <FormField label={t("rateDetails")} hint={t("rateDetailsHint")}>
         <div className="divide-y rounded-xl border">
           {CATEGORY_RATING_FIELDS.map((f) => (
             <div key={f.key} className="flex items-center justify-between px-4 py-2.5">
-              <span className="text-sm">{f.label}</span>
+              <span className="text-sm">{tEnum(`categoryRating.${f.key}`)}</span>
               <MiniStars
                 value={cat[f.key] ?? 0}
                 onChange={(n) => setCat((c) => ({ ...c, [f.key]: n }))}
@@ -94,31 +106,31 @@ export function ReviewForm({
         </div>
       </FormField>
 
-      <FormField label="What's good about it?">
+      <FormField label={t("whatsGood")}>
         <TagPicker options={COMMON_PROS} value={pros} onChange={setPros} tone="pro" />
       </FormField>
 
-      <FormField label="What's not so good?">
+      <FormField label={t("whatsBad")}>
         <TagPicker options={COMMON_CONS} value={cons} onChange={setCons} tone="con" />
       </FormField>
 
-      <FormField label="Would you buy it again?" required>
-        <ChipGroup options={BUY_AGAIN_OPTIONS} value={buyAgain} onChange={setBuyAgain} />
+      <FormField label={t("buyAgainQ")} required>
+        <ChipGroup options={buyAgainOptions} value={buyAgain} onChange={setBuyAgain} />
       </FormField>
 
-      <FormField label="Anything else?" hint="Optional — a few sentences on your experience.">
+      <FormField label={t("anythingElse")} hint={t("anythingElseHint")}>
         <Textarea
           name="comment"
           defaultValue={existing?.comment ?? ""}
           rows={4}
           maxLength={4000}
-          placeholder="How has it held up? Any surprises, good or bad?"
+          placeholder={t("commentPlaceholder")}
         />
       </FormField>
 
       {showPurchase ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Price paid (৳)">
+          <FormField label={t("pricePaid")}>
             <Input
               name="purchasePrice"
               type="number"
@@ -126,11 +138,11 @@ export function ReviewForm({
               defaultValue={existing?.purchasePrice ?? ""}
             />
           </FormField>
-          <FormField label="Where did you buy it?">
+          <FormField label={t("whereBuy")}>
             <Input
               name="purchaseStore"
               defaultValue={existing?.purchaseStore ?? ""}
-              placeholder="Store or seller name"
+              placeholder={t("storePlaceholder")}
             />
           </FormField>
         </div>
@@ -140,7 +152,7 @@ export function ReviewForm({
           onClick={() => setShowPurchase(true)}
           className="text-sm font-medium text-primary hover:underline"
         >
-          + Add purchase details (optional)
+          {t("addPurchaseDetails")}
         </button>
       )}
 
@@ -153,14 +165,14 @@ export function ReviewForm({
       <div className="flex gap-2">
         <Button type="submit" disabled={pending || !canSubmit}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {existing ? "Save changes" : "Publish review"}
+          {existing ? t("saveChanges") : t("publishReview")}
         </Button>
         <Button
           type="button"
           variant="ghost"
           onClick={() => router.push(`/products/${product.slug}`)}
         >
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </form>

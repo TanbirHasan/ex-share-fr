@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { FormState } from "@/app/dashboard/(admin)/taxonomy/actions";
@@ -63,6 +64,7 @@ export function CrudTable<T>({
   newLabel?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("catalog.crud");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<T | null>(null);
   const [state, formAction, pending] = useActionState(saveAction, { ok: false });
@@ -70,11 +72,11 @@ export function CrudTable<T>({
 
   useEffect(() => {
     if (state.ok) {
-      toast.success(editing ? `${title} updated` : `${title} created`);
+      toast.success(editing ? t("updated", { title }) : t("created", { title }));
       setOpen(false);
       router.refresh();
     }
-  }, [state, editing, title, router]);
+  }, [state, editing, title, router, t]);
 
   function openNew() {
     setEditing(null);
@@ -88,10 +90,10 @@ export function CrudTable<T>({
     startDelete(async () => {
       const res = await deleteAction(getId(row));
       if (res.ok) {
-        toast.success(`${title} deleted`);
+        toast.success(t("deleted", { title }));
         router.refresh();
       } else {
-        toast.error(res.error ?? "Could not delete");
+        toast.error(res.error ?? t("couldNotDelete"));
       }
     });
   }
@@ -120,7 +122,7 @@ export function CrudTable<T>({
                   {c.header}
                 </TableHead>
               ))}
-              <TableHead className="w-24 text-right">Actions</TableHead>
+              <TableHead className="w-24 text-right">{t("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,7 +132,7 @@ export function CrudTable<T>({
                   colSpan={columns.length + 1}
                   className="py-10 text-center text-sm text-muted-foreground"
                 >
-                  Nothing here yet.
+                  {t("nothingHere")}
                 </TableCell>
               </TableRow>
             )}
@@ -147,7 +149,7 @@ export function CrudTable<T>({
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => openEdit(row)}
-                      aria-label="Edit"
+                      aria-label={t("edit")}
                     >
                       <Pencil className="size-3.5" />
                     </Button>
@@ -156,7 +158,7 @@ export function CrudTable<T>({
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          aria-label="Delete"
+                          aria-label={t("delete")}
                           disabled={deletingId}
                         >
                           <Trash2 className="size-3.5" />
@@ -164,16 +166,15 @@ export function CrudTable<T>({
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete “{getName(row)}”?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This cannot be undone. Records still in use cannot be
-                            deleted.
-                          </AlertDialogDescription>
+                          <AlertDialogTitle>
+                            {t("deleteTitle", { name: getName(row) })}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>{t("deleteDesc")}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                           <AlertDialogAction onClick={() => remove(row)}>
-                            Delete
+                            {t("delete")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -190,7 +191,7 @@ export function CrudTable<T>({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editing ? `Edit ${title.toLowerCase()}` : `New ${title.toLowerCase()}`}
+              {editing ? t("editEntity", { title }) : t("newEntity", { title })}
             </DialogTitle>
           </DialogHeader>
           <form action={formAction} className="space-y-4">
@@ -204,7 +205,7 @@ export function CrudTable<T>({
             <DialogFooter>
               <Button type="submit" disabled={pending}>
                 {pending && <Loader2 className="size-4 animate-spin" />}
-                {editing ? "Save changes" : "Create"}
+                {editing ? t("saveChanges") : t("create")}
               </Button>
             </DialogFooter>
           </form>

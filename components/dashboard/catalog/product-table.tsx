@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Pencil, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteProduct } from "@/app/dashboard/(admin)/catalog/actions";
@@ -35,6 +36,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Locale } from "@/i18n/config";
+import { localizedName } from "@/lib/i18n-content";
 import { PRODUCT_STATUSES, type Brand, type Category, type Product } from "@/lib/catalog-types";
 
 const ALL = "__all__";
@@ -63,6 +66,9 @@ export function ProductTable({
 }) {
   const router = useRouter();
   const params = useSearchParams();
+  const t = useTranslations("catalog.table");
+  const tEnum = useTranslations("enums");
+  const locale = useLocale() as Locale;
   const [pendingDelete, startDelete] = useTransition();
   const [q, setQ] = useState(query.q);
 
@@ -80,10 +86,10 @@ export function ProductTable({
     startDelete(async () => {
       const res = await deleteProduct(p.id);
       if (res.ok) {
-        toast.success("Product deleted");
+        toast.success(t("productDeleted"));
         router.refresh();
       } else {
-        toast.error(res.error ?? "Could not delete");
+        toast.error(res.error ?? t("couldNotDelete"));
       }
     });
   }
@@ -105,7 +111,7 @@ export function ProductTable({
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search name, model or slug…"
+            placeholder={t("searchProducts")}
             className="pl-9"
           />
         </form>
@@ -115,13 +121,13 @@ export function ProductTable({
           onValueChange={(v) => setParam({ status: v === ALL ? null : v })}
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("status")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All statuses</SelectItem>
+            <SelectItem value={ALL}>{t("allStatuses")}</SelectItem>
             {PRODUCT_STATUSES.map((s) => (
-              <SelectItem key={s} value={s} className="capitalize">
-                {s}
+              <SelectItem key={s} value={s}>
+                {tEnum(`productStatus.${s}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -132,13 +138,13 @@ export function ProductTable({
           onValueChange={(v) => setParam({ categoryId: v === ALL ? null : v })}
         >
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Category" />
+            <SelectValue placeholder={t("category")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All categories</SelectItem>
+            <SelectItem value={ALL}>{t("allCategories")}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c.id} value={c.id}>
-                {c.nameEn}
+                {localizedName(locale, c)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -149,19 +155,19 @@ export function ProductTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Brand</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("colProduct")}</TableHead>
+              <TableHead>{t("colCategory")}</TableHead>
+              <TableHead>{t("colBrand")}</TableHead>
+              <TableHead>{t("colPrice")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
+              <TableHead className="text-right">{t("colActions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="py-12 text-center text-sm text-muted-foreground">
-                  No products match. Adjust the filters or add one.
+                  {t("noProductsMatch")}
                 </TableCell>
               </TableRow>
             )}
@@ -179,20 +185,18 @@ export function ProductTable({
                   )}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {p.category.nameEn}
+                  {localizedName(locale, p.category)}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">{p.brand.name}</TableCell>
                 <TableCell className="text-sm tabular-nums">
                   {price(p.priceMin, p.priceMax)}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary" className="capitalize">
-                    {p.status}
-                  </Badge>
+                  <Badge variant="secondary">{tEnum(`productStatus.${p.status}`)}</Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
-                    <Button asChild variant="ghost" size="icon-sm" aria-label="Edit">
+                    <Button asChild variant="ghost" size="icon-sm" aria-label={t("edit")}>
                       <Link href={`/dashboard/catalog/${p.id}`}>
                         <Pencil className="size-3.5" />
                       </Link>
@@ -202,7 +206,7 @@ export function ProductTable({
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          aria-label="Delete"
+                          aria-label={t("delete")}
                           disabled={pendingDelete}
                         >
                           <Trash2 className="size-3.5" />
@@ -210,15 +214,14 @@ export function ProductTable({
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete “{p.name}”?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This removes the product and its images. Reviews and
-                            problems attached to it are removed too.
-                          </AlertDialogDescription>
+                          <AlertDialogTitle>{t("deleteTitle", { name: p.name })}</AlertDialogTitle>
+                          <AlertDialogDescription>{t("deleteDesc")}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => remove(p)}>Delete</AlertDialogAction>
+                          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => remove(p)}>
+                            {t("delete")}
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -231,9 +234,7 @@ export function ProductTable({
       </div>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          {total} product{total === 1 ? "" : "s"}
-        </span>
+        <span>{t("productCount", { count: total })}</span>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -241,7 +242,7 @@ export function ProductTable({
             disabled={page <= 1}
             onClick={() => setParam({ page: String(page - 1) })}
           >
-            <ChevronLeft className="size-4" /> Prev
+            <ChevronLeft className="size-4" /> {t("prev")}
           </Button>
           <span>
             {page} / {pages}
@@ -252,7 +253,7 @@ export function ProductTable({
             disabled={page >= pages}
             onClick={() => setParam({ page: String(page + 1) })}
           >
-            Next <ChevronRight className="size-4" />
+            {t("next")} <ChevronRight className="size-4" />
           </Button>
         </div>
       </div>

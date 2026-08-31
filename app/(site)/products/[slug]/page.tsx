@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import {
   ChevronRight,
   ImageOff,
@@ -19,9 +20,11 @@ import { ServiceSection } from "@/components/site/service-section";
 import { ReviewsSection } from "@/components/site/reviews-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Locale } from "@/i18n/config";
 import { ApiError, apiGet } from "@/lib/api";
 import type { Product } from "@/lib/catalog-types";
 import { formatPrice } from "@/lib/format";
+import { localizedName } from "@/lib/i18n-content";
 
 async function load(slug: string): Promise<Product | null> {
   try {
@@ -39,7 +42,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const p = await load(slug);
-  if (!p) return { title: "Product not found" };
+  if (!p) {
+    const t = await getTranslations("product");
+    return { title: t("notFound") };
+  }
   return {
     title: p.name,
     description: `${p.brand.name} ${p.name} — community ratings, reported problems, solutions and real prices in Bangladesh.`,
@@ -54,7 +60,11 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const p = await load(slug);
+  const [t, locale, p] = await Promise.all([
+    getTranslations("product"),
+    getLocale() as Promise<Locale>,
+    load(slug),
+  ]);
   if (!p) notFound();
 
   const specEntries = Object.entries(p.spec ?? {});
@@ -64,14 +74,14 @@ export default async function ProductPage({
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/products" className="hover:text-foreground">
-          Products
+          {t("breadcrumbProducts")}
         </Link>
         <ChevronRight className="size-3" />
         <Link
           href={`/products?category=${p.category.slug}`}
           className="hover:text-foreground"
         >
-          {p.category.nameEn}
+          {localizedName(locale, p.category)}
         </Link>
         <ChevronRight className="size-3" />
         <span className="truncate text-foreground">{p.name}</span>
@@ -118,7 +128,9 @@ export default async function ProductPage({
           </div>
           <h1 className="mt-1.5 text-2xl font-semibold tracking-tight sm:text-3xl">{p.name}</h1>
           {p.modelNo && (
-            <p className="mt-1 text-sm text-muted-foreground">Model {p.modelNo}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("model", { model: p.modelNo })}
+            </p>
           )}
 
           <div className="mt-4">
@@ -128,23 +140,23 @@ export default async function ProductPage({
           <p className="mt-4 text-2xl font-semibold tabular-nums">
             {formatPrice(p.priceMin, p.priceMax)}
           </p>
-          <p className="text-xs text-muted-foreground">Typical reported price</p>
+          <p className="text-xs text-muted-foreground">{t("typicalPrice")}</p>
 
           {/* Community quick facts */}
           <dl className="mt-6 grid grid-cols-3 gap-3">
             <QuickStat
               icon={ThumbsUp}
-              label="Would buy again"
+              label={t("wouldBuyAgain")}
               value={p.ratingCount ? `${p.wouldBuyAgainPct}%` : "—"}
             />
             <QuickStat
               icon={MessageSquareText}
-              label="Reviews"
+              label={t("reviews")}
               value={p.ratingCount.toLocaleString()}
             />
             <QuickStat
               icon={TriangleAlert}
-              label="Problems"
+              label={t("problems")}
               value="0"
             />
           </dl>
@@ -152,12 +164,12 @@ export default async function ProductPage({
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <Button asChild>
               <Link href={`/contribute?product=${p.slug}`}>
-                <PenLine className="size-4" /> Write a review
+                <PenLine className="size-4" /> {t("writeReview")}
               </Link>
             </Button>
             <Button asChild variant="outline">
               <Link href={`/contribute/problem?product=${p.slug}`}>
-                <TriangleAlert className="size-4" /> Report a problem
+                <TriangleAlert className="size-4" /> {t("reportProblem")}
               </Link>
             </Button>
             <SaveButton productId={p.id} className="h-9 px-3" />
@@ -176,7 +188,7 @@ export default async function ProductPage({
         </div>
 
         <div className="space-y-10">
-          <Section title="Specifications">
+          <Section title={t("specifications")}>
             {specEntries.length ? (
               <dl className="divide-y rounded-xl border bg-card text-sm">
                 {specEntries.map(([k, v]) => (
@@ -187,18 +199,18 @@ export default async function ProductPage({
                 ))}
               </dl>
             ) : (
-              <EmptyNote>No specifications recorded.</EmptyNote>
+              <EmptyNote>{t("noSpecs")}</EmptyNote>
             )}
           </Section>
 
-          <Section title="Warranty">
+          <Section title={t("warranty")}>
             {p.warrantyText ? (
               <p className="flex gap-2 rounded-xl border bg-card p-4 text-sm">
                 <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
                 {p.warrantyText}
               </p>
             ) : (
-              <EmptyNote>No warranty information recorded.</EmptyNote>
+              <EmptyNote>{t("noWarranty")}</EmptyNote>
             )}
           </Section>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Check, GitCompareArrows } from "lucide-react";
 import { useCompareTray } from "@/components/site/compare-tray";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ export function CompareButton({
   name: string;
   className?: string;
 }) {
+  const t = useTranslations("buttons");
   const { has, toggle, full } = useCompareTray();
   const active = has(slug);
   const disabled = !active && full;
@@ -22,7 +24,7 @@ export function CompareButton({
       type="button"
       aria-pressed={active}
       disabled={disabled}
-      title={disabled ? `Compare up to 4 products` : undefined}
+      title={disabled ? t("compareUpTo") : undefined}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -38,7 +40,7 @@ export function CompareButton({
       )}
     >
       {active ? <Check className="size-3.5" /> : <GitCompareArrows className="size-3.5" />}
-      {active ? "Comparing" : "Compare"}
+      {active ? t("comparing") : t("compare")}
     </button>
   );
 }

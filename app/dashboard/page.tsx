@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getFormatter, getTranslations } from "next-intl/server";
 import {
   ArrowRight,
   LifeBuoy,
@@ -31,30 +32,36 @@ type Me = {
 };
 
 export default async function DashboardOverview() {
-  const session = await auth();
-  const res = await apiFetch("/api/v1/me");
+  const [session, t, format, res] = await Promise.all([
+    auth(),
+    getTranslations("dashboard.home"),
+    getFormatter(),
+    apiFetch("/api/v1/me"),
+  ]);
   const me: Me | null = res.ok ? await res.json() : null;
 
-  const firstName = (session?.user?.name ?? "there").split(" ")[0];
+  const firstName = (session?.user?.name ?? t("there")).split(" ")[0];
 
   const stats = [
-    { label: "Reviews", value: me?.reviewCount ?? 0, icon: Star, href: "/dashboard/reviews" },
-    { label: "Problems", value: me?.problemCount ?? 0, icon: MessageSquareText, href: "/dashboard/problems" },
-    { label: "Solutions", value: me?.solutionCount ?? 0, icon: LifeBuoy, href: "/dashboard/solutions" },
+    { label: t("reviews"), value: me?.reviewCount ?? 0, icon: Star, href: "/dashboard/reviews" },
+    { label: t("problems"), value: me?.problemCount ?? 0, icon: MessageSquareText, href: "/dashboard/problems" },
+    { label: t("solutions"), value: me?.solutionCount ?? 0, icon: LifeBuoy, href: "/dashboard/solutions" },
   ];
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome back, {firstName}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t("welcomeBack", { name: firstName })}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Your contributions and account at a glance.
+            {t("lede")}
             {session?.user?.id && (
               <>
                 {" "}
                 <Link href={`/u/${session.user.id}`} className="text-primary hover:underline">
-                  View public profile
+                  {t("viewPublicProfile")}
                 </Link>
               </>
             )}
@@ -62,7 +69,7 @@ export default async function DashboardOverview() {
         </div>
         <Button asChild>
           <Link href="/contribute">
-            <PenLine className="size-4" /> Share an experience
+            <PenLine className="size-4" /> {t("shareExperience")}
           </Link>
         </Button>
       </div>
@@ -93,12 +100,10 @@ export default async function DashboardOverview() {
         <Card className="border-primary/30 bg-primary/5">
           <CardContent className="flex flex-wrap items-center gap-3 p-5">
             <ShieldCheck className="size-5 text-primary" />
-            <p className="text-sm font-medium">
-              You have admin access — the catalog and moderation tools are in the sidebar.
-            </p>
+            <p className="text-sm font-medium">{t("adminAccess")}</p>
             <Button asChild size="sm" variant="outline" className="ml-auto">
               <Link href="/dashboard/catalog">
-                Open catalog <ArrowRight className="size-4" />
+                {t("openCatalog")} <ArrowRight className="size-4" />
               </Link>
             </Button>
           </CardContent>
@@ -108,16 +113,14 @@ export default async function DashboardOverview() {
       {/* Account detail */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Account</CardTitle>
-          <CardDescription>
-            Identity from your session, verified against the API.
-          </CardDescription>
+          <CardTitle className="text-base">{t("account")}</CardTitle>
+          <CardDescription>{t("accountDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Row label="Name" value={session?.user?.name ?? "—"} />
-          <Row label="Email" value={session?.user?.email ?? "—"} />
+          <Row label={t("name")} value={session?.user?.name ?? "—"} />
+          <Row label={t("email")} value={session?.user?.email ?? "—"} />
           <Row
-            label="Role"
+            label={t("role")}
             value={
               <Badge variant={me?.role === "admin" ? "default" : "secondary"}>
                 {me?.role ?? session?.user?.role ?? "user"}
@@ -125,14 +128,14 @@ export default async function DashboardOverview() {
             }
           />
           <Row
-            label="User ID"
+            label={t("userId")}
             value={<code className="font-mono text-xs">{session?.user?.id ?? "—"}</code>}
           />
           <Row
-            label="Member since"
+            label={t("memberSince")}
             value={
               me?.createdAt
-                ? new Date(me.createdAt).toLocaleDateString(undefined, {
+                ? format.dateTime(new Date(me.createdAt), {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -142,8 +145,7 @@ export default async function DashboardOverview() {
           />
           {!me && (
             <p className="rounded-lg bg-destructive/10 px-3 py-2 text-destructive">
-              Backend rejected the request (status {res.status}). Check that both apps
-              share the same AUTH_SHARED_SECRET and the API is running.
+              {t("backendRejected", { status: res.status })}
             </p>
           )}
         </CardContent>

@@ -80,7 +80,7 @@ export function SearchCommand({ className }: { className?: string }) {
           onFocus={() => setOpen(true)}
           placeholder={t("searchPlaceholder")}
           className="h-10 pl-9"
-          aria-label="Search"
+          aria-label={t("search")}
         />
       </form>
 
@@ -122,7 +122,7 @@ export function SearchCommand({ className }: { className?: string }) {
                       <Store className="size-4 text-muted-foreground" />
                       <span className="text-sm">
                         <span className="font-medium">{b.name}</span>
-                        <span className="text-muted-foreground"> · brand</span>
+                        <span className="text-muted-foreground">{t("brandSuffix")}</span>
                       </span>
                     </button>
                   ))}
@@ -130,7 +130,7 @@ export function SearchCommand({ className }: { className?: string }) {
               )}
             </div>
           ) : (
-            <p className="px-3 py-3 text-sm text-muted-foreground">No quick matches.</p>
+            <p className="px-3 py-3 text-sm text-muted-foreground">{t("noQuickMatches")}</p>
           )}
 
           <button
@@ -139,7 +139,7 @@ export function SearchCommand({ className }: { className?: string }) {
             className="flex w-full items-center gap-2 border-t px-3 py-2.5 text-left text-sm font-medium text-primary hover:bg-accent"
           >
             <Search className="size-4" />
-            Search for “{value.trim()}”
+            {t("searchForTerm", { term: value.trim() })}
           </button>
         </div>
       )}

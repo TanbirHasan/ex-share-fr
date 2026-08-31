@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import type { Brand } from "@/lib/catalog-types";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Brands",
-  description: "Manufacturers covered on ExperienceHub, with community product counts.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("brands");
+  return {
+    title: t("metaTitle"),
+    description: "Manufacturers covered on ExperienceHub, with community product counts.",
+  };
+}
 
 function initials(name: string) {
   return name
@@ -20,22 +24,25 @@ function initials(name: string) {
 }
 
 export default async function BrandsPage() {
-  const brands = await apiGet<Brand[]>("/api/v1/brands");
+  const [t, brands] = await Promise.all([
+    getTranslations("brands"),
+    apiGet<Brand[]>("/api/v1/brands"),
+  ]);
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <header className="mb-6">
         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Brands
+          {t("eyebrow")}
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-          All brands
+          {t("allBrands")}
         </h1>
       </header>
 
       {brands.length === 0 ? (
         <p className="rounded-xl border bg-card p-12 text-center text-sm text-muted-foreground">
-          No brands yet.
+          {t("noBrandsYet")}
         </p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -56,7 +63,7 @@ export default async function BrandsPage() {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{b.name}</span>
                   <span className="text-xs text-muted-foreground">
-                    {b.productCount ?? 0} product{(b.productCount ?? 0) === 1 ? "" : "s"}
+                    {t("productCount", { count: b.productCount ?? 0 })}
                   </span>
                 </span>
                 <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />

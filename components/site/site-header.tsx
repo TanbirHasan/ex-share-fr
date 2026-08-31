@@ -40,7 +40,7 @@ export function SiteHeader() {
         {/* Mobile menu */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu">
+            <Button variant="ghost" size="icon" className="lg:hidden" aria-label={th("menu")}>
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>

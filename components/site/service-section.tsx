@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Headset, Star } from "lucide-react";
 import { auth } from "@/auth";
 import { ServiceCard } from "@/components/site/service-card";
@@ -9,7 +10,6 @@ import {
   REPAIR_OUTCOME,
   RESPONSE_TIME,
   SERVICE_WARRANTY,
-  labelFor,
   type ServiceExperience,
   type ServiceList,
 } from "@/lib/service-types";
@@ -36,10 +36,12 @@ function Dist({
   title,
   data,
   labels,
+  getLabel,
 }: {
   title: string;
   data: Record<string, number>;
   labels: readonly { value: string; label: string }[];
+  getLabel: (value: string) => string;
 }) {
   const entries = labels.filter((l) => data[l.value]);
   if (entries.length === 0) return null;
@@ -49,7 +51,7 @@ function Dist({
       <div className="mt-1.5 flex flex-wrap gap-1.5">
         {entries.map((l) => (
           <span key={l.value} className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-            {l.label} · {data[l.value]}
+            {getLabel(l.value)} · {data[l.value]}
           </span>
         ))}
       </div>
@@ -58,7 +60,11 @@ function Dist({
 }
 
 export async function ServiceSection({ product }: { product: Product }) {
-  const session = await auth();
+  const [session, t, tEnum] = await Promise.all([
+    auth(),
+    getTranslations("service"),
+    getTranslations("enums"),
+  ]);
   const signedIn = Boolean(session?.user);
 
   const [listRes, mineRes] = await Promise.all([
@@ -76,12 +82,12 @@ export async function ServiceSection({ product }: { product: Product }) {
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold tracking-tight">
-          Customer service{s.count > 0 ? ` (${s.count})` : ""}
+          {s.count > 0 ? t("headingCount", { count: s.count }) : t("heading")}
         </h2>
         <Button asChild size="sm" variant={mine ? "outline" : "default"}>
           <Link href={`/contribute/service?product=${product.slug}`}>
             <Headset className="size-4" />
-            {mine ? "Edit yours" : "Rate the service"}
+            {mine ? t("editYours") : t("rateService")}
           </Link>
         </Button>
       </div>
@@ -90,12 +96,12 @@ export async function ServiceSection({ product }: { product: Product }) {
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">
           <Headset className="mt-0.5 size-4 shrink-0" />
           <p>
-            No after-sales experiences yet.{" "}
+            {t("noExperiences")}{" "}
             <Link
               href={`/contribute/service?product=${product.slug}`}
               className="text-primary hover:underline"
             >
-              Dealt with their service? Rate it.
+              {t("dealtRate")}
             </Link>
           </p>
         </div>
@@ -108,40 +114,57 @@ export async function ServiceSection({ product }: { product: Product }) {
                   <Star className="size-5 fill-amber-400 text-amber-400" />
                   {s.avgRating.toFixed(1)}
                 </span>
-                <p className="text-xs text-muted-foreground">service rating</p>
+                <p className="text-xs text-muted-foreground">{t("serviceRating")}</p>
               </div>
               <div>
                 <p className="text-2xl font-semibold tabular-nums">{s.recommendedRate}%</p>
-                <p className="text-xs text-muted-foreground">rated it 4★ or better</p>
+                <p className="text-xs text-muted-foreground">{t("ratedFourPlus")}</p>
               </div>
               {s.avgTechnicianRating != null && (
                 <div>
                   <p className="text-2xl font-semibold tabular-nums">
                     {s.avgTechnicianRating.toFixed(1)}
                   </p>
-                  <p className="text-xs text-muted-foreground">avg technician</p>
+                  <p className="text-xs text-muted-foreground">{t("avgTechnician")}</p>
                 </div>
               )}
               {s.medianCost != null && (
                 <div>
                   <p className="text-2xl font-semibold tabular-nums">
-                    {s.medianCost === 0 ? "Free" : `৳${s.medianCost.toLocaleString()}`}
+                    {s.medianCost === 0 ? t("free") : `৳${s.medianCost.toLocaleString()}`}
                   </p>
-                  <p className="text-xs text-muted-foreground">typical cost</p>
+                  <p className="text-xs text-muted-foreground">{t("typicalCost")}</p>
                 </div>
               )}
               {s.medianDurationDays != null && (
                 <div>
-                  <p className="text-2xl font-semibold tabular-nums">{s.medianDurationDays}d</p>
-                  <p className="text-xs text-muted-foreground">typical turnaround</p>
+                  <p className="text-2xl font-semibold tabular-nums">
+                    {t("durationDays", { days: s.medianDurationDays })}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{t("typicalTurnaround")}</p>
                 </div>
               )}
             </div>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <Dist title="Response time" data={s.responseTime} labels={RESPONSE_TIME} />
-              <Dist title="Outcome" data={s.repairOutcome} labels={REPAIR_OUTCOME} />
-              <Dist title="Warranty" data={s.warranty} labels={SERVICE_WARRANTY} />
+              <Dist
+                title={t("responseTimeTitle")}
+                data={s.responseTime}
+                labels={RESPONSE_TIME}
+                getLabel={(v) => tEnum(`responseTime.${v}`)}
+              />
+              <Dist
+                title={t("outcomeTitle")}
+                data={s.repairOutcome}
+                labels={REPAIR_OUTCOME}
+                getLabel={(v) => tEnum(`repairOutcome.${v}`)}
+              />
+              <Dist
+                title={t("warrantyTitle")}
+                data={s.warranty}
+                labels={SERVICE_WARRANTY}
+                getLabel={(v) => tEnum(`serviceWarranty.${v}`)}
+              />
             </div>
           </div>
 

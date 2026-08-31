@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { submitProblem } from "@/app/(site)/contribute/problem-actions";
@@ -22,19 +23,34 @@ export function ReportProblemForm({
   product: { id: string; slug: string; name: string };
 }) {
   const router = useRouter();
+  const t = useTranslations("problemForm");
+  const tEnum = useTranslations("enums");
   const [state, formAction, pending] = useActionState(submitProblem, { ok: false });
 
   const [category, setCategory] = useState<ProblemCategory | "">("");
   const [whenStarted, setWhenStarted] = useState("");
   const [warranty, setWarranty] = useState("");
 
+  const categoryOptions = PROBLEM_CATEGORIES.map((o) => ({
+    value: o.value,
+    label: tEnum(`problemCategory.${o.value}`),
+  }));
+  const startedOptions = PROBLEM_STARTED.map((o) => ({
+    value: o.value,
+    label: tEnum(`problemStarted.${o.value}`),
+  }));
+  const warrantyOptions = WARRANTY_COVERED.map((o) => ({
+    value: o.value,
+    label: tEnum(`warrantyCovered.${o.value}`),
+  }));
+
   useEffect(() => {
     if (state.ok && state.slug) {
-      toast.success("Problem reported — thank you");
+      toast.success(t("problemReported"));
       router.push(`/problems/${state.slug}`);
       router.refresh();
     }
-  }, [state, router]);
+  }, [state, router, t]);
 
   return (
     <form action={formAction} className="space-y-7">
@@ -43,43 +59,39 @@ export function ReportProblemForm({
       <input type="hidden" name="whenStarted" value={whenStarted} />
       <input type="hidden" name="warrantyCovered" value={warranty} />
 
-      <FormField label="What kind of problem is it?" required>
-        <ChipGroup options={PROBLEM_CATEGORIES} value={category} onChange={setCategory} />
+      <FormField label={t("kindOfProblem")} required>
+        <ChipGroup options={categoryOptions} value={category} onChange={setCategory} />
       </FormField>
 
-      <FormField label="Title" required hint="A short, searchable summary of the fault.">
-        <Input
-          name="title"
-          maxLength={160}
-          placeholder="e.g. Compressor hums loudly after about a year"
-        />
+      <FormField label={t("title")} required hint={t("titleHint")}>
+        <Input name="title" maxLength={160} placeholder={t("titlePlaceholder")} />
       </FormField>
 
-      <FormField label="What actually happened?" required>
+      <FormField label={t("whatHappened")} required>
         <Textarea
           name="description"
           rows={5}
           maxLength={4000}
-          placeholder="When it happens, what it looks/sounds like, whether it's constant or intermittent…"
+          placeholder={t("whatHappenedPlaceholder")}
         />
       </FormField>
 
-      <FormField label="When did it start?" hint="Optional — helps others see the pattern.">
-        <ChipGroup options={PROBLEM_STARTED} value={whenStarted} onChange={setWhenStarted} />
+      <FormField label={t("whenStart")} hint={t("whenStartHint")}>
+        <ChipGroup options={startedOptions} value={whenStarted} onChange={setWhenStarted} />
       </FormField>
 
-      <FormField label="Was it covered by warranty?" hint="Optional.">
-        <ChipGroup options={WARRANTY_COVERED} value={warranty} onChange={setWarranty} />
+      <FormField label={t("coveredWarranty")} hint={t("optional")}>
+        <ChipGroup options={warrantyOptions} value={warranty} onChange={setWarranty} />
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Repair cost (৳)" hint="Optional. 0 if it was free.">
+        <FormField label={t("repairCost")} hint={t("repairCostHint")}>
           <Input name="repairCost" type="number" min={0} />
         </FormField>
       </div>
 
-      <FormField label="Anything the service centre said or did?" hint="Optional.">
-        <Textarea name="note" rows={3} maxLength={2000} placeholder="How the repair went, how long it took…" />
+      <FormField label={t("serviceCentreSaid")} hint={t("optional")}>
+        <Textarea name="note" rows={3} maxLength={2000} placeholder={t("notePlaceholder")} />
       </FormField>
 
       {state.error && (
@@ -91,14 +103,14 @@ export function ReportProblemForm({
       <div className="flex gap-2">
         <Button type="submit" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          Report problem
+          {t("reportProblem")}
         </Button>
         <Button
           type="button"
           variant="ghost"
           onClick={() => router.push(`/products/${product.slug}`)}
         >
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </form>

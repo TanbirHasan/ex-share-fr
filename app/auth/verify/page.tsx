@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { AuthError } from "next-auth";
 import { ArrowRight, KeyRound, TriangleAlert } from "lucide-react";
 import { signIn } from "@/auth";
@@ -12,19 +13,18 @@ export default async function VerifyPage({
   searchParams: Promise<{ email?: string; token?: string }>;
 }) {
   const { email, token } = await searchParams;
+  const t = await getTranslations("auth");
 
   if (!email || !token) {
     return (
-      <AuthShell title="Broken link" subtitle="This sign-in link is missing information.">
+      <AuthShell title={t("brokenLinkTitle")} subtitle={t("brokenLinkSubtitle")}>
         <div className="rounded-xl border bg-card p-6 text-center">
           <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <TriangleAlert className="size-5" />
           </span>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Request a fresh link and try again.
-          </p>
+          <p className="mt-4 text-sm text-muted-foreground">{t("brokenLinkBody")}</p>
           <Button asChild className="mt-4">
-            <Link href="/login">Back to sign in</Link>
+            <Link href="/login">{t("backToSignIn")}</Link>
           </Button>
         </div>
       </AuthShell>
@@ -44,17 +44,15 @@ export default async function VerifyPage({
   }
 
   return (
-    <AuthShell title="Confirm sign-in" subtitle={`Continue as ${email}`}>
+    <AuthShell title={t("confirmTitle")} subtitle={t("confirmSubtitle", { email })}>
       <form action={verify} className="rounded-xl border bg-card p-6 text-center">
         <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary">
           <KeyRound className="size-5" />
         </span>
-        <p className="mt-4 text-sm text-muted-foreground">
-          For your security, confirm you opened this link yourself.
-        </p>
+        <p className="mt-4 text-sm text-muted-foreground">{t("confirmBody")}</p>
         <Button type="submit" size="lg" className="mt-5 h-11 w-full">
           <ArrowRight className="size-4" />
-          Continue
+          {t("continue")}
         </Button>
       </form>
     </AuthShell>

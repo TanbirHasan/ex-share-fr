@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ImageOff, Star } from "lucide-react";
 import { CompareRemove } from "@/components/site/compare-remove";
 import { formatPrice } from "@/lib/format";
@@ -24,6 +25,8 @@ function priceMid(p: CompareProduct): number | null {
 }
 
 export function CompareTable({ products }: { products: CompareProduct[] }) {
+  const t = useTranslations("compare");
+  const tEnum = useTranslations("enums");
   const slugs = products.map((p) => p.slug);
   const n = products.length;
   const cols = `170px repeat(${n}, minmax(190px, 1fr))`;
@@ -75,7 +78,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
         ))}
 
         <Row
-          label="Price"
+          label={t("price")}
           best={priceBest}
           cells={products.map((p) => (
             <span className="tabular-nums">{formatPrice(p.priceMin, p.priceMax)}</span>
@@ -83,7 +86,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
         />
 
         <Row
-          label="Community rating"
+          label={t("communityRating")}
           best={ratingBest}
           cells={products.map((p) =>
             p.ratingCount > 0 ? (
@@ -93,13 +96,13 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
                 <span className="text-muted-foreground">({p.ratingCount})</span>
               </span>
             ) : (
-              <span className="text-muted-foreground">No reviews</span>
+              <span className="text-muted-foreground">{t("noReviews")}</span>
             ),
           )}
         />
 
         <Row
-          label="Would buy again"
+          label={t("wouldBuyAgain")}
           best={buyAgainBest}
           cells={products.map((p) =>
             p.ratingCount > 0 ? (
@@ -118,7 +121,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
           return (
             <Row
               key={f.key}
-              label={f.label}
+              label={tEnum(`categoryRating.${f.key}`)}
               best={bestSet(vals, "max")}
               cells={vals.map((v) =>
                 v != null ? (
@@ -132,7 +135,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
         })}
 
         <Row
-          label="Reported problems"
+          label={t("reportedProblems")}
           best={problemBest}
           cells={products.map((p) =>
             p.problemCount > 0 ? (
@@ -140,13 +143,13 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
                 {p.problemCount}
               </Link>
             ) : (
-              <span className="text-muted-foreground">None</span>
+              <span className="text-muted-foreground">{t("none")}</span>
             ),
           )}
         />
 
         <Row
-          label="Warranty"
+          label={t("warranty")}
           cells={products.map((p) => (
             <span className="text-xs">{p.warrantyText ?? "—"}</span>
           ))}
@@ -157,7 +160,7 @@ export function CompareTable({ products }: { products: CompareProduct[] }) {
             className="col-span-full border-t bg-muted/40 px-3 py-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
             style={{ gridColumn: "1 / -1" }}
           >
-            Specifications
+            {t("specifications")}
           </div>
         )}
         {specKeys.map((key) => (

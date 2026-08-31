@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { toast } from "sonner";
 import { toggleSave } from "@/app/(site)/saved-actions";
@@ -18,6 +19,7 @@ export function SaveButton({
   showLabel?: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("buttons");
   const { has, setSaved } = useSaved();
   const [pending, start] = useTransition();
   const saved = has(productId);
@@ -31,7 +33,7 @@ export function SaveButton({
       if (!res.ok) {
         setSaved(productId, saved); // revert
         if (res.error?.toLowerCase().includes("sign in")) router.push("/login");
-        else toast.error(res.error ?? "Could not update.");
+        else toast.error(res.error ?? t("couldNotUpdate"));
       }
     });
   }
@@ -42,7 +44,7 @@ export function SaveButton({
       onClick={onClick}
       disabled={pending}
       aria-pressed={saved}
-      aria-label={saved ? "Remove from saved" : "Save product"}
+      aria-label={saved ? t("removeFromSaved") : t("saveProduct")}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-60",
         saved
@@ -52,7 +54,7 @@ export function SaveButton({
       )}
     >
       {saved ? <BookmarkCheck className="size-3.5" /> : <Bookmark className="size-3.5" />}
-      {showLabel && (saved ? "Saved" : "Save")}
+      {showLabel && (saved ? t("saved") : t("save"))}
     </button>
   );
 }

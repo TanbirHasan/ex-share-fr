@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { TriangleAlert } from "lucide-react";
 import { ProblemCard } from "@/components/site/problem-card";
 import { Button } from "@/components/ui/button";
@@ -13,20 +14,27 @@ export async function ProductProblems({
   productId: string;
   productSlug: string;
 }) {
-  const list = await apiGet<Paginated<ProblemListItem>>(
-    `/api/v1/products/${productId}/problems?limit=10`,
-  ).catch(() => ({ data: [], total: 0, limit: 10, offset: 0 }) as Paginated<ProblemListItem>);
+  const [t, list] = await Promise.all([
+    getTranslations("problems"),
+    apiGet<Paginated<ProblemListItem>>(
+      `/api/v1/products/${productId}/problems?limit=10`,
+    ).catch(
+      () => ({ data: [], total: 0, limit: 10, offset: 0 }) as Paginated<ProblemListItem>,
+    ),
+  ]);
 
   return (
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold tracking-tight">
-          Reported problems{list.total > 0 ? ` (${list.total})` : ""}
+          {list.total > 0
+            ? t("reportedProblemsCount", { count: list.total })
+            : t("reportedProblems")}
         </h2>
         <Button asChild size="sm" variant="outline">
           <Link href={`/contribute/problem?product=${productSlug}`}>
             <TriangleAlert className="size-4" />
-            Report a problem
+            {t("reportAProblem")}
           </Link>
         </Button>
       </div>
@@ -35,12 +43,12 @@ export async function ProductProblems({
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">
           <TriangleAlert className="mt-0.5 size-4 shrink-0" />
           <p>
-            No problems reported yet.{" "}
+            {t("noProblemsYet")}{" "}
             <Link
               href={`/contribute/problem?product=${productSlug}`}
               className="text-primary hover:underline"
             >
-              Hit a fault? Report it.
+              {t("hitFaultReport")}
             </Link>
           </p>
         </div>

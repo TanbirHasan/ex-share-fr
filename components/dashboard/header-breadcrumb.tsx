@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,11 +12,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-const label = (seg: string) =>
+const titleCase = (seg: string) =>
   seg.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export function HeaderBreadcrumb() {
   const pathname = usePathname();
+  const t = useTranslations("dashboard.crumbs");
+  const label = (seg: string) => t.has(seg) ? t(seg) : titleCase(seg);
   const segments = pathname.split("/").filter(Boolean); // ["dashboard", ...]
 
   return (

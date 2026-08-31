@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Bookmark,
   Boxes,
@@ -29,25 +30,25 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-type Item = { title: string; href: string; icon: typeof Star };
+type Item = { key: string; href: string; icon: typeof Star };
 
 const overview: Item[] = [
-  { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { key: "overview", href: "/dashboard", icon: LayoutDashboard },
 ];
 
 const contributions: Item[] = [
-  { title: "My reviews", href: "/dashboard/reviews", icon: Star },
-  { title: "My problems", href: "/dashboard/problems", icon: MessageSquareText },
-  { title: "My solutions", href: "/dashboard/solutions", icon: LifeBuoy },
-  { title: "My questions", href: "/dashboard/questions", icon: HelpCircle },
-  { title: "Service reports", href: "/dashboard/service", icon: Headset },
-  { title: "Saved products", href: "/dashboard/saved", icon: Bookmark },
+  { key: "myReviews", href: "/dashboard/reviews", icon: Star },
+  { key: "myProblems", href: "/dashboard/problems", icon: MessageSquareText },
+  { key: "mySolutions", href: "/dashboard/solutions", icon: LifeBuoy },
+  { key: "myQuestions", href: "/dashboard/questions", icon: HelpCircle },
+  { key: "serviceReports", href: "/dashboard/service", icon: Headset },
+  { key: "savedProducts", href: "/dashboard/saved", icon: Bookmark },
 ];
 
 const admin: Item[] = [
-  { title: "Catalog", href: "/dashboard/catalog", icon: Boxes },
-  { title: "Categories & brands", href: "/dashboard/taxonomy", icon: Tags },
-  { title: "Moderation", href: "/dashboard/moderation", icon: ShieldCheck },
+  { key: "catalog", href: "/dashboard/catalog", icon: Boxes },
+  { key: "categoriesBrands", href: "/dashboard/taxonomy", icon: Tags },
+  { key: "moderation", href: "/dashboard/moderation", icon: ShieldCheck },
 ];
 
 export function AppSidebar({
@@ -56,6 +57,7 @@ export function AppSidebar({
   user: { name: string | null; email: string; image: string | null; role: string };
 }) {
   const pathname = usePathname();
+  const t = useTranslations("dashboard.nav");
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
@@ -72,10 +74,10 @@ export function AppSidebar({
           <SidebarMenu>
             {overview.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.title}>
+                <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={t(item.key)}>
                   <Link href={item.href}>
                     <item.icon />
-                    <span>{item.title}</span>
+                    <span>{t(item.key)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -84,14 +86,14 @@ export function AppSidebar({
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Contributions</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("contributions")}</SidebarGroupLabel>
           <SidebarMenu>
             {contributions.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.title}>
+                <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={t(item.key)}>
                   <Link href={item.href}>
                     <item.icon />
-                    <span>{item.title}</span>
+                    <span>{t(item.key)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -101,14 +103,14 @@ export function AppSidebar({
 
         {user.role === "admin" && (
           <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("admin")}</SidebarGroupLabel>
             <SidebarMenu>
               {admin.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={t(item.key)}>
                     <Link href={item.href}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span>{t(item.key)}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

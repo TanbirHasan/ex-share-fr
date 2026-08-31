@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { HelpCircle } from "lucide-react";
 import { auth } from "@/auth";
 import { AskQuestionBox } from "@/components/site/ask-question-box";
@@ -7,7 +8,7 @@ import type { Product } from "@/lib/catalog-types";
 import type { Question } from "@/lib/qa-types";
 
 export async function ProductQA({ product }: { product: Product }) {
-  const session = await auth();
+  const [session, t] = await Promise.all([auth(), getTranslations("qa")]);
   const signedIn = Boolean(session?.user);
 
   const res = await apiFetch(`/api/v1/products/${product.id}/questions?limit=10`);
@@ -20,7 +21,7 @@ export async function ProductQA({ product }: { product: Product }) {
       <div className="mb-3 flex items-center gap-2">
         <HelpCircle className="size-5 text-primary" />
         <h2 className="text-lg font-semibold tracking-tight">
-          Questions &amp; answers{list.total > 0 ? ` (${list.total})` : ""}
+          {list.total > 0 ? t("headingCount", { count: list.total }) : t("heading")}
         </h2>
       </div>
 
@@ -33,9 +34,7 @@ export async function ProductQA({ product }: { product: Product }) {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm text-muted-foreground">
-          No questions yet — ask the first one.
-        </p>
+        <p className="mt-3 text-sm text-muted-foreground">{t("noQuestionsYet")}</p>
       )}
     </section>
   );

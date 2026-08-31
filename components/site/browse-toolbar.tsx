@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,6 +28,7 @@ export function BrowseToolbar({
   current: Current;
 }) {
   const router = useRouter();
+  const t = useTranslations("common");
   const [q, setQ] = useState(current.q);
 
   function go(next: Partial<Current>) {
@@ -53,7 +55,7 @@ export function BrowseToolbar({
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search products…"
+          placeholder={t("searchProducts")}
           className="pl-9"
         />
       </form>
@@ -63,10 +65,10 @@ export function BrowseToolbar({
         onValueChange={(v) => go({ category: v === ALL ? "" : v })}
       >
         <SelectTrigger className="w-44">
-          <SelectValue placeholder="Category" />
+          <SelectValue placeholder={t("category")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={ALL}>All categories</SelectItem>
+          <SelectItem value={ALL}>{t("allCategories")}</SelectItem>
           {categories.map((c) => (
             <SelectItem key={c.id} value={c.slug}>
               {c.nameEn}
@@ -80,10 +82,10 @@ export function BrowseToolbar({
         onValueChange={(v) => go({ brand: v === ALL ? "" : v })}
       >
         <SelectTrigger className="w-40">
-          <SelectValue placeholder="Brand" />
+          <SelectValue placeholder={t("brand")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={ALL}>All brands</SelectItem>
+          <SelectItem value={ALL}>{t("allBrands")}</SelectItem>
           {brands.map((b) => (
             <SelectItem key={b.id} value={b.slug}>
               {b.name}
@@ -100,9 +102,9 @@ export function BrowseToolbar({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="newest">Newest</SelectItem>
-          <SelectItem value="trending">Trending</SelectItem>
-          <SelectItem value="top_rated">Top rated</SelectItem>
+          <SelectItem value="newest">{t("newest")}</SelectItem>
+          <SelectItem value="trending">{t("trending")}</SelectItem>
+          <SelectItem value="top_rated">{t("topRated")}</SelectItem>
         </SelectContent>
       </Select>
     </div>

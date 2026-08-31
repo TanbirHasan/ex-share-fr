@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { toggleHelpful } from "@/app/(site)/reviews-actions";
@@ -19,6 +20,7 @@ export function HelpfulButton({
   canVote: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("buttons");
   const [state, setState] = useState({ count, voted });
   const [pending, start] = useTransition();
 
@@ -30,7 +32,7 @@ export function HelpfulButton({
     start(async () => {
       const res = await toggleHelpful(reviewId, state.voted);
       if (res.ok) setState({ count: res.helpfulCount ?? 0, voted: res.voted ?? false });
-      else toast.error(res.error ?? "Could not record your vote.");
+      else toast.error(res.error ?? t("couldNotVote"));
     });
   }
 
@@ -47,7 +49,7 @@ export function HelpfulButton({
       )}
     >
       <ThumbsUp className="size-3.5" />
-      Helpful{state.count > 0 ? ` · ${state.count}` : ""}
+      {t("helpful")}{state.count > 0 ? ` · ${state.count}` : ""}
     </button>
   );
 }

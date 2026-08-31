@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Check, ThumbsUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
@@ -9,22 +10,25 @@ import type { MySolution } from "@/lib/problem-types";
 export const dynamic = "force-dynamic";
 
 export default async function MySolutionsPage() {
-  const data = await apiGet<Paginated<MySolution>>("/api/v1/me/solutions?limit=50");
+  const [t, data] = await Promise.all([
+    getTranslations("dashboard.pages"),
+    apiGet<Paginated<MySolution>>("/api/v1/me/solutions?limit=50"),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">My solutions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("solutionsTitle")}</h1>
         <p className="text-sm text-muted-foreground">
-          {data.total} solution{data.total === 1 ? "" : "s"} you&apos;ve shared.
+          {t("solutionsCount", { count: data.total })}
         </p>
       </div>
 
       {data.data.length === 0 ? (
         <div className="rounded-xl border border-dashed bg-card p-12 text-center">
-          <p className="text-sm text-muted-foreground">You haven&apos;t added any solutions.</p>
+          <p className="text-sm text-muted-foreground">{t("solutionsEmpty")}</p>
           <Button asChild className="mt-4">
-            <Link href="/problems">Browse problems</Link>
+            <Link href="/problems">{t("browseProblems")}</Link>
           </Button>
         </div>
       ) : (

@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Check, Languages } from "lucide-react";
 import { setLocale } from "@/app/set-locale";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { LOCALE_LABELS, locales } from "@/i18n/config";
 
 export function LanguageSwitcher() {
   const current = useLocale();
+  const t = useTranslations("common");
   const router = useRouter();
   const [pending, start] = useTransition();
 
@@ -27,7 +28,7 @@ export function LanguageSwitcher() {
           size="sm"
           className="hidden gap-1.5 sm:flex"
           disabled={pending}
-          aria-label="Change language"
+          aria-label={t("changeLanguage")}
         >
           <Languages className="size-4" />
           {current === "bn" ? "বাংলা" : "EN"}

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Check, Loader2, ThumbsUp, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -25,6 +26,7 @@ export function SolutionCard({
   signedIn: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("solutions");
   const [s, setS] = useState({
     worked: solution.workedCount,
     didnt: solution.didntWorkCount,
@@ -34,7 +36,7 @@ export function SolutionCard({
   });
   const [pending, start] = useTransition();
 
-  const name = solution.author.name?.trim() || "ExperienceHub user";
+  const name = solution.author.name?.trim() || t("anonUser");
   const initials = name
     .split(/\s+/)
     .slice(0, 2)
@@ -61,7 +63,7 @@ export function SolutionCard({
           didnt: res.didnt ?? p.didnt,
           confirmed: res.confirmed ?? "none",
         }));
-      } else toast.error(res.error ?? "Could not save.");
+      } else toast.error(res.error ?? t("couldNotSave"));
     });
   }
 
@@ -71,7 +73,7 @@ export function SolutionCard({
       const res = await voteSolution(solution.id, s.voted);
       if (res.ok) {
         setS((p) => ({ ...p, helpful: res.helpful ?? p.helpful, voted: res.voted ?? false }));
-      } else toast.error(res.error ?? "Could not vote.");
+      } else toast.error(res.error ?? t("couldNotVote"));
     });
   }
 
@@ -79,9 +81,9 @@ export function SolutionCard({
     start(async () => {
       const res = await deleteSolution(solution.id, slug);
       if (res.ok) {
-        toast.success("Solution deleted");
+        toast.success(t("solutionDeleted"));
         router.refresh();
-      } else toast.error(res.error ?? "Could not delete.");
+      } else toast.error(res.error ?? t("couldNotDelete"));
     });
   }
 
@@ -108,7 +110,7 @@ export function SolutionCard({
             className="ml-auto"
             onClick={remove}
             disabled={pending}
-            aria-label="Delete solution"
+            aria-label={t("deleteSolution")}
           >
             <Trash2 className="size-3.5" />
           </Button>
@@ -130,7 +132,7 @@ export function SolutionCard({
           )}
         >
           <Check className="size-3.5" />
-          Worked for me{s.worked > 0 ? ` · ${s.worked}` : ""}
+          {t("workedForMe")}{s.worked > 0 ? ` · ${s.worked}` : ""}
         </button>
         <button
           type="button"
@@ -144,7 +146,7 @@ export function SolutionCard({
           )}
         >
           <X className="size-3.5" />
-          Didn&apos;t work{s.didnt > 0 ? ` · ${s.didnt}` : ""}
+          {t("didntWork")}{s.didnt > 0 ? ` · ${s.didnt}` : ""}
         </button>
         <button
           type="button"
@@ -156,7 +158,7 @@ export function SolutionCard({
           )}
         >
           {pending ? <Loader2 className="size-3.5 animate-spin" /> : <ThumbsUp className="size-3.5" />}
-          Helpful{s.helpful > 0 ? ` · ${s.helpful}` : ""}
+          {t("helpful")}{s.helpful > 0 ? ` · ${s.helpful}` : ""}
         </button>
       </footer>
 

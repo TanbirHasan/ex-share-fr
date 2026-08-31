@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { GitCompareArrows, X } from "lucide-react";
 import { useCompareTray } from "@/components/site/compare-tray";
 import { Button } from "@/components/ui/button";
 
 export function CompareBar() {
   const router = useRouter();
+  const t = useTranslations("compare");
   const { items, remove, clear } = useCompareTray();
 
   if (items.length === 0) return null;
@@ -25,7 +27,7 @@ export function CompareBar() {
               <button
                 type="button"
                 onClick={() => remove(i.slug)}
-                aria-label={`Remove ${i.name}`}
+                aria-label={t("removeName", { name: i.name })}
                 className="rounded-full p-0.5 hover:bg-muted"
               >
                 <X className="size-3" />
@@ -34,7 +36,7 @@ export function CompareBar() {
           ))}
         </div>
         <Button variant="ghost" size="sm" onClick={clear}>
-          Clear
+          {t("clear")}
         </Button>
         <Button
           size="sm"
@@ -43,7 +45,7 @@ export function CompareBar() {
             router.push(`/compare?slugs=${items.map((i) => i.slug).join(",")}`)
           }
         >
-          Compare ({items.length})
+          {t("compareCount", { count: items.length })}
         </Button>
       </div>
     </div>

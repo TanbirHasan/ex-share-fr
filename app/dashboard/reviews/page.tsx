@@ -1,31 +1,37 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ImageOff, Pencil, Star } from "lucide-react";
 import { DeleteReviewButton } from "@/components/dashboard/delete-review-button";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
 import type { Paginated } from "@/lib/catalog-types";
 import { formatDate } from "@/lib/format";
-import { ownershipLabel, type MyReview } from "@/lib/review-types";
+import { type MyReview } from "@/lib/review-types";
 
 export const dynamic = "force-dynamic";
 
 export default async function MyReviewsPage() {
-  const data = await apiGet<Paginated<MyReview>>("/api/v1/me/reviews?limit=50");
+  const [t, tReviews, tEnum, data] = await Promise.all([
+    getTranslations("dashboard.pages"),
+    getTranslations("reviews"),
+    getTranslations("enums"),
+    apiGet<Paginated<MyReview>>("/api/v1/me/reviews?limit=50"),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">My reviews</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("reviewsTitle")}</h1>
         <p className="text-sm text-muted-foreground">
-          {data.total} review{data.total === 1 ? "" : "s"} you&apos;ve shared.
+          {t("reviewsCount", { count: data.total })}
         </p>
       </div>
 
       {data.data.length === 0 ? (
         <div className="rounded-xl border border-dashed bg-card p-12 text-center">
-          <p className="text-sm text-muted-foreground">You haven&apos;t reviewed anything yet.</p>
+          <p className="text-sm text-muted-foreground">{t("reviewsEmpty")}</p>
           <Button asChild className="mt-4">
-            <Link href="/products">Browse products</Link>
+            <Link href="/products">{t("browseProducts")}</Link>
           </Button>
         </div>
       ) : (
@@ -54,7 +60,11 @@ export default async function MyReviewsPage() {
                     {r.rating.toFixed(1)}
                   </span>
                   <span>·</span>
-                  <span>Owned {ownershipLabel(r.ownershipDuration).toLowerCase()}</span>
+                  <span>
+                    {tReviews("ownedFor", {
+                      duration: tEnum(`ownership.${r.ownershipDuration}`),
+                    })}
+                  </span>
                   <span>·</span>
                   <span>{formatDate(r.createdAt)}</span>
                 </div>
@@ -64,7 +74,7 @@ export default async function MyReviewsPage() {
               </div>
 
               <div className="flex shrink-0 items-start gap-1">
-                <Button asChild variant="ghost" size="icon-sm" aria-label="Edit review">
+                <Button asChild variant="ghost" size="icon-sm" aria-label={t("editReview")}>
                   <Link href={`/contribute?product=${r.product.slug}`}>
                     <Pencil className="size-3.5" />
                   </Link>

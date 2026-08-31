@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { submitServiceExperience } from "@/app/(site)/contribute/service-actions";
@@ -30,7 +31,26 @@ export function ServiceForm({
   existing: ServiceExperience | null;
 }) {
   const router = useRouter();
+  const t = useTranslations("serviceForm");
+  const tEnum = useTranslations("enums");
   const [state, formAction, pending] = useActionState(submitServiceExperience, { ok: false });
+
+  const channelOptions = CHANNEL.map((o) => ({
+    value: o.value,
+    label: tEnum(`channel.${o.value}`),
+  }));
+  const responseOptions = RESPONSE_TIME.map((o) => ({
+    value: o.value,
+    label: tEnum(`responseTime.${o.value}`),
+  }));
+  const outcomeOptions = REPAIR_OUTCOME.map((o) => ({
+    value: o.value,
+    label: tEnum(`repairOutcome.${o.value}`),
+  }));
+  const warrantyOptions = SERVICE_WARRANTY.map((o) => ({
+    value: o.value,
+    label: tEnum(`serviceWarranty.${o.value}`),
+  }));
 
   const [rating, setRating] = useState(existing?.rating ?? 0);
   const [responseTime, setResponseTime] = useState(existing?.responseTime ?? "");
@@ -41,11 +61,11 @@ export function ServiceForm({
 
   useEffect(() => {
     if (state.ok) {
-      toast.success(existing ? "Service experience updated" : "Thanks for sharing this");
+      toast.success(existing ? t("updated") : t("thanksSharing"));
       router.push(`/products/${product.slug}`);
       router.refresh();
     }
-  }, [state, existing, product.slug, router]);
+  }, [state, existing, product.slug, router, t]);
 
   const canSubmit = rating > 0 && responseTime && channel && outcome && warranty;
 
@@ -61,38 +81,43 @@ export function ServiceForm({
       <input type="hidden" name="warranty" value={warranty} />
       <input type="hidden" name="technicianRating" value={tech || ""} />
 
-      <FormField label="Overall, how was the service?" required>
+      <FormField label={t("overallHow")} required>
         <StarRatingInput value={rating} onChange={setRating} />
       </FormField>
 
-      <FormField label="How did you contact them?" required>
-        <ChipGroup options={CHANNEL} value={channel} onChange={setChannel} />
+      <FormField label={t("howContact")} required>
+        <ChipGroup options={channelOptions} value={channel} onChange={setChannel} />
       </FormField>
 
-      <FormField label="How quickly did they respond?" required>
-        <ChipGroup options={RESPONSE_TIME} value={responseTime} onChange={setResponseTime} />
+      <FormField label={t("howQuickly")} required>
+        <ChipGroup options={responseOptions} value={responseTime} onChange={setResponseTime} />
       </FormField>
 
-      <FormField label="How did it end?" required>
-        <ChipGroup options={REPAIR_OUTCOME} value={outcome} onChange={setOutcome} />
+      <FormField label={t("howEnd")} required>
+        <ChipGroup options={outcomeOptions} value={outcome} onChange={setOutcome} />
       </FormField>
 
-      <FormField label="Was it under warranty?" required>
-        <ChipGroup options={SERVICE_WARRANTY} value={warranty} onChange={setWarranty} />
+      <FormField label={t("underWarranty")} required>
+        <ChipGroup options={warrantyOptions} value={warranty} onChange={setWarranty} />
       </FormField>
 
-      <FormField label="Technician" hint="Optional — rate the technician if one was involved.">
+      <FormField label={t("technician")} hint={t("technicianHint")}>
         <MiniStars value={tech} onChange={setTech} />
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <FormField label="What needed servicing?">
-          <Input name="issue" maxLength={200} defaultValue={existing?.issue ?? ""} placeholder="e.g. Compressor" />
+        <FormField label={t("whatServicing")}>
+          <Input
+            name="issue"
+            maxLength={200}
+            defaultValue={existing?.issue ?? ""}
+            placeholder={t("issuePlaceholder")}
+          />
         </FormField>
-        <FormField label="Cost paid (৳)" hint="0 if free.">
+        <FormField label={t("costPaid")} hint={t("costHint")}>
           <Input name="cost" type="number" min={0} defaultValue={existing?.cost ?? ""} />
         </FormField>
-        <FormField label="Days to resolve">
+        <FormField label={t("daysResolve")}>
           <Input
             name="durationDays"
             type="number"
@@ -102,13 +127,13 @@ export function ServiceForm({
         </FormField>
       </div>
 
-      <FormField label="Anything else?" hint="Optional.">
+      <FormField label={t("anythingElse")} hint={t("optional")}>
         <Textarea
           name="comment"
           rows={4}
           maxLength={4000}
           defaultValue={existing?.comment ?? ""}
-          placeholder="How the whole process went — booking, updates, pickup, attitude…"
+          placeholder={t("commentPlaceholder")}
         />
       </FormField>
 
@@ -121,14 +146,14 @@ export function ServiceForm({
       <div className="flex gap-2">
         <Button type="submit" disabled={pending || !canSubmit}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {existing ? "Save changes" : "Publish"}
+          {existing ? t("saveChanges") : t("publish")}
         </Button>
         <Button
           type="button"
           variant="ghost"
           onClick={() => router.push(`/products/${product.slug}`)}
         >
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </form>

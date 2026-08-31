@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { ImagePlus, Loader2, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { addImage, deleteImage } from "@/app/dashboard/(admin)/catalog/actions";
@@ -17,6 +18,7 @@ export function ImageManager({
   images: ProductImage[];
   primaryImage: string | null;
 }) {
+  const t = useTranslations("catalog.images");
   const [url, setUrl] = useState("");
   const [pending, start] = useTransition();
 
@@ -27,9 +29,9 @@ export function ImageManager({
       const res = await addImage(productId, value);
       if (res.ok) {
         setUrl("");
-        toast.success("Image added");
+        toast.success(t("imageAdded"));
       } else {
-        toast.error(res.error ?? "Could not add image");
+        toast.error(res.error ?? t("couldNotAdd"));
       }
     });
   }
@@ -37,8 +39,8 @@ export function ImageManager({
   function remove(imageId: string) {
     start(async () => {
       const res = await deleteImage(productId, imageId);
-      if (res.ok) toast.success("Image removed");
-      else toast.error(res.error ?? "Could not remove image");
+      if (res.ok) toast.success(t("imageRemoved"));
+      else toast.error(res.error ?? t("couldNotRemove"));
     });
   }
 
@@ -46,19 +48,19 @@ export function ImageManager({
     <div className="space-y-4">
       <div className="flex gap-2">
         <Input
-          placeholder="https://…/photo.jpg"
+          placeholder={t("urlPlaceholder")}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
         />
         <Button type="button" onClick={add} disabled={pending}>
           {pending ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
-          Add
+          {t("add")}
         </Button>
       </div>
 
       {images.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No images yet.</p>
+        <p className="text-sm text-muted-foreground">{t("noImages")}</p>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {images.map((img) => (
@@ -70,7 +72,7 @@ export function ImageManager({
               <img src={img.url} alt="" className="aspect-square w-full object-cover" />
               {primaryImage === img.url && (
                 <span className="absolute top-1.5 left-1.5 flex items-center gap-1 rounded bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
-                  <Star className="size-3" /> Primary
+                  <Star className="size-3" /> {t("primary")}
                 </span>
               )}
               <Button
@@ -79,7 +81,7 @@ export function ImageManager({
                 size="icon-sm"
                 className="absolute top-1.5 right-1.5 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={() => remove(img.id)}
-                aria-label="Remove image"
+                aria-label={t("removeImage")}
               >
                 <Trash2 className="size-3.5" />
               </Button>

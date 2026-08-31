@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { BadgeCheck, LifeBuoy, MessageSquareText, ShieldCheck, Star, ThumbsUp } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +24,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const p = await load(id);
-  return { title: p ? p.name ?? "Contributor" : "Profile not found" };
+  const [t, p] = await Promise.all([getTranslations("profile"), load(id)]);
+  return { title: p ? (p.name ?? t("contributor")) : t("notFound") };
 }
 
 export const dynamic = "force-dynamic";
@@ -35,10 +36,14 @@ export default async function ProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const p = await load(id);
+  const [t, tEnum, p] = await Promise.all([
+    getTranslations("profile"),
+    getTranslations("enums"),
+    load(id),
+  ]);
   if (!p) notFound();
 
-  const name = p.name?.trim() || "ExperienceHub user";
+  const name = p.name?.trim() || t("anonUser");
   const initials = name
     .split(/\s+/)
     .slice(0, 2)
@@ -47,10 +52,10 @@ export default async function ProfilePage({
   const level = reputationLevel(p.score);
 
   const stats = [
-    { label: "Reviews", value: p.counts.reviews, icon: Star },
-    { label: "Problems", value: p.counts.problems, icon: MessageSquareText },
-    { label: "Solutions", value: p.counts.solutions, icon: LifeBuoy },
-    { label: "Found helpful", value: p.counts.helpfulReceived, icon: ThumbsUp },
+    { label: t("reviews"), value: p.counts.reviews, icon: Star },
+    { label: t("problems"), value: p.counts.problems, icon: MessageSquareText },
+    { label: t("solutions"), value: p.counts.solutions, icon: LifeBuoy },
+    { label: t("foundHelpful"), value: p.counts.helpfulReceived, icon: ThumbsUp },
   ];
 
   return (
@@ -65,16 +70,16 @@ export default async function ProfilePage({
             <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
             {p.staff && (
               <Badge variant="secondary" className="gap-1">
-                <ShieldCheck className="size-3" /> Staff
+                <ShieldCheck className="size-3" /> {t("staff")}
               </Badge>
             )}
           </div>
           <p className="mt-0.5 flex items-center gap-2 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-medium text-primary">
               <BadgeCheck className="size-3.5" />
-              {level.label}
+              {tEnum(`reputation.${level.key}`)}
             </span>
-            · {p.score} points · joined {formatDate(p.createdAt)}
+            {t("pointsJoined", { points: p.score, date: formatDate(p.createdAt) })}
           </p>
         </div>
       </header>
@@ -91,7 +96,7 @@ export default async function ProfilePage({
 
       {p.badges.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-sm font-semibold tracking-tight">Badges</h2>
+          <h2 className="text-sm font-semibold tracking-tight">{t("badges")}</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {p.badges.map((b) => {
               const Icon = BADGE_ICON[b.key] ?? BadgeCheck;
@@ -117,7 +122,7 @@ export default async function ProfilePage({
       <section className="mt-8 space-y-8">
         {p.recent.reviews.length > 0 && (
           <div>
-            <h2 className="mb-2 text-sm font-semibold tracking-tight">Recent reviews</h2>
+            <h2 className="mb-2 text-sm font-semibold tracking-tight">{t("recentReviews")}</h2>
             <ul className="space-y-2">
               {p.recent.reviews.map((r) => (
                 <li key={r.id} className="rounded-xl border bg-card p-3 text-sm">
@@ -147,7 +152,7 @@ export default async function ProfilePage({
 
         {p.recent.problems.length > 0 && (
           <div>
-            <h2 className="mb-2 text-sm font-semibold tracking-tight">Reported problems</h2>
+            <h2 className="mb-2 text-sm font-semibold tracking-tight">{t("reportedProblems")}</h2>
             <ul className="space-y-2">
               {p.recent.problems.map((pr) => (
                 <li key={pr.id} className="rounded-xl border bg-card p-3 text-sm">
@@ -155,8 +160,11 @@ export default async function ProfilePage({
                     {pr.title}
                   </Link>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    {pr.productName} · {pr.reportCount} report{pr.reportCount === 1 ? "" : "s"} ·{" "}
-                    {formatDate(pr.createdAt)}
+                    {t("problemMeta", {
+                      product: pr.productName,
+                      count: pr.reportCount,
+                      date: formatDate(pr.createdAt),
+                    })}
                   </p>
                 </li>
               ))}
@@ -166,7 +174,7 @@ export default async function ProfilePage({
 
         {p.recent.solutions.length > 0 && (
           <div>
-            <h2 className="mb-2 text-sm font-semibold tracking-tight">Solutions shared</h2>
+            <h2 className="mb-2 text-sm font-semibold tracking-tight">{t("solutionsShared")}</h2>
             <ul className="space-y-2">
               {p.recent.solutions.map((s) => (
                 <li key={s.id} className="rounded-xl border bg-card p-3 text-sm">
@@ -178,8 +186,11 @@ export default async function ProfilePage({
                   </Link>
                   <p className="mt-1 line-clamp-2 text-muted-foreground">{s.body}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {s.workedCount} confirmed working · {s.helpfulCount} helpful ·{" "}
-                    {formatDate(s.createdAt)}
+                    {t("solutionMeta", {
+                      worked: s.workedCount,
+                      helpful: s.helpfulCount,
+                      date: formatDate(s.createdAt),
+                    })}
                   </p>
                 </li>
               ))}
@@ -191,7 +202,7 @@ export default async function ProfilePage({
           p.recent.problems.length === 0 &&
           p.recent.solutions.length === 0 && (
             <p className="rounded-xl border border-dashed bg-card p-6 text-center text-sm text-muted-foreground">
-              No public contributions yet.
+              {t("noPublicContributions")}
             </p>
           )}
       </section>

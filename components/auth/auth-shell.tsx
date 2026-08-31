@@ -1,24 +1,9 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, MessageSquareText, ShieldCheck, TriangleAlert } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 
-const highlights = [
-  {
-    icon: MessageSquareText,
-    title: "Real ownership reviews",
-    body: "Rated by how long people have actually lived with the product.",
-  },
-  {
-    icon: TriangleAlert,
-    title: "Problems, out in the open",
-    body: "See the faults owners hit — and when they started.",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Fixes that worked",
-    body: "Solutions ranked by the people they actually helped.",
-  },
-];
+const highlightIcons = [MessageSquareText, TriangleAlert, CheckCircle2];
 
 export function AuthShell({
   title,
@@ -29,6 +14,13 @@ export function AuthShell({
   subtitle?: string;
   children: ReactNode;
 }) {
+  const t = useTranslations("auth");
+  const highlights = [
+    { title: t("h1Title"), body: t("h1Body") },
+    { title: t("h2Title"), body: t("h2Body") },
+    { title: t("h3Title"), body: t("h3Body") },
+  ];
+
   return (
     <main className="flex flex-1 flex-col lg:flex-row">
       {/* Brand / value panel */}
@@ -37,32 +29,32 @@ export function AuthShell({
         <div className="relative">
           <BrandLogo href="/" className="[&_span]:text-primary-foreground" />
           <h2 className="mt-14 max-w-sm text-3xl font-semibold leading-tight tracking-tight">
-            Learn from people who own the product.
+            {t("panelHeading")}
           </h2>
-          <p className="mt-3 max-w-sm text-sm text-primary-foreground/80">
-            Structured, searchable experiences from real owners in Bangladesh — not
-            lost in a feed.
-          </p>
+          <p className="mt-3 max-w-sm text-sm text-primary-foreground/80">{t("panelSub")}</p>
         </div>
 
         <ul className="relative mt-12 space-y-4">
-          {highlights.map(({ icon: Icon, title: t, body }) => (
-            <li
-              key={t}
-              className="flex gap-3 rounded-xl bg-primary-foreground/10 p-4 backdrop-blur-sm"
-            >
-              <Icon className="mt-0.5 size-5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium">{t}</p>
-                <p className="text-xs text-primary-foreground/75">{body}</p>
-              </div>
-            </li>
-          ))}
+          {highlights.map((h, i) => {
+            const Icon = highlightIcons[i]!;
+            return (
+              <li
+                key={h.title}
+                className="flex gap-3 rounded-xl bg-primary-foreground/10 p-4 backdrop-blur-sm"
+              >
+                <Icon className="mt-0.5 size-5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">{h.title}</p>
+                  <p className="text-xs text-primary-foreground/75">{h.body}</p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
 
         <p className="relative flex items-center gap-2 text-xs text-primary-foreground/70">
           <ShieldCheck className="size-4" />
-          Sign-in is passwordless. We never see your Google password.
+          {t("passwordless")}
         </p>
       </section>
 
@@ -72,12 +64,8 @@ export function AuthShell({
           <div className="mb-8 lg:hidden">
             <BrandLogo href="/" />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>
-          )}
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
+          {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
           <div className="mt-8">{children}</div>
         </div>
       </section>

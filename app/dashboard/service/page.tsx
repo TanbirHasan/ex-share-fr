@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ImageOff, Pencil, Star } from "lucide-react";
 import { DeleteServiceButton } from "@/components/dashboard/delete-service-button";
 import { Badge } from "@/components/ui/badge";
@@ -6,27 +7,31 @@ import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
 import type { Paginated } from "@/lib/catalog-types";
 import { formatDate } from "@/lib/format";
-import { REPAIR_OUTCOME, labelFor, type MyServiceExperience } from "@/lib/service-types";
+import { type MyServiceExperience } from "@/lib/service-types";
 
 export const dynamic = "force-dynamic";
 
 export default async function MyServicePage() {
-  const data = await apiGet<Paginated<MyServiceExperience>>("/api/v1/me/service?limit=50");
+  const [t, tEnum, data] = await Promise.all([
+    getTranslations("dashboard.pages"),
+    getTranslations("enums"),
+    apiGet<Paginated<MyServiceExperience>>("/api/v1/me/service?limit=50"),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">My service reports</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("serviceTitle")}</h1>
         <p className="text-sm text-muted-foreground">
-          {data.total} after-sales experience{data.total === 1 ? "" : "s"} you&apos;ve shared.
+          {t("serviceCount", { count: data.total })}
         </p>
       </div>
 
       {data.data.length === 0 ? (
         <div className="rounded-xl border border-dashed bg-card p-12 text-center">
-          <p className="text-sm text-muted-foreground">Nothing here yet.</p>
+          <p className="text-sm text-muted-foreground">{t("serviceEmpty")}</p>
           <Button asChild className="mt-4">
-            <Link href="/products">Browse products</Link>
+            <Link href="/products">{t("browseProducts")}</Link>
           </Button>
         </div>
       ) : (
@@ -54,7 +59,7 @@ export default async function MyServicePage() {
                     {it.rating.toFixed(1)}
                   </span>
                   <span>·</span>
-                  <Badge variant="secondary">{labelFor(REPAIR_OUTCOME, it.repairOutcome)}</Badge>
+                  <Badge variant="secondary">{tEnum(`repairOutcome.${it.repairOutcome}`)}</Badge>
                   <span>·</span>
                   <span>{formatDate(it.createdAt)}</span>
                 </div>
@@ -63,7 +68,7 @@ export default async function MyServicePage() {
                 )}
               </div>
               <div className="flex shrink-0 items-start gap-1">
-                <Button asChild variant="ghost" size="icon-sm" aria-label="Edit">
+                <Button asChild variant="ghost" size="icon-sm" aria-label={t("edit")}>
                   <Link href={`/contribute/service?product=${it.product.slug}`}>
                     <Pencil className="size-3.5" />
                   </Link>

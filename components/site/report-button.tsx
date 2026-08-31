@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { Flag, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -25,14 +26,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const REASONS = [
-  { value: "spam", label: "Spam or advertising" },
-  { value: "fake", label: "Fake or planted" },
-  { value: "offensive", label: "Offensive or abusive" },
-  { value: "wrong_product", label: "Wrong product" },
-  { value: "duplicate", label: "Duplicate" },
-  { value: "other", label: "Something else" },
-];
+const REASON_VALUES = [
+  "spam",
+  "fake",
+  "offensive",
+  "wrong_product",
+  "duplicate",
+  "other",
+] as const;
 
 export function ReportButton({
   targetType,
@@ -44,6 +45,7 @@ export function ReportButton({
   className?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("report");
   const { status } = useSession();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -63,14 +65,12 @@ export function ReportButton({
     start(async () => {
       const res = await submitReport(targetType, targetId, reason, detail);
       if (res.ok) {
-        toast.success(
-          res.already ? "You've already reported this." : "Thanks — a moderator will review it.",
-        );
+        toast.success(res.already ? t("alreadyReported") : t("thanksModerator"));
         setOpen(false);
         setReason("");
         setDetail("");
       } else {
-        toast.error(res.error ?? "Could not send the report.");
+        toast.error(res.error ?? t("couldNotSend"));
       }
     });
   }
@@ -86,46 +86,52 @@ export function ReportButton({
         )}
       >
         <Flag className="size-3" />
-        Report
+        {t("report")}
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Report this {targetType}</DialogTitle>
+            <DialogTitle>
+              {targetType === "review"
+                ? t("titleReview")
+                : targetType === "problem"
+                  ? t("titleProblem")
+                  : t("titleSolution")}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="reason">Reason</Label>
+              <Label htmlFor="reason">{t("reason")}</Label>
               <Select value={reason} onValueChange={setReason}>
                 <SelectTrigger id="reason" className="w-full">
-                  <SelectValue placeholder="Pick a reason" />
+                  <SelectValue placeholder={t("pickReason")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {REASONS.map((rz) => (
-                    <SelectItem key={rz.value} value={rz.value}>
-                      {rz.label}
+                  {REASON_VALUES.map((rz) => (
+                    <SelectItem key={rz} value={rz}>
+                      {t(`reasons.${rz}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="detail">Details (optional)</Label>
+              <Label htmlFor="detail">{t("detailsOptional")}</Label>
               <Textarea
                 id="detail"
                 value={detail}
                 onChange={(e) => setDetail(e.target.value)}
                 rows={3}
                 maxLength={1000}
-                placeholder="Anything that helps the moderator…"
+                placeholder={t("detailsPlaceholder")}
               />
             </div>
           </div>
           <DialogFooter>
             <Button onClick={submit} disabled={pending || !reason}>
               {pending && <Loader2 className="size-4 animate-spin" />}
-              Submit report
+              {t("submitReport")}
             </Button>
           </DialogFooter>
         </DialogContent>

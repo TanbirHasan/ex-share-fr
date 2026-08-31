@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { saveProduct } from "@/app/dashboard/(admin)/catalog/actions";
@@ -16,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Locale } from "@/i18n/config";
+import { localizedName } from "@/lib/i18n-content";
 import { PRODUCT_STATUSES, type Brand, type Category, type Product } from "@/lib/catalog-types";
 
 export function ProductForm({
@@ -28,18 +31,21 @@ export function ProductForm({
   brands: Brand[];
 }) {
   const router = useRouter();
+  const t = useTranslations("catalog.form");
+  const tEnum = useTranslations("enums");
+  const locale = useLocale() as Locale;
   const [state, formAction, pending] = useActionState(saveProduct, { ok: false });
 
   useEffect(() => {
     if (!state.ok) return;
     if (!product && state.id) {
-      toast.success("Product created");
+      toast.success(t("productCreated"));
       router.push(`/dashboard/catalog/${state.id}`);
     } else {
-      toast.success("Product saved");
+      toast.success(t("productSaved"));
       router.refresh();
     }
-  }, [state, product, router]);
+  }, [state, product, router, t]);
 
   return (
     <form action={formAction} className="space-y-5">
@@ -47,35 +53,35 @@ export function ProductForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
-          label="Name"
+          label={t("name")}
           name="name"
           defaultValue={product?.name}
           placeholder="Walton Smart Fridge WNM-2A3"
           required
         />
         <Field
-          label="Slug"
+          label={t("slug")}
           name="slug"
           defaultValue={product?.slug}
           placeholder="walton-wnm-2a3"
           required
         />
         <Field
-          label="Model number"
+          label={t("modelNumber")}
           name="modelNo"
           defaultValue={product?.modelNo ?? ""}
           placeholder="WNM-2A3"
         />
         <div className="space-y-1.5">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status">{t("status")}</Label>
           <Select name="status" defaultValue={product?.status ?? "active"}>
             <SelectTrigger id="status" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {PRODUCT_STATUSES.map((s) => (
-                <SelectItem key={s} value={s} className="capitalize">
-                  {s}
+                <SelectItem key={s} value={s}>
+                  {tEnum(`productStatus.${s}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -83,25 +89,25 @@ export function ProductForm({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="categoryId">Category</Label>
+          <Label htmlFor="categoryId">{t("category")}</Label>
           <Select name="categoryId" defaultValue={product?.categoryId} required>
             <SelectTrigger id="categoryId" className="w-full">
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder={t("selectCategory")} />
             </SelectTrigger>
             <SelectContent>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
-                  {c.nameEn}
+                  {localizedName(locale, c)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="brandId">Brand</Label>
+          <Label htmlFor="brandId">{t("brand")}</Label>
           <Select name="brandId" defaultValue={product?.brandId} required>
             <SelectTrigger id="brandId" className="w-full">
-              <SelectValue placeholder="Select brand" />
+              <SelectValue placeholder={t("selectBrand")} />
             </SelectTrigger>
             <SelectContent>
               {brands.map((b) => (
@@ -114,14 +120,14 @@ export function ProductForm({
         </div>
 
         <Field
-          label="Price min (৳)"
+          label={t("priceMin")}
           name="priceMin"
           type="number"
           min={0}
           defaultValue={product?.priceMin ?? ""}
         />
         <Field
-          label="Price max (৳)"
+          label={t("priceMax")}
           name="priceMax"
           type="number"
           min={0}
@@ -130,11 +136,11 @@ export function ProductForm({
       </div>
 
       <TextareaField
-        label="Warranty (free text)"
+        label={t("warrantyFreeText")}
         name="warrantyText"
         defaultValue={product?.warrantyText ?? ""}
         rows={2}
-        placeholder="2 years on compressor, 1 year comprehensive"
+        placeholder={t("warrantyPlaceholder")}
       />
 
       <SpecEditor initial={product?.spec} />
@@ -148,10 +154,10 @@ export function ProductForm({
       <div className="flex gap-2">
         <Button type="submit" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" />}
-          {product ? "Save changes" : "Create product"}
+          {product ? t("saveChanges") : t("createProduct")}
         </Button>
         <Button type="button" variant="ghost" onClick={() => router.push("/dashboard/catalog")}>
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </form>

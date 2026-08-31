@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { signIn } from "next-auth/react";
 import { ArrowRight, Loader2, Mail, MailCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -12,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 function LoginForm() {
+  const t = useTranslations("auth");
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/dashboard";
 
@@ -33,10 +35,10 @@ function LoginForm() {
         setSent(true);
       } else {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        toast.error(body.error ?? "Something went wrong.");
+        toast.error(body.error ?? t("somethingWrong"));
       }
     } catch {
-      toast.error("Network error. Is the backend running?");
+      toast.error(t("networkError"));
     } finally {
       setLoading(false);
     }
@@ -48,13 +50,15 @@ function LoginForm() {
         <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary">
           <MailCheck className="size-5" />
         </span>
-        <p className="mt-4 text-sm font-medium text-foreground">Check your inbox</p>
+        <p className="mt-4 text-sm font-medium text-foreground">{t("checkInbox")}</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          We sent a sign-in link to <span className="font-medium text-foreground">{email}</span>. In
-          local development it is printed in the server console.
+          {t.rich("linkSent", {
+            email,
+            b: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+          })}
         </p>
         <Button variant="ghost" className="mt-4" onClick={() => setSent(false)}>
-          Use a different email
+          {t("useDifferentEmail")}
         </Button>
       </div>
     );
@@ -77,18 +81,18 @@ function LoginForm() {
         ) : (
           <GoogleIcon className="size-4" />
         )}
-        Continue with Google
+        {t("continueWithGoogle")}
       </Button>
 
       <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
         <span className="h-px flex-1 bg-border" />
-        or
+        {t("or")}
         <span className="h-px flex-1 bg-border" />
       </div>
 
       <form onSubmit={sendLink} className="space-y-3">
         <div className="space-y-1.5">
-          <Label htmlFor="email">Email address</Label>
+          <Label htmlFor="email">{t("emailLabel")}</Label>
           <div className="relative">
             <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -96,7 +100,7 @@ function LoginForm() {
               type="email"
               required
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11 pl-9"
@@ -105,23 +109,19 @@ function LoginForm() {
         </div>
         <Button type="submit" size="lg" className="h-11 w-full" disabled={loading}>
           {loading ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
-          Send magic link
+          {t("sendMagicLink")}
         </Button>
       </form>
 
-      <p className="text-center text-xs text-muted-foreground">
-        By continuing you agree to our Terms and Content Policy.
-      </p>
+      <p className="text-center text-xs text-muted-foreground">{t("termsLine")}</p>
     </div>
   );
 }
 
 export default function LoginPage() {
+  const t = useTranslations("auth");
   return (
-    <AuthShell
-      title="Sign in to ExperienceHub"
-      subtitle="Reading is open to everyone. Sign in to contribute your experience."
-    >
+    <AuthShell title={t("loginTitle")} subtitle={t("loginSubtitle")}>
       <Suspense fallback={<div className="h-64" />}>
         <LoginForm />
       </Suspense>

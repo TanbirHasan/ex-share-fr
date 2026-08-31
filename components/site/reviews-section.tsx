@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { MessageSquareText, PenLine, Star } from "lucide-react";
 import { auth } from "@/auth";
 import { ReviewCard } from "@/components/site/review-card";
@@ -18,7 +19,11 @@ function topTags(reviews: Review[], key: "pros" | "cons", n = 4) {
 }
 
 export async function ReviewsSection({ product }: { product: Product }) {
-  const session = await auth();
+  const [session, t, tEnum] = await Promise.all([
+    auth(),
+    getTranslations("reviews"),
+    getTranslations("enums"),
+  ]);
   const signedIn = Boolean(session?.user);
 
   const [listRes, mineRes] = await Promise.all([
@@ -41,12 +46,14 @@ export async function ReviewsSection({ product }: { product: Product }) {
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold tracking-tight">
-          Reviews{product.ratingCount > 0 ? ` (${product.ratingCount})` : ""}
+          {product.ratingCount > 0
+            ? t("headingCount", { count: product.ratingCount })
+            : t("heading")}
         </h2>
         <Button asChild size="sm" variant={mine ? "outline" : "default"}>
           <Link href={`/contribute?product=${product.slug}`}>
             <PenLine className="size-4" />
-            {mine ? "Edit your review" : "Write a review"}
+            {mine ? t("editYourReview") : t("writeReview")}
           </Link>
         </Button>
       </div>
@@ -55,10 +62,10 @@ export async function ReviewsSection({ product }: { product: Product }) {
         <div className="flex gap-2.5 rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">
           <MessageSquareText className="mt-0.5 size-4 shrink-0" />
           <p>
-            No reviews yet.{" "}
-            {signedIn ? "Own it? Be the first to share your experience." : (
+            {t("noReviewsYet")}{" "}
+            {signedIn ? t("beFirstSignedIn") : (
               <Link href={`/contribute?product=${product.slug}`} className="text-primary hover:underline">
-                Be the first to review it.
+                {t("beFirstLink")}
               </Link>
             )}
           </p>
@@ -74,17 +81,17 @@ export async function ReviewsSection({ product }: { product: Product }) {
                   <span className="text-2xl font-semibold">
                     {Number(product.ratingAvg).toFixed(1)}
                   </span>
-                  <span className="text-sm text-muted-foreground">/ 5</span>
+                  <span className="text-sm text-muted-foreground">{t("outOfFive")}</span>
                 </div>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {product.ratingCount} review{product.ratingCount === 1 ? "" : "s"}
+                  {t("reviewCount", { count: product.ratingCount })}
                 </p>
               </div>
               <div>
                 <p className="text-2xl font-semibold tabular-nums">
                   {product.wouldBuyAgainPct}%
                 </p>
-                <p className="text-xs text-muted-foreground">would buy again</p>
+                <p className="text-xs text-muted-foreground">{t("wouldBuyAgainLower")}</p>
               </div>
             </div>
 
@@ -92,7 +99,9 @@ export async function ReviewsSection({ product }: { product: Product }) {
               <dl className="mt-5 grid gap-2 sm:grid-cols-2">
                 {CATEGORY_RATING_FIELDS.filter((f) => catAvgs[f.key] != null).map((f) => (
                   <div key={f.key} className="flex items-center gap-3">
-                    <dt className="w-32 shrink-0 text-xs text-muted-foreground">{f.label}</dt>
+                    <dt className="w-32 shrink-0 text-xs text-muted-foreground">
+                      {tEnum(`categoryRating.${f.key}`)}
+                    </dt>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                       <div
                         className="h-full rounded-full bg-primary"
@@ -111,7 +120,7 @@ export async function ReviewsSection({ product }: { product: Product }) {
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 {pros.length > 0 && (
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground">Most mentioned</p>
+                    <p className="text-xs font-medium text-muted-foreground">{t("mostMentioned")}</p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {pros.map(({ tag, count }) => (
                         <span
@@ -126,7 +135,7 @@ export async function ReviewsSection({ product }: { product: Product }) {
                 )}
                 {cons.length > 0 && (
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground">Common complaints</p>
+                    <p className="text-xs font-medium text-muted-foreground">{t("commonComplaints")}</p>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       {cons.map(({ tag, count }) => (
                         <span

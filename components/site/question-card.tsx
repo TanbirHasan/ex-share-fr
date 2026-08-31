@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Check, CircleCheck, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -19,8 +20,8 @@ import { formatDate } from "@/lib/format";
 import type { Answer, Question } from "@/lib/qa-types";
 import { cn } from "@/lib/utils";
 
-function personName(name: string | null) {
-  return name?.trim() || "ExperienceHub user";
+function personName(name: string | null, fallback: string) {
+  return name?.trim() || fallback;
 }
 
 export function QuestionCard({
@@ -33,10 +34,11 @@ export function QuestionCard({
   signedIn: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("qa");
   const [answer, setAnswer] = useState("");
   const [pending, start] = useTransition();
 
-  const askerName = personName(question.author.name);
+  const askerName = personName(question.author.name, t("anonUser"));
 
   function run(fn: () => Promise<{ ok: boolean; error?: string }>, ok?: string) {
     start(async () => {
@@ -45,7 +47,7 @@ export function QuestionCard({
         if (ok) toast.success(ok);
         router.refresh();
       } else {
-        toast.error(res.error ?? "Something went wrong.");
+        toast.error(res.error ?? t("somethingWrong"));
       }
     });
   }
@@ -66,7 +68,7 @@ export function QuestionCard({
               {askerName}
             </Link>
             <ReputationChip score={question.author.reputation} />
-            · asked {formatDate(question.createdAt)}
+            · {t("asked", { date: formatDate(question.createdAt) })}
           </p>
         </div>
         {question.viewerCanEdit && (
@@ -74,7 +76,7 @@ export function QuestionCard({
             type="button"
             onClick={() => run(() => deleteQuestion(question.id, slug))}
             disabled={pending}
-            aria-label="Delete question"
+            aria-label={t("deleteQuestion")}
             className="text-muted-foreground hover:text-destructive"
           >
             <Trash2 className="size-3.5" />
@@ -105,7 +107,7 @@ export function QuestionCard({
             onChange={(e) => setAnswer(e.target.value)}
             rows={2}
             maxLength={3000}
-            placeholder="Answer from your experience…"
+            placeholder={t("answerPlaceholder")}
             className="text-sm"
           />
           <Button
@@ -119,15 +121,18 @@ export function QuestionCard({
             }
             disabled={pending || answer.trim().length < 5}
           >
-            {pending ? <Loader2 className="size-4 animate-spin" /> : "Answer"}
+            {pending ? <Loader2 className="size-4 animate-spin" /> : t("answer")}
           </Button>
         </div>
       ) : (
         <p className="mt-3 text-xs text-muted-foreground">
-          <Link href="/login" className="text-primary hover:underline">
-            Sign in
-          </Link>{" "}
-          to answer.
+          {t.rich("signInToAnswer", {
+            link: (c) => (
+              <Link href="/login" className="text-primary hover:underline">
+                {c}
+              </Link>
+            ),
+          })}
         </p>
       )}
     </article>
@@ -149,7 +154,8 @@ function AnswerRow({
   pending: boolean;
   run: (fn: () => Promise<{ ok: boolean; error?: string }>, ok?: string) => void;
 }) {
-  const name = personName(answer.author.name);
+  const t = useTranslations("qa");
+  const name = personName(answer.author.name, t("anonUser"));
   return (
     <li
       className={cn(
@@ -160,7 +166,7 @@ function AnswerRow({
       <div className="flex items-center gap-1.5 text-xs">
         {answer.isAccepted && (
           <span className="inline-flex items-center gap-1 font-medium text-emerald-700 dark:text-emerald-400">
-            <CircleCheck className="size-3.5" /> Accepted
+            <CircleCheck className="size-3.5" /> {t("accepted")}
           </span>
         )}
         <Link href={`/u/${answer.author.id}`} className="font-medium hover:underline">
@@ -177,7 +183,7 @@ function AnswerRow({
                 run(
                   () =>
                     acceptAnswer(questionId, slug, answer.isAccepted ? null : answer.id),
-                  answer.isAccepted ? "Unmarked" : "Marked as accepted",
+                  answer.isAccepted ? t("unmarked") : t("markedAccepted"),
                 )
               }
               className={cn(
@@ -188,7 +194,7 @@ function AnswerRow({
               )}
             >
               <Check className="size-3" />
-              {answer.isAccepted ? "Unaccept" : "Accept"}
+              {answer.isAccepted ? t("unaccept") : t("accept")}
             </button>
           )}
           {answer.viewerCanEdit && (
@@ -196,7 +202,7 @@ function AnswerRow({
               type="button"
               disabled={pending}
               onClick={() => run(() => deleteAnswer(answer.id, slug))}
-              aria-label="Delete answer"
+              aria-label={t("deleteAnswer")}
               className="text-muted-foreground hover:text-destructive"
             >
               <Trash2 className="size-3" />

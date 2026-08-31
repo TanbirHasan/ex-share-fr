@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,11 +16,12 @@ export function FormField({
   hint?: string;
   children: ReactNode;
 }) {
+  const t = useTranslations("common");
   return (
     <div className="space-y-2">
       <div className="flex items-baseline gap-1.5">
         <span className="text-sm font-medium">{label}</span>
-        {required && <span className="text-xs text-destructive">required</span>}
+        {required && <span className="text-xs text-destructive">{t("required")}</span>}
       </div>
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       {children}
@@ -132,6 +134,7 @@ export function TagPicker({
   onChange: (v: string[]) => void;
   tone: "pro" | "con";
 }) {
+  const t = useTranslations("common");
   const [custom, setCustom] = useState("");
   const toggle = (tag: string) =>
     onChange(value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag].slice(0, 8));
@@ -175,7 +178,7 @@ export function TagPicker({
               setCustom("");
             }
           }}
-          placeholder="Add your own…"
+          placeholder={t("addYourOwn")}
           className="h-8 flex-1 rounded-md border bg-background px-2.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>

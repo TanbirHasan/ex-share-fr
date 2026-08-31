@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { LifeBuoy, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { problemCategoryLabel, type ProblemListItem } from "@/lib/problem-types";
+import { type ProblemListItem } from "@/lib/problem-types";
 
 export function ProblemCard({
   problem,
@@ -10,13 +11,15 @@ export function ProblemCard({
   problem: ProblemListItem;
   showProduct?: boolean;
 }) {
+  const t = useTranslations("problems");
+  const tEnum = useTranslations("enums");
   return (
     <Link
       href={`/problems/${problem.slug}`}
       className="block rounded-xl border bg-card p-4 transition-colors hover:border-primary/40"
     >
       <div className="flex items-center gap-2">
-        <Badge variant="secondary">{problemCategoryLabel(problem.category)}</Badge>
+        <Badge variant="secondary">{tEnum(`problemCategory.${problem.category}`)}</Badge>
         {showProduct && (
           <span className="truncate text-xs text-muted-foreground">{problem.product.name}</span>
         )}
@@ -26,11 +29,11 @@ export function ProblemCard({
       <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Users className="size-3.5" />
-          {problem.reportCount} report{problem.reportCount === 1 ? "" : "s"}
+          {t("reportCount", { count: problem.reportCount })}
         </span>
         <span className="inline-flex items-center gap-1">
           <LifeBuoy className="size-3.5" />
-          {problem.solutionCount} solution{problem.solutionCount === 1 ? "" : "s"}
+          {t("solutionCount", { count: problem.solutionCount })}
         </span>
       </div>
     </Link>

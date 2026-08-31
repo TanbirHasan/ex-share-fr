@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Plus } from "lucide-react";
 import { ProductTable } from "@/components/dashboard/catalog/product-table";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,8 @@ export default async function CatalogPage({
   if (status) qs.set("status", status);
   if (categoryId) qs.set("categoryId", categoryId);
 
-  const [products, categories, brands] = await Promise.all([
+  const [t, products, categories, brands] = await Promise.all([
+    getTranslations("dashboard.admin"),
     apiGet<Paginated<Product>>(`/api/v1/products?${qs.toString()}`),
     apiGet<Category[]>("/api/v1/categories"),
     apiGet<Brand[]>("/api/v1/brands"),
@@ -36,14 +38,14 @@ export default async function CatalogPage({
     <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Catalog</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("catalogTitle")}</h1>
           <p className="text-sm text-muted-foreground">
-            Every product record. {categories.length} categories · {brands.length} brands.
+            {t("catalogLede", { categories: categories.length, brands: brands.length })}
           </p>
         </div>
         <Button asChild>
           <Link href="/dashboard/catalog/new">
-            <Plus className="size-4" /> New product
+            <Plus className="size-4" /> {t("newProduct")}
           </Link>
         </Button>
       </div>

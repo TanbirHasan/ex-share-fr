@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,10 +11,11 @@ export function RatingStars({
   count: number;
   className?: string;
 }) {
+  const t = useTranslations("common");
   if (!count) {
     return (
       <span className={cn("text-sm text-muted-foreground", className)}>
-        No ratings yet
+        {t("noRatingsYet")}
       </span>
     );
   }

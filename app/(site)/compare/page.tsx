@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { GitCompareArrows } from "lucide-react";
 import { CompareTable } from "@/components/site/compare-table";
 import { TraySync } from "@/components/site/compare-tray";
@@ -8,21 +9,29 @@ import { apiGet } from "@/lib/api";
 import type { CompareResult } from "@/lib/compare-types";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Compare products",
-  description: "Side-by-side ratings, reliability, reported problems and specs.",
-};
 
-function Prompt({ message }: { message: string }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("compare");
+  return {
+    title: t("metaTitle"),
+    description: "Side-by-side ratings, reliability, reported problems and specs.",
+  };
+}
+
+async function Prompt({ message }: { message: string }) {
+  const [t, tCommon] = await Promise.all([
+    getTranslations("compare"),
+    getTranslations("common"),
+  ]);
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-6 py-24 text-center">
       <span className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
         <GitCompareArrows className="size-6" />
       </span>
-      <h1 className="mt-5 text-xl font-semibold tracking-tight">Compare products</h1>
+      <h1 className="mt-5 text-xl font-semibold tracking-tight">{t("title")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{message}</p>
       <Button asChild className="mt-6">
-        <Link href="/products">Browse products</Link>
+        <Link href="/products">{tCommon("browseProducts")}</Link>
       </Button>
     </div>
   );
@@ -43,10 +52,10 @@ export default async function ComparePage({
     ),
   ].slice(0, 4);
 
+  const t = await getTranslations("compare");
+
   if (list.length < 2) {
-    return (
-      <Prompt message="Add at least two products from any product page or list, then compare them here." />
-    );
+    return <Prompt message={t("addTwo")} />;
   }
 
   const result = await apiGet<CompareResult>(
@@ -54,7 +63,7 @@ export default async function ComparePage({
   );
 
   if (result.products.length < 2) {
-    return <Prompt message="We couldn't find enough of those products to compare." />;
+    return <Prompt message={t("notEnough")} />;
   }
 
   return (
@@ -62,14 +71,12 @@ export default async function ComparePage({
       <TraySync items={result.products.map((p) => ({ slug: p.slug, name: p.name }))} />
       <header className="mb-6">
         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Compare
+          {t("eyebrow")}
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-          {result.products.length} products, side by side
+          {t("sideBySide", { count: result.products.length })}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Best value in each row is highlighted.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{t("bestValueHighlighted")}</p>
       </header>
 
       <CompareTable products={result.products} />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Hammer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -7,8 +8,8 @@ export default async function DashboardPlaceholder({
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
-  const { slug } = await params;
-  const title = (slug.at(-1) ?? "Section")
+  const [{ slug }, t] = await Promise.all([params, getTranslations("dashboard.placeholder")]);
+  const title = (slug.at(-1) ?? t("section"))
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -18,11 +19,9 @@ export default async function DashboardPlaceholder({
         <Hammer className="size-6" />
       </span>
       <h1 className="mt-5 text-xl font-semibold tracking-tight">{title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        This area isn&apos;t built yet. It lands in a later milestone.
-      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{t("notBuilt")}</p>
       <Button asChild variant="outline" className="mt-6">
-        <Link href="/dashboard">Back to overview</Link>
+        <Link href="/dashboard">{t("backToOverview")}</Link>
       </Button>
     </div>
   );

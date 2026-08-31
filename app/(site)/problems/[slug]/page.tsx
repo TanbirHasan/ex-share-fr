@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ChevronRight, LifeBuoy, ShieldCheck, TriangleAlert, Wrench } from "lucide-react";
 import { auth } from "@/auth";
 import { ProblemReportButton } from "@/components/site/problem-report-button";
@@ -11,13 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ApiError } from "@/lib/api";
 import { apiFetch } from "@/lib/backend";
 import { formatDate } from "@/lib/format";
-import {
-  PROBLEM_STARTED,
-  problemCategoryLabel,
-  problemStartedLabel,
-  warrantyLabel,
-  type ProblemDetail,
-} from "@/lib/problem-types";
+import { PROBLEM_STARTED, type ProblemDetail } from "@/lib/problem-types";
 
 async function load(slug: string): Promise<ProblemDetail | null> {
   const res = await apiFetch(`/api/v1/problems/${encodeURIComponent(slug)}`);
@@ -33,7 +28,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const p = await load(slug);
-  if (!p) return { title: "Problem not found" };
+  if (!p) {
+    const t = await getTranslations("problems");
+    return { title: t("metaNotFound") };
+  }
   return {
     title: `${p.title} — ${p.product.name}`,
     description: p.description.slice(0, 155),
@@ -48,7 +46,11 @@ export default async function ProblemPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const p = await load(slug);
+  const [t, tEnum, p] = await Promise.all([
+    getTranslations("problems"),
+    getTranslations("enums"),
+    load(slug),
+  ]);
   if (!p) notFound();
 
   const session = await auth();
@@ -61,7 +63,7 @@ export default async function ProblemPage({
     <div className="mx-auto max-w-3xl px-6 py-8">
       <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/problems" className="hover:text-foreground">
-          Problems
+          {t("breadcrumb")}
         </Link>
         <ChevronRight className="size-3" />
         <Link href={`/products/${p.product.slug}`} className="hover:text-foreground">
@@ -70,9 +72,9 @@ export default async function ProblemPage({
       </nav>
 
       <div className="mt-4 flex items-center gap-2">
-        <Badge variant="secondary">{problemCategoryLabel(p.category)}</Badge>
+        <Badge variant="secondary">{tEnum(`problemCategory.${p.category}`)}</Badge>
         <span className="text-xs text-muted-foreground">
-          Reported {formatDate(p.createdAt)}
+          {t("reportedOn", { date: formatDate(p.createdAt) })}
         </span>
       </div>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{p.title}</h1>
@@ -80,7 +82,7 @@ export default async function ProblemPage({
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
         <span className="inline-flex items-center gap-1.5 font-medium">
           <TriangleAlert className="size-4 text-amber-600 dark:text-amber-400" />
-          {p.reportCount} owner{p.reportCount === 1 ? "" : "s"} reported this
+          {t("ownersReported", { count: p.reportCount })}
         </span>
         <ProblemReportButton
           problemId={p.id}
@@ -96,11 +98,13 @@ export default async function ProblemPage({
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {Object.keys(p.whenStarted).length > 0 && (
           <div className="rounded-xl border bg-card p-4">
-            <p className="text-xs font-medium text-muted-foreground">When it started</p>
+            <p className="text-xs font-medium text-muted-foreground">{t("whenStarted")}</p>
             <ul className="mt-2 space-y-1.5">
               {PROBLEM_STARTED.filter((b) => p.whenStarted[b.value]).map((b) => (
                 <li key={b.value} className="flex items-center gap-2 text-xs">
-                  <span className="w-28 shrink-0 text-muted-foreground">{b.label}</span>
+                  <span className="w-28 shrink-0 text-muted-foreground">
+                    {tEnum(`problemStarted.${b.value}`)}
+                  </span>
                   <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                     <span
                       className="block h-full rounded-full bg-primary"
@@ -121,7 +125,7 @@ export default async function ProblemPage({
             <div className="rounded-xl border bg-card p-4">
               <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <ShieldCheck className="size-3.5" />
-                Warranty outcome
+                {t("warrantyOutcome")}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {Object.entries(p.warrantyBreakdown).map(([k, n]) => (
@@ -129,7 +133,7 @@ export default async function ProblemPage({
                     key={k}
                     className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium"
                   >
-                    {warrantyLabel(k)} · {n}
+                    {tEnum(`warrantyCovered.${k}`)} · {n}
                   </span>
                 ))}
               </div>
@@ -139,14 +143,14 @@ export default async function ProblemPage({
             <div className="rounded-xl border bg-card p-4">
               <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <Wrench className="size-3.5" />
-                Repair cost ({p.repairCost.count} report{p.repairCost.count === 1 ? "" : "s"})
+                {t("repairCost", { count: p.repairCost.count })}
               </p>
               <p className="mt-1 text-sm font-semibold tabular-nums">
                 {p.repairCost.min === p.repairCost.max
                   ? `৳${p.repairCost.min.toLocaleString()}`
                   : `৳${p.repairCost.min.toLocaleString()} – ৳${p.repairCost.max.toLocaleString()}`}
                 <span className="ml-2 text-xs font-normal text-muted-foreground">
-                  median ৳{p.repairCost.median.toLocaleString()}
+                  {t("median", { amount: p.repairCost.median.toLocaleString() })}
                 </span>
               </p>
             </div>
@@ -159,11 +163,11 @@ export default async function ProblemPage({
         <div className="mb-3 flex items-center gap-2">
           <LifeBuoy className="size-5 text-primary" />
           <h2 className="text-lg font-semibold tracking-tight">
-            Solutions ({p.solutions.length})
+            {t("solutionsHeading", { count: p.solutions.length })}
           </h2>
           {solved > 0 && (
             <span className="text-xs text-muted-foreground">
-              {solved} confirmed working
+              {t("confirmedWorking", { count: solved })}
             </span>
           )}
         </div>
@@ -176,7 +180,7 @@ export default async function ProblemPage({
           </div>
         ) : (
           <p className="rounded-xl border border-dashed bg-card p-4 text-sm text-muted-foreground">
-            No solutions yet. If you fixed this, share how.
+            {t("noSolutionsYet")}
           </p>
         )}
 

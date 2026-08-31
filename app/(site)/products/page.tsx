@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import { BrowseToolbar } from "@/components/site/browse-toolbar";
 import { Pager } from "@/components/site/pager";
 import { ProductGrid } from "@/components/site/product-grid";
+import type { Locale } from "@/i18n/config";
 import { apiGet } from "@/lib/api";
+import { localizedName } from "@/lib/i18n-content";
 import type { Brand, Category, Paginated, ProductListItem } from "@/lib/catalog-types";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +41,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
   if (brand) qs.set("brandSlug", brand);
   if (sort) qs.set("sort", sort);
 
-  const [list, categories, brands] = await Promise.all([
+  const [t, locale, list, categories, brands] = await Promise.all([
+    getTranslations("products"),
+    getLocale() as Promise<Locale>,
     apiGet<Paginated<ProductListItem>>(`/api/v1/products?${qs.toString()}`),
     apiGet<Category[]>("/api/v1/categories"),
     apiGet<Brand[]>("/api/v1/brands"),
@@ -46,18 +51,20 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
 
   const activeCategory = categories.find((c) => c.slug === category);
   const activeBrand = brands.find((b) => b.slug === brand);
-  const heading = activeCategory?.nameEn ?? activeBrand?.name ?? "All products";
+  const heading = activeCategory
+    ? localizedName(locale, activeCategory)
+    : (activeBrand?.name ?? t("allProducts"));
   const totalPages = Math.max(1, Math.ceil(list.total / LIMIT));
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header className="mb-6">
         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Products
+          {t("eyebrow")}
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{heading}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {list.total} {list.total === 1 ? "product" : "products"}
+          {t("count", { count: list.total })}
         </p>
       </header>
 
@@ -70,7 +77,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
       <div className="mt-6 space-y-6">
         <ProductGrid
           products={list.data}
-          empty={q ? `Nothing matches “${q}”.` : "No products here yet."}
+          empty={q ? t("nothingMatches", { q }) : t("noProductsHere")}
         />
         <Pager
           basePath="/products"
