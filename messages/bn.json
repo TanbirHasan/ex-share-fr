@@ -729,6 +729,8 @@
     "outOfFive": "/ ৫",
     "reviewCount": "{count, plural, other {#টি রিভিউ}}",
     "wouldBuyAgainLower": "আবার কিনবে",
+    "fromResponses": "{count, plural, other {#টি উত্তর}} থেকে",
+    "allReviews": "সব রিভিউ ({count})",
     "mostMentioned": "সবচেয়ে বেশি উল্লেখিত",
     "commonComplaints": "সাধারণ অভিযোগ",
     "anonUser": "ExperienceHub ব্যবহারকারী",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { MessageSquareText, PenLine, Star } from "lucide-react";
+import { MessageSquareText, PenLine, Star, ThumbsUp } from "lucide-react";
 import { auth } from "@/auth";
 import { ReviewCard } from "@/components/site/review-card";
 import { Button } from "@/components/ui/button";
@@ -91,32 +91,47 @@ export async function ReviewsSection({
         <>
           {/* Summary */}
           <div className="rounded-xl border bg-card p-5">
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <Star className="size-5 fill-amber-400 text-amber-400" />
-                  <span className="text-2xl font-semibold">
+            <div className="grid gap-6 sm:grid-cols-2 sm:divide-x sm:divide-border">
+              <div className="flex items-center gap-4">
+                <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-amber-400/10">
+                  <Star className="size-6 fill-amber-400 text-amber-400" />
+                </span>
+                <div>
+                  <p className="text-2xl font-semibold leading-none tabular-nums">
                     {Number(product.ratingAvg).toFixed(1)}
-                  </span>
-                  <span className="text-sm text-muted-foreground">{t("outOfFive")}</span>
+                    <span className="text-sm font-normal text-muted-foreground">
+                      {" "}
+                      {t("outOfFive")}
+                    </span>
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t("reviewCount", { count: product.ratingCount })}
+                  </p>
                 </div>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {t("reviewCount", { count: product.ratingCount })}
-                </p>
               </div>
-              <div>
-                <p className="text-2xl font-semibold tabular-nums">
-                  {product.wouldBuyAgainPct}%
-                </p>
-                <p className="text-xs text-muted-foreground">{t("wouldBuyAgainLower")}</p>
+
+              <div className="flex items-center gap-4 sm:pl-6">
+                <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+                  <ThumbsUp className="size-6 text-emerald-600 dark:text-emerald-400" />
+                </span>
+                <div>
+                  <p className="text-2xl font-semibold leading-none tabular-nums">
+                    {product.wouldBuyAgainPct}%
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t("wouldBuyAgainLower")}{" "}
+                    {product.ratingCount < 5 &&
+                      `(${t("fromResponses", { count: product.ratingCount })})`}
+                  </p>
+                </div>
               </div>
             </div>
 
             {Object.keys(catAvgs).length > 0 && (
-              <dl className="mt-5 grid gap-2 sm:grid-cols-2">
+              <dl className="mt-6 space-y-2.5 border-t pt-5">
                 {CATEGORY_RATING_FIELDS.filter((f) => catAvgs[f.key] != null).map((f) => (
                   <div key={f.key} className="flex items-center gap-3">
-                    <dt className="w-32 shrink-0 text-xs text-muted-foreground">
+                    <dt className="w-32 shrink-0 truncate text-xs text-muted-foreground sm:w-36">
                       {tEnum(`categoryRating.${f.key}`)}
                     </dt>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
@@ -125,7 +140,7 @@ export async function ReviewsSection({
                         style={{ width: `${(catAvgs[f.key]! / 5) * 100}%` }}
                       />
                     </div>
-                    <dd className="w-8 text-right text-xs font-medium tabular-nums">
+                    <dd className="w-7 text-right text-xs font-medium tabular-nums">
                       {catAvgs[f.key]!.toFixed(1)}
                     </dd>
                   </div>
@@ -134,7 +149,7 @@ export async function ReviewsSection({
             )}
 
             {(pros.length > 0 || cons.length > 0) && (
-              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="mt-5 grid gap-4 border-t pt-5 sm:grid-cols-2">
                 {pros.length > 0 && (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground">{t("mostMentioned")}</p>
@@ -170,10 +185,15 @@ export async function ReviewsSection({
           </div>
 
           {/* List */}
-          <div className="mt-4 space-y-3">
-            {list.data.map((r) => (
-              <ReviewCard key={r.id} review={r} canVote={signedIn} />
-            ))}
+          <div className="mt-8">
+            <p className="mb-3 text-sm font-medium text-muted-foreground">
+              {t("allReviews", { count: product.ratingCount })}
+            </p>
+            <div className="space-y-4">
+              {list.data.map((r) => (
+                <ReviewCard key={r.id} review={r} canVote={signedIn} />
+              ))}
+            </div>
           </div>
         </>
       )}

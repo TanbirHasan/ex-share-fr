@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Star } from "lucide-react";
+import { Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import { CommentThread } from "@/components/site/comment-thread";
 import { HelpfulButton } from "@/components/site/helpful-button";
 import { ReviewPhotoStrip } from "@/components/site/review-photo-strip";
@@ -13,14 +13,19 @@ import { type Review } from "@/lib/review-types";
 import { cn } from "@/lib/utils";
 
 const buyAgainClass: Record<string, string> = {
-  yes: "text-emerald-700 dark:text-emerald-400",
-  maybe: "text-amber-700 dark:text-amber-400",
-  no: "text-red-700 dark:text-red-400",
+  yes: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  maybe: "bg-muted text-muted-foreground",
+  no: "bg-red-500/10 text-red-700 dark:text-red-400",
 };
 const buyAgainKey: Record<string, string> = {
   yes: "wouldBuyAgain",
   maybe: "mightBuyAgain",
   no: "wouldNotBuyAgain",
+};
+const buyAgainIcon: Record<string, typeof ThumbsUp> = {
+  yes: ThumbsUp,
+  maybe: ThumbsUp,
+  no: ThumbsDown,
 };
 
 export function ReviewCard({ review, canVote }: { review: Review; canVote: boolean }) {
@@ -36,52 +41,67 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
   const baLabel = buyAgainKey[review.wouldBuyAgain]
     ? t(buyAgainKey[review.wouldBuyAgain])
     : "";
+  const BaIcon = buyAgainIcon[review.wouldBuyAgain];
+  const storeLabel = review.store
+    ? { text: t("boughtAt", { store: review.store.name }), href: `/stores/${review.store.slug}` }
+    : review.purchaseStore
+      ? { text: t("boughtAt", { store: review.purchaseStore }), href: null }
+      : null;
 
   return (
-    <article className="rounded-xl border bg-card p-4">
-      <header className="flex items-center gap-3">
-        <Avatar className="size-9 border">
+    <article className="rounded-xl border bg-card p-4 sm:p-5">
+      <header className="flex items-start gap-3">
+        <Avatar className="size-10 border">
           <AvatarImage src={review.author.avatarUrl ?? undefined} alt={name} />
           <AvatarFallback className="text-xs">{initials}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 truncate text-sm font-medium">
-            <Link href={`/u/${review.author.id}`} className="hover:underline">
-              {name}
-            </Link>
-            <ReputationChip score={review.author.reputation} />
-          </p>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <p className="flex items-center gap-1.5 truncate text-sm font-medium">
+              <Link href={`/u/${review.author.id}`} className="hover:underline">
+                {name}
+              </Link>
+              <ReputationChip score={review.author.reputation} />
+            </p>
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/10 px-2 py-0.5 text-sm font-semibold">
+              <Star className="size-3.5 fill-amber-400 text-amber-400" />
+              {review.rating.toFixed(1)}
+            </span>
+          </div>
           <p className="text-xs text-muted-foreground">
             {t("ownedFor", { duration: tEnum(`ownership.${review.ownershipDuration}`) })} ·{" "}
             {formatDate(review.createdAt)}
           </p>
         </div>
-        <span className="ml-auto inline-flex items-center gap-1 text-sm font-semibold">
-          <Star className="size-4 fill-amber-400 text-amber-400" />
-          {review.rating.toFixed(1)}
-        </span>
       </header>
 
-      {(review.pros.length > 0 || review.cons.length > 0) && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {review.pros.map((p) => (
-            <span
-              key={`p-${p}`}
-              className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400"
-            >
-              + {p}
-            </span>
-          ))}
-          {review.cons.map((c) => (
-            <span
-              key={`c-${c}`}
-              className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-400"
-            >
-              − {c}
-            </span>
-          ))}
-        </div>
-      )}
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        <span
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+            baClass,
+          )}
+        >
+          <BaIcon className="size-3" />
+          {baLabel}
+        </span>
+        {review.pros.map((p) => (
+          <span
+            key={`p-${p}`}
+            className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400"
+          >
+            + {p}
+          </span>
+        ))}
+        {review.cons.map((c) => (
+          <span
+            key={`c-${c}`}
+            className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-400"
+          >
+            − {c}
+          </span>
+        ))}
+      </div>
 
       {review.comment && (
         <div className="mt-3">
@@ -90,33 +110,33 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
             targetType="review"
             targetId={review.id}
             sourceLang={review.contentLang}
-            className="text-sm whitespace-pre-line text-foreground/90"
+            className="text-sm leading-relaxed whitespace-pre-line text-foreground/90"
           />
         </div>
       )}
 
       {review.images.length > 0 && <ReviewPhotoStrip images={review.images} />}
 
-      <footer className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-        <span className={cn("font-medium", baClass)}>{baLabel}</span>
-        {review.store ? (
-          <Link href={`/stores/${review.store.slug}`} className="text-muted-foreground hover:underline">
-            {t("boughtAt", { store: review.store.name })}
+      {storeLabel &&
+        (storeLabel.href ? (
+          <Link
+            href={storeLabel.href}
+            className="mt-3 inline-block text-xs text-muted-foreground hover:underline"
+          >
+            {storeLabel.text}
           </Link>
-        ) : review.purchaseStore ? (
-          <span className="text-muted-foreground">
-            {t("boughtAt", { store: review.purchaseStore })}
-          </span>
-        ) : null}
-        <span className="ml-auto flex items-center gap-3">
-          <ReportButton targetType="review" targetId={review.id} />
-          <HelpfulButton
-            reviewId={review.id}
-            count={review.helpfulCount}
-            voted={review.viewerHasVoted}
-            canVote={canVote}
-          />
-        </span>
+        ) : (
+          <p className="mt-3 text-xs text-muted-foreground">{storeLabel.text}</p>
+        ))}
+
+      <footer className="mt-3 flex items-center gap-3 border-t pt-3 text-xs">
+        <ReportButton targetType="review" targetId={review.id} />
+        <HelpfulButton
+          reviewId={review.id}
+          count={review.helpfulCount}
+          voted={review.viewerHasVoted}
+          canVote={canVote}
+        />
       </footer>
 
       <CommentThread targetType="review" targetId={review.id} />

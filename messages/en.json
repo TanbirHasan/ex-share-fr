@@ -729,6 +729,8 @@
     "outOfFive": "/ 5",
     "reviewCount": "{count, plural, one {# review} other {# reviews}}",
     "wouldBuyAgainLower": "would buy again",
+    "fromResponses": "from {count, plural, one {# response} other {# responses}}",
+    "allReviews": "All reviews ({count})",
     "mostMentioned": "Most mentioned",
     "commonComplaints": "Common complaints",
     "anonUser": "ExperienceHub user",
