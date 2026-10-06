@@ -67,7 +67,7 @@ export function SiteFooter() {
       <div className="border-t">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted-foreground sm:flex-row">
           <p>
-            © {new Date().getFullYear()} ExperienceHub. {t("built")}
+            © {new Date().getFullYear()} KinarAgey. {t("built")}
           </p>
           <p>{t("tagline")}</p>
         </div>

@@ -39,7 +39,7 @@
     "recentActivity": "Recent community activity",
     "recentActivitySub": "The latest from real owners across Bangladesh.",
     "recentlyViewed": "Recently viewed",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "activityVerb": {
       "review": "Reviewed",
       "problem": "Reported a problem",
@@ -104,10 +104,10 @@
     "home": "Go home"
   },
   "legal": {
-    "disclaimer": "ExperienceHub is a community project and this is starter text, not legal advice.",
+    "disclaimer": "KinarAgey is a community project and this is starter text, not legal advice.",
     "about": {
-      "title": "About ExperienceHub",
-      "p1": "ExperienceHub is a community knowledge base of real product ownership experiences in Bangladesh — honest reviews, the problems owners actually hit, and the fixes that worked.",
+      "title": "About KinarAgey",
+      "p1": "KinarAgey is a community knowledge base of real product ownership experiences in Bangladesh — honest reviews, the problems owners actually hit, and the fixes that worked.",
       "p2": "Anyone can read. Sign in to add a review, report a problem, share a solution, or ask the owners a question. Content from brand-new accounts is briefly held for review; after that it publishes straight away.",
       "p3": "It's built and run by one person, in the open, as an experiment. Feedback and corrections are welcome."
     },
@@ -119,7 +119,7 @@
     },
     "terms": {
       "title": "Terms of use",
-      "p1": "Use the site lawfully and in good faith. You keep ownership of what you post, but you grant ExperienceHub the right to display and distribute it on the platform.",
+      "p1": "Use the site lawfully and in good faith. You keep ownership of what you post, but you grant KinarAgey the right to display and distribute it on the platform.",
       "p2": "Information here is community-contributed and provided as-is — verify anything important (prices, warranty terms, specifications) with the seller or manufacturer before you rely on it.",
       "p3": "Accounts that abuse the platform may be suspended or removed. These terms may change; continued use means you accept the current version."
     },
@@ -460,7 +460,7 @@
       "good": "Write from real use — how long you've owned it, what broke, what you'd tell a friend.",
       "moderated": "Your first few contributions are checked by a moderator before they appear publicly.",
       "reputation": "Helpful contributions build your reputation and unlock instant publishing.",
-      "more": "How ExperienceHub works"
+      "more": "How KinarAgey works"
     }
   },
   "requestForm": {
@@ -615,7 +615,7 @@
     "responseTimeTitle": "Response time",
     "outcomeTitle": "Outcome",
     "warrantyTitle": "Warranty",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "warrantyChip": "Warranty: {value}",
     "serviced": "Serviced: {issue}",
     "technician": "Technician {rating}/5",
@@ -664,7 +664,7 @@
     "heading": "Questions & answers",
     "headingCount": "Questions & answers ({count})",
     "noQuestionsYet": "No questions yet — ask the first one.",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "somethingWrong": "Something went wrong.",
     "deleteQuestion": "Delete question",
     "asked": "asked {date}",
@@ -685,7 +685,7 @@
     "couldNotPost": "Could not post your question."
   },
   "solutions": {
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "deleteSolution": "Delete solution",
     "workedForMe": "Worked for me",
     "didntWork": "Didn’t work",
@@ -710,7 +710,7 @@
     "hide": "Hide comments",
     "loading": "Loading…",
     "none": "No comments yet.",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "deleteComment": "Delete comment",
     "placeholder": "Add a comment…",
     "post": "Post",
@@ -733,7 +733,7 @@
     "allReviews": "All reviews ({count})",
     "mostMentioned": "Most mentioned",
     "commonComplaints": "Common complaints",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "ownedFor": "Owned {duration}",
     "boughtAt": "Bought at {store}",
     "wouldBuyAgain": "Would buy again",
@@ -743,7 +743,7 @@
   "profile": {
     "contributor": "Contributor",
     "notFound": "Profile not found",
-    "anonUser": "ExperienceHub user",
+    "anonUser": "KinarAgey user",
     "staff": "Staff",
     "pointsJoined": "· {points} points · joined {date}",
     "reviews": "Reviews",
@@ -793,7 +793,7 @@
     "metaSearch": "Search",
     "metaSearchFor": "Search: {q}",
     "eyebrow": "Search",
-    "title": "Search ExperienceHub",
+    "title": "Search KinarAgey",
     "lede": "Look up a product, model, brand, or a problem like “AC not cooling”.",
     "resultsFor": "Results for “{query}”",
     "matches": "{count, plural, one {# match} other {# matches}}",
@@ -1132,7 +1132,7 @@
     "h2Body": "See the faults owners hit — and when they started.",
     "h3Title": "Fixes that worked",
     "h3Body": "Solutions ranked by the people they actually helped.",
-    "loginTitle": "Sign in to ExperienceHub",
+    "loginTitle": "Sign in to KinarAgey",
     "loginSubtitle": "Reading is open to everyone. Sign in to contribute your experience.",
     "continueWithGoogle": "Continue with Google",
     "or": "or",
@@ -1158,7 +1158,7 @@
     "metaTitle": "How it works",
     "eyebrow": "How it works",
     "title": "Real ownership experience, from people in Bangladesh",
-    "intro": "ExperienceHub collects what actually happens after you buy — how products hold up, what goes wrong, and how it gets fixed — so the next buyer decides with real information.",
+    "intro": "KinarAgey collects what actually happens after you buy — how products hold up, what goes wrong, and how it gets fixed — so the next buyer decides with real information.",
     "steps": {
       "searchTitle": "Search for a product",
       "searchBody": "Find the exact model you're considering. Every product page gathers ratings, reported problems, fixes and real prices in one place.",

@@ -27,8 +27,8 @@ const notoBengali = Noto_Sans_Bengali({
 
 export const metadata: Metadata = {
   title: {
-    default: "ExperienceHub — Real product experiences from Bangladesh",
-    template: "%s · ExperienceHub",
+    default: "KinarAgey — Real product experiences from Bangladesh",
+    template: "%s · KinarAgey",
   },
   description:
     "Honest reviews, common problems, and fixes that actually worked — from real owners in Bangladesh.",

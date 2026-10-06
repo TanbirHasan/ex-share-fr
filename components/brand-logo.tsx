@@ -18,7 +18,7 @@ export function BrandLogo({
       </span>
       <span className="flex flex-col leading-none">
         <span className="text-[17px] font-semibold tracking-tight text-foreground">
-          Experience<span className="text-primary">Hub</span>
+          Kinar<span className="text-primary">Agey</span>
         </span>
         {showTagline && (
           <span className="mt-1 text-[11px] font-medium text-muted-foreground">

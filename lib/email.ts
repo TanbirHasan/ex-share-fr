@@ -2,7 +2,7 @@ import "server-only";
 import { Resend } from "resend";
 
 const apiKey = process.env.RESEND_API_KEY;
-const from = process.env.RESEND_FROM ?? "ExperienceHub <onboarding@resend.dev>";
+const from = process.env.RESEND_FROM ?? "KinarAgey <onboarding@resend.dev>";
 const resend = apiKey ? new Resend(apiKey) : null;
 
 function logLink(email: string, url: string, note: string) {
@@ -19,8 +19,8 @@ function magicLinkHtml(url: string, expiresAt: string): string {
       <tr><td align="center">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:440px;background:#ffffff;border:1px solid #dce4e0;border-radius:14px;padding:32px">
           <tr><td>
-            <p style="margin:0 0 4px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#0f766e">ExperienceHub</p>
-            <h1 style="margin:8px 0 0;font-size:20px;font-weight:600">Sign in to ExperienceHub</h1>
+            <p style="margin:0 0 4px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#0f766e">KinarAgey</p>
+            <h1 style="margin:8px 0 0;font-size:20px;font-weight:600">Sign in to KinarAgey</h1>
             <p style="margin:12px 0 24px;font-size:14px;line-height:1.6;color:#47574f">
               Click the button below to finish signing in. This link works once and expires ${expires}.
             </p>
@@ -55,9 +55,9 @@ export async function sendMagicLink(
     const { error } = await resend.emails.send({
       from,
       to: email,
-      subject: "Your ExperienceHub sign-in link",
+      subject: "Your KinarAgey sign-in link",
       html: magicLinkHtml(url, expiresAt),
-      text: `Sign in to ExperienceHub:\n${url}\n\nThis link works once and expires ${new Date(
+      text: `Sign in to KinarAgey:\n${url}\n\nThis link works once and expires ${new Date(
         expiresAt,
       ).toUTCString()}. If you didn't request it, ignore this email.`,
     });

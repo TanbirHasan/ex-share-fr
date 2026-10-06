@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("brands");
   return {
     title: t("metaTitle"),
-    description: "Manufacturers covered on ExperienceHub, with community product counts.",
+    description: "Manufacturers covered on KinarAgey, with community product counts.",
   };
 }
 
