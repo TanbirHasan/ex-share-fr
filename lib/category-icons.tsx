@@ -1,15 +1,19 @@
 import {
   AirVent,
+  BatteryCharging,
   Boxes,
   CookingPot,
   Fan,
   Headphones,
+  Laptop,
   Microwave,
   Refrigerator,
   Scissors,
   Smartphone,
+  Speaker,
   Tv,
   WashingMachine,
+  Watch,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,6 +34,10 @@ const map: Record<string, LucideIcon> = {
   headphones: Headphones,
   "air-fryer": CookingPot,
   "sewing-machine": Scissors,
+  laptop: Laptop,
+  smartwatch: Watch,
+  "power-bank": BatteryCharging,
+  speaker: Speaker,
 };
 
 export function categoryIcon(slug: string): LucideIcon {
