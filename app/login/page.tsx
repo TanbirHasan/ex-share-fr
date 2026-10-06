@@ -12,6 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+// Magic-link sign-in is OFF for now: Resend's free sandbox sender only
+// delivers to our own account email, so real users can't receive the link.
+// Re-enable once a domain is purchased + verified in Resend (update
+// RESEND_FROM too). Matching flag in app/api/auth/magic-link/route.ts and
+// backend/src/modules/internal/internal.routes.ts.
+const MAGIC_LINK_ENABLED = false;
+
 function LoginForm() {
   const t = useTranslations("auth");
   const params = useSearchParams();
@@ -84,34 +91,38 @@ function LoginForm() {
         {t("continueWithGoogle")}
       </Button>
 
-      <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        <span className="h-px flex-1 bg-border" />
-        {t("or")}
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      <form onSubmit={sendLink} className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="email">{t("emailLabel")}</Label>
-          <div className="relative">
-            <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder={t("emailPlaceholder")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-11 pl-9"
-            />
+      {MAGIC_LINK_ENABLED && (
+        <>
+          <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <span className="h-px flex-1 bg-border" />
+            {t("or")}
+            <span className="h-px flex-1 bg-border" />
           </div>
-        </div>
-        <Button type="submit" size="lg" className="h-11 w-full" disabled={loading}>
-          {loading ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
-          {t("sendMagicLink")}
-        </Button>
-      </form>
+
+          <form onSubmit={sendLink} className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">{t("emailLabel")}</Label>
+              <div className="relative">
+                <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder={t("emailPlaceholder")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11 pl-9"
+                />
+              </div>
+            </div>
+            <Button type="submit" size="lg" className="h-11 w-full" disabled={loading}>
+              {loading ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+              {t("sendMagicLink")}
+            </Button>
+          </form>
+        </>
+      )}
 
       <p className="text-center text-xs text-muted-foreground">{t("termsLine")}</p>
     </div>

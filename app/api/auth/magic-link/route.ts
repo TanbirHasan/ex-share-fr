@@ -4,7 +4,20 @@ import { safeCallbackUrl } from "@/lib/safe-redirect";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
 
+// Magic-link sign-in is OFF for now: Resend's free sandbox sender only
+// delivers to our own account email, so real users can't receive the link.
+// Re-enable once a domain is purchased + verified in Resend (update
+// RESEND_FROM too). Matching flag in app/login/page.tsx and
+// backend/src/modules/internal/internal.routes.ts.
+const MAGIC_LINK_ENABLED = false;
+
 export async function POST(req: Request) {
+  if (!MAGIC_LINK_ENABLED) {
+    return NextResponse.json(
+      { error: "Email sign-in is temporarily unavailable. Please use Google." },
+      { status: 503 },
+    );
+  }
   let email = "";
   let callbackUrl = "/dashboard";
   try {
