@@ -152,7 +152,8 @@
       "followed_new_solution": "{title}-এর জন্য নতুন সমাধান",
       "price_drop": "{title} এর দাম {price} হয়েছে",
       "pending_content_submitted": "নতুন {kind} পর্যালোচনার অপেক্ষায়: {title}",
-      "product_request_submitted": "নতুন পণ্যের অনুরোধ: {title}"
+      "product_request_submitted": "নতুন পণ্যের অনুরোধ: {title}",
+      "product_request_fulfilled": "{title} যোগ করা হয়েছে — আপনার পোস্ট প্রকাশিত হয়েছে"
     },
     "bell": {
       "title": "নোটিফিকেশন",
@@ -343,6 +344,7 @@
     },
     "form": {
       "productCreated": "পণ্য তৈরি হয়েছে",
+      "productCreatedAndLinked": "পণ্য তৈরি হয়েছে এবং অনুরোধ সম্পন্ন হয়েছে",
       "productSaved": "পণ্য সংরক্ষণ হয়েছে",
       "name": "নাম",
       "slug": "স্লাগ",
@@ -477,6 +479,14 @@
     "category": "ক্যাটাগরি",
     "categoryHint": "ঐচ্ছিক — সাজাতে সাহায্য করে।",
     "notSure": "নিশ্চিত নই",
+    "shareExperience": {
+      "title": "আপনার কাছে কি এটি আছে?",
+      "lede": "এখনই আপনার রিভিউ, সমস্যা বা সার্ভিস অভিজ্ঞতা যোগ করুন — আমরা পণ্যটি যোগ করার সাথে সাথেই এটি প্রকাশিত হবে, আপনাকে আবার আসতে হবে না।",
+      "none": "শুধু অনুরোধ করুন",
+      "review": "একটি রিভিউ যোগ করুন",
+      "problem": "একটি সমস্যা জানান",
+      "service": "সার্ভিস অভিজ্ঞতা শেয়ার করুন"
+    },
     "submit": "অনুরোধ পাঠান",
     "thanks": "অনুরোধ পাঠানো হয়েছে",
     "alreadyRequested": "আপনি ইতিমধ্যে এটি চেয়েছেন",
@@ -984,11 +994,16 @@
       "noneWithStatus": "কোনো {status} অনুরোধ নেই।",
       "by": "{name} এর অনুরোধ",
       "someone": "একজন",
-      "markAdded": "যোগ করা হয়েছে চিহ্নিত করুন",
-      "markedAdded": "যোগ করা হয়েছে বলে চিহ্নিত",
+      "createProduct": "পণ্য তৈরি করুন",
+      "linkExisting": "বিদ্যমান পণ্যের সাথে যুক্ত করুন",
+      "linkExistingPlaceholder": "পণ্য খুঁজুন…",
+      "linkedSuccess": "অনুরোধ যুক্ত ও সম্পন্ন হয়েছে",
       "reject": "প্রত্যাখ্যান",
       "markedRejected": "অনুরোধ প্রত্যাখ্যান করা হয়েছে",
-      "failed": "ব্যর্থ হয়েছে"
+      "failed": "ব্যর্থ হয়েছে",
+      "draftReview": "রিভিউ খসড়া",
+      "draftProblem": "সমস্যার খসড়া",
+      "draftService": "সার্ভিস খসড়া"
     },
     "home": {
       "welcomeBack": "স্বাগতম, {name}",

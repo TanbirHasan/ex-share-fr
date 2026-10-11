@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { saveProduct } from "@/app/dashboard/(admin)/catalog/actions";
+import { fulfillRequest } from "@/app/dashboard/(admin)/requests/actions";
 import { Field, TextareaField } from "@/components/dashboard/catalog/field";
 import { SpecEditor } from "@/components/dashboard/catalog/spec-editor";
 import { Button } from "@/components/ui/button";
@@ -25,10 +26,12 @@ export function ProductForm({
   product,
   categories,
   brands,
+  requestId,
 }: {
   product?: Product;
   categories: Category[];
   brands: Brand[];
+  requestId?: string;
 }) {
   const router = useRouter();
   const t = useTranslations("catalog.form");
@@ -39,13 +42,20 @@ export function ProductForm({
   useEffect(() => {
     if (!state.ok) return;
     if (!product && state.id) {
-      toast.success(t("productCreated"));
+      if (requestId) {
+        fulfillRequest(requestId, state.id).then((res) => {
+          if (res.ok) toast.success(t("productCreatedAndLinked"));
+          else toast.error(res.error ?? t("productCreated"));
+        });
+      } else {
+        toast.success(t("productCreated"));
+      }
       router.push(`/dashboard/catalog/${state.id}`);
     } else {
       toast.success(t("productSaved"));
       router.refresh();
     }
-  }, [state, product, router, t]);
+  }, [state, product, requestId, router, t]);
 
   return (
     <form action={formAction} className="space-y-5">

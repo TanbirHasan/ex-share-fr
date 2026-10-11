@@ -14,6 +14,8 @@ type ProductRequest = {
   status: "open" | "added" | "rejected";
   createdAt: string;
   requester: { id: string; name: string | null } | null;
+  contentType: "review" | "problem" | "service" | null;
+  contentPreview: string | null;
 };
 
 type List = {
@@ -91,6 +93,23 @@ export default async function RequestsPage({
               </div>
 
               <p className="mt-2 text-sm whitespace-pre-line text-foreground">{req.rawText}</p>
+
+              {req.contentType && (
+                <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs">
+                  <span className="font-medium text-primary">
+                    {t(
+                      req.contentType === "review"
+                        ? "draftReview"
+                        : req.contentType === "problem"
+                          ? "draftProblem"
+                          : "draftService",
+                    )}
+                  </span>
+                  {req.contentPreview && (
+                    <span className="ml-1.5 text-muted-foreground">{req.contentPreview}</span>
+                  )}
+                </div>
+              )}
 
               {status === "open" && (
                 <div className="mt-3">

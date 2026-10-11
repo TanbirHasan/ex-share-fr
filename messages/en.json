@@ -152,7 +152,8 @@
       "followed_new_solution": "New solution for {title}",
       "price_drop": "{title} dropped to {price}",
       "pending_content_submitted": "New {kind} awaiting review: {title}",
-      "product_request_submitted": "New product request: {title}"
+      "product_request_submitted": "New product request: {title}",
+      "product_request_fulfilled": "{title} was added — your post is live"
     },
     "bell": {
       "title": "Notifications",
@@ -343,6 +344,7 @@
     },
     "form": {
       "productCreated": "Product created",
+      "productCreatedAndLinked": "Product created and request fulfilled",
       "productSaved": "Product saved",
       "name": "Name",
       "slug": "Slug",
@@ -477,6 +479,14 @@
     "category": "Category",
     "categoryHint": "Optional — helps us file it.",
     "notSure": "Not sure",
+    "shareExperience": {
+      "title": "Do you already own it?",
+      "lede": "Add your review, problem, or service experience now — it goes live the moment we add the product, so you won't need to come back.",
+      "none": "Just request it",
+      "review": "Add a review",
+      "problem": "Report a problem",
+      "service": "Share a service experience"
+    },
     "submit": "Send request",
     "thanks": "Request sent",
     "alreadyRequested": "You've already asked for this",
@@ -984,11 +994,16 @@
       "noneWithStatus": "No {status} requests.",
       "by": "by {name}",
       "someone": "someone",
-      "markAdded": "Mark added",
-      "markedAdded": "Marked as added",
+      "createProduct": "Create product",
+      "linkExisting": "Link existing",
+      "linkExistingPlaceholder": "Search products…",
+      "linkedSuccess": "Request linked and fulfilled",
       "reject": "Reject",
       "markedRejected": "Request rejected",
-      "failed": "Failed"
+      "failed": "Failed",
+      "draftReview": "Review draft",
+      "draftProblem": "Problem draft",
+      "draftService": "Service draft"
     },
     "home": {
       "welcomeBack": "Welcome back, {name}",

@@ -7,8 +7,13 @@ import type { Brand, Category } from "@/lib/catalog-types";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewProductPage() {
-  const [t, categories, brands] = await Promise.all([
+export default async function NewProductPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ requestId?: string }>;
+}) {
+  const [{ requestId }, t, categories, brands] = await Promise.all([
+    searchParams,
     getTranslations("dashboard.admin"),
     apiGet<Category[]>("/api/v1/categories"),
     apiGet<Brand[]>("/api/v1/brands"),
@@ -32,7 +37,7 @@ export default async function NewProductPage() {
           .
         </p>
       ) : (
-        <ProductForm categories={categories} brands={brands} />
+        <ProductForm categories={categories} brands={brands} requestId={requestId} />
       )}
     </div>
   );

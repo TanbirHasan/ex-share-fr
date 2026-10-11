@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { submitProductRequest } from "@/app/(site)/contribute/request-actions";
+import { RequestContentFields } from "@/components/site/request-content-fields";
 import { FormField } from "@/components/site/review-inputs";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -76,6 +77,8 @@ export function RequestForm({
           </SelectContent>
         </Select>
       </FormField>
+
+      <RequestContentFields />
 
       {state.error && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
