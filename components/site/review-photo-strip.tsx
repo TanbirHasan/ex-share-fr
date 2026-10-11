@@ -15,10 +15,14 @@ export function ReviewPhotoStrip({ images }: { images: { id: string; url: string
             key={img.id}
             type="button"
             onClick={() => setActive(img.url)}
-            className="size-16 overflow-hidden rounded-lg border transition-opacity hover:opacity-90"
+            className="group size-16 overflow-hidden rounded-lg border transition-colors hover:border-primary/40"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img.url} alt="" className="size-full object-cover" />
+            <img
+              src={img.url}
+              alt=""
+              className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            />
           </button>
         ))}
       </div>

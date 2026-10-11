@@ -49,7 +49,7 @@ export function ReviewCard({ review, canVote }: { review: Review; canVote: boole
       : null;
 
   return (
-    <article className="rounded-xl border bg-card p-4 sm:p-5">
+    <article className="card-elevated rounded-xl border border-border/80 bg-card p-4 sm:p-5">
       <header className="flex items-start gap-3">
         <Avatar className="size-10 border">
           <AvatarImage src={review.author.avatarUrl ?? undefined} alt={name} />

@@ -34,6 +34,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import type { ComponentProps } from "react";
 
 const map: Record<string, LucideIcon> = {
   refrigerator: Refrigerator,
@@ -93,4 +94,12 @@ const map: Record<string, LucideIcon> = {
 
 export function categoryIcon(slug: string): LucideIcon {
   return map[slug] ?? Boxes;
+}
+
+export function CategoryIconGlyph({
+  slug,
+  ...props
+}: ComponentProps<LucideIcon> & { slug: string }) {
+  const Icon = map[slug] ?? Boxes;
+  return <Icon {...props} />;
 }

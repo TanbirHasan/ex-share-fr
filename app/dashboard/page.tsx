@@ -77,13 +77,13 @@ export default async function DashboardOverview() {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map(({ label, value, icon: Icon, href }) => (
-          <Card key={label}>
+          <Card key={label} className="card-elevated border-border/80">
             <CardContent className="flex items-center gap-4 p-5">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Icon className="size-5" />
               </span>
               <div>
-                <p className="text-2xl font-semibold tabular-nums">{value}</p>
+                <p className="text-2xl font-bold tabular-nums">{value}</p>
                 <Link
                   href={href}
                   className="text-xs text-muted-foreground hover:text-foreground"

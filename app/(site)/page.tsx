@@ -73,14 +73,16 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="border-b bg-gradient-to-b from-primary/[0.06] to-background">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
+      <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/[0.08] to-background">
+        <div className="brand-grid pointer-events-none absolute inset-0 opacity-35" />
+        <div className="pointer-events-none absolute -top-32 right-0 size-96 rounded-full bg-primary/[0.14] blur-3xl" />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
               <Sparkles className="size-3.5 text-primary" />
               {t("eyebrow")}
             </span>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            <h1 className="mt-5 text-5xl font-bold tracking-tighter text-foreground lg:text-6xl">
               {t("titleLead")} <span className="text-primary">{t("titleAccent")}</span>
             </h1>
             <p className="mt-4 max-w-lg text-lg text-muted-foreground">{t("subtitle")}</p>
@@ -91,7 +93,7 @@ export default async function HomePage() {
                 <Input
                   name="q"
                   placeholder={t("searchPlaceholder")}
-                  className="h-12 pl-10 text-base"
+                  className="h-12 bg-background/95 pl-10 text-base shadow-sm backdrop-blur"
                 />
               </div>
               <Button type="submit" size="lg" className="h-12 px-6">
@@ -105,7 +107,7 @@ export default async function HomePage() {
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
-                  className="rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                  className="rounded-full border border-primary/15 bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-primary/[0.08] hover:text-foreground"
                 >
                   {s}
                 </Link>
@@ -113,7 +115,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <Card className="self-start">
+          <Card className="card-elevated self-start border-border/80 bg-card/95 backdrop-blur">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-foreground">
@@ -126,9 +128,11 @@ export default async function HomePage() {
               </div>
               <dl className="mt-5 grid grid-cols-2 gap-4">
                 {statCards.map(({ key, icon: Icon }) => (
-                  <div key={key} className="rounded-xl border bg-muted/40 p-4">
-                    <Icon className="size-4 text-primary" />
-                    <dd className="mt-2 text-xl font-semibold text-foreground tabular-nums">
+                  <div key={key} className="card-elevated rounded-xl border border-border/80 bg-card p-4">
+                    <span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Icon className="size-4" />
+                    </span>
+                    <dd className="mt-3 text-2xl font-bold text-foreground tabular-nums">
                       {stats[key].toLocaleString()}
                     </dd>
                     <dt className="text-xs text-muted-foreground">{tStats(key)}</dt>
@@ -155,7 +159,7 @@ export default async function HomePage() {
                 <Link
                   key={c.id}
                   href={`/products?category=${c.slug}`}
-                  className="group flex items-center gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent"
+                  className="card-elevated group flex items-center gap-3 rounded-xl border border-border/80 bg-card p-4 transition-colors hover:card-elevated-hover hover:bg-accent"
                 >
                   <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Icon className="size-5" />

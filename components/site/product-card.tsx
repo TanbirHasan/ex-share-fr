@@ -5,25 +5,24 @@ import { CompareButton } from "@/components/site/compare-button";
 import { RatingStars } from "@/components/site/rating-stars";
 import { SaveButton } from "@/components/site/save-button";
 import { formatPrice } from "@/lib/format";
-import { categoryIcon } from "@/lib/category-icons";
+import { CategoryIconGlyph } from "@/lib/category-icons";
 import { localizedName } from "@/lib/i18n-content";
 import type { Locale } from "@/i18n/config";
 import type { ProductListItem } from "@/lib/catalog-types";
 
 export function ProductCard({ product }: { product: ProductListItem }) {
   const locale = useLocale() as Locale;
-  const CategoryIcon = categoryIcon(product.category.slug);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-xl border bg-card transition-colors hover:border-primary/40">
+    <div className="card-elevated group relative flex flex-col overflow-hidden rounded-xl border border-border/80 bg-card hover:card-elevated-hover">
       <div className="absolute top-2 right-2 z-10 flex gap-1">
         <SaveButton productId={product.id} showLabel={false} className="backdrop-blur" />
         <CompareButton slug={product.slug} name={product.name} className="backdrop-blur" />
       </div>
       <Link href={`/products/${product.slug}`} className="flex flex-1 flex-col">
-        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-muted">
-          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground shadow-sm backdrop-blur">
-            <CategoryIcon className="size-3" />
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gradient-to-b from-muted/40 to-muted/10 p-4">
+          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full border border-primary/15 bg-primary/[0.08] px-2 py-0.5 text-[11px] font-medium text-foreground shadow-sm backdrop-blur">
+            <CategoryIconGlyph slug={product.category.slug} className="size-3" />
             {localizedName(locale, product.category)}
           </span>
           {product.primaryImage ? (
@@ -31,15 +30,21 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             <img
               src={product.primaryImage}
               alt=""
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
             />
           ) : (
-            <ImageOff className="size-6 text-muted-foreground" />
+            <div className="relative flex size-20 items-center justify-center text-muted-foreground">
+              <CategoryIconGlyph
+                slug={product.category.slug}
+                className="absolute size-16 opacity-10"
+              />
+              <ImageOff className="relative size-6" />
+            </div>
           )}
         </div>
         <div className="flex flex-1 flex-col p-4">
           <p className="text-xs font-medium text-muted-foreground">{product.brand.name}</p>
-          <h3 className="mt-0.5 line-clamp-2 text-sm font-medium text-foreground group-hover:text-primary">
+          <h3 className="mt-0.5 line-clamp-2 text-sm font-medium text-foreground transition-colors group-hover:text-primary">
             {product.name}
           </h3>
           <div className="mt-2">

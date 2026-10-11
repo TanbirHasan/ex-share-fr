@@ -27,6 +27,7 @@ import { ReviewsSection } from "@/components/site/reviews-section";
 import { Badge } from "@/components/ui/badge";
 import type { Locale } from "@/i18n/config";
 import { ApiError, apiGet } from "@/lib/api";
+import { CategoryIconGlyph } from "@/lib/category-icons";
 import type { Product } from "@/lib/catalog-types";
 import { formatPrice } from "@/lib/format";
 import { localizedName } from "@/lib/i18n-content";
@@ -99,23 +100,29 @@ export default async function ProductPage({
       <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
         {/* Gallery */}
         <div className="space-y-3">
-          <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border bg-muted">
+          <div className="card-elevated flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-border/80 bg-gradient-to-b from-muted/40 to-muted/10 p-5">
             {p.primaryImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.primaryImage} alt={p.name} className="h-full w-full object-cover" />
+              <img src={p.primaryImage} alt={p.name} className="h-full w-full object-contain" />
             ) : (
-              <ImageOff className="size-8 text-muted-foreground" />
+              <div className="relative flex size-28 items-center justify-center text-muted-foreground">
+                <CategoryIconGlyph
+                  slug={p.category.slug}
+                  className="absolute size-24 opacity-10"
+                />
+                <ImageOff className="relative size-8" />
+              </div>
             )}
           </div>
           {p.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {p.images.slice(0, 8).map((img) => (
+              {p.images.slice(0, 8).map((img, index) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={img.id}
                   src={img.url}
                   alt=""
-                  className="aspect-square w-full rounded-lg border object-cover"
+                  className={`aspect-square w-full rounded-lg border bg-card object-cover transition-all hover:border-primary/40 hover:ring-2 hover:ring-primary/20 ${index === 0 ? "ring-2 ring-primary/35" : ""}`}
                 />
               ))}
             </div>
