@@ -1,12 +1,14 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { saveProduct } from "@/app/dashboard/(admin)/catalog/actions";
+import { saveProduct, type AiProductDraft } from "@/app/dashboard/(admin)/catalog/actions";
 import { fulfillRequest } from "@/app/dashboard/(admin)/requests/actions";
+import { AiAssist } from "@/components/dashboard/catalog/ai-assist";
+import { BrandSelect } from "@/components/dashboard/catalog/brand-select";
 import { Field, TextareaField } from "@/components/dashboard/catalog/field";
 import { SpecEditor } from "@/components/dashboard/catalog/spec-editor";
 import { Button } from "@/components/ui/button";
@@ -21,6 +23,28 @@ import {
 import type { Locale } from "@/i18n/config";
 import { localizedName } from "@/lib/i18n-content";
 import { PRODUCT_STATUSES, type Brand, type Category, type Product } from "@/lib/catalog-types";
+
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function findByName<T extends { id: string }>(
+  items: T[],
+  name: (item: T) => string,
+  guess: string | undefined,
+): T | undefined {
+  if (!guess) return undefined;
+  const g = guess.trim().toLowerCase();
+  if (!g) return undefined;
+  return (
+    items.find((i) => name(i).toLowerCase() === g) ??
+    items.find((i) => name(i).toLowerCase().includes(g) || g.includes(name(i).toLowerCase()))
+  );
+}
 
 export function ProductForm({
   product,
@@ -38,6 +62,18 @@ export function ProductForm({
   const tEnum = useTranslations("enums");
   const locale = useLocale() as Locale;
   const [state, formAction, pending] = useActionState(saveProduct, { ok: false });
+  const [draft, setDraft] = useState<AiProductDraft | null>(null);
+  const [draftVersion, setDraftVersion] = useState(0);
+
+  function applyDraft(d: AiProductDraft) {
+    setDraft(d);
+    setDraftVersion((v) => v + 1);
+  }
+
+  const matchedCategoryId = draft
+    ? findByName(categories, (c) => c.nameEn, draft.category)?.id
+    : undefined;
+  const matchedBrandId = draft ? findByName(brands, (b) => b.name, draft.brand)?.id : undefined;
 
   useEffect(() => {
     if (!state.ok) return;
@@ -61,25 +97,27 @@ export function ProductForm({
     <form action={formAction} className="space-y-5">
       {product && <input type="hidden" name="id" value={product.id} />}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      {!product && <AiAssist onApply={applyDraft} />}
+
+      <div key={draftVersion} className="grid gap-4 sm:grid-cols-2">
         <Field
           label={t("name")}
           name="name"
-          defaultValue={product?.name}
+          defaultValue={product?.name ?? draft?.name ?? ""}
           placeholder="Walton Smart Fridge WNM-2A3"
           required
         />
         <Field
           label={t("slug")}
           name="slug"
-          defaultValue={product?.slug}
+          defaultValue={product?.slug ?? (draft?.name ? slugify(draft.name) : "")}
           placeholder="walton-wnm-2a3"
           required
         />
         <Field
           label={t("modelNumber")}
           name="modelNo"
-          defaultValue={product?.modelNo ?? ""}
+          defaultValue={product?.modelNo ?? draft?.modelNo ?? ""}
           placeholder="WNM-2A3"
         />
         <div className="space-y-1.5">
@@ -100,7 +138,7 @@ export function ProductForm({
 
         <div className="space-y-1.5">
           <Label htmlFor="categoryId">{t("category")}</Label>
-          <Select name="categoryId" defaultValue={product?.categoryId} required>
+          <Select name="categoryId" defaultValue={product?.categoryId ?? matchedCategoryId} required>
             <SelectTrigger id="categoryId" className="w-full">
               <SelectValue placeholder={t("selectCategory")} />
             </SelectTrigger>
@@ -112,21 +150,26 @@ export function ProductForm({
               ))}
             </SelectContent>
           </Select>
+          {draft && draft.category && !matchedCategoryId && (
+            <p className="text-xs text-amber-600 dark:text-amber-500">
+              {t("aiSuggested")}: {draft.category}
+            </p>
+          )}
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="brandId">{t("brand")}</Label>
-          <Select name="brandId" defaultValue={product?.brandId} required>
-            <SelectTrigger id="brandId" className="w-full">
-              <SelectValue placeholder={t("selectBrand")} />
-            </SelectTrigger>
-            <SelectContent>
-              {brands.map((b) => (
-                <SelectItem key={b.id} value={b.id}>
-                  {b.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <BrandSelect
+            brands={brands}
+            defaultValue={product?.brandId ?? matchedBrandId}
+            placeholder={t("selectBrand")}
+            searchPlaceholder={t("searchBrand")}
+            emptyLabel={t("noBrandFound")}
+          />
+          {draft && draft.brand && !matchedBrandId && (
+            <p className="text-xs text-amber-600 dark:text-amber-500">
+              {t("aiSuggested")}: {draft.brand}
+            </p>
+          )}
         </div>
 
         <Field
@@ -134,26 +177,28 @@ export function ProductForm({
           name="priceMin"
           type="number"
           min={0}
-          defaultValue={product?.priceMin ?? ""}
+          defaultValue={product?.priceMin ?? draft?.priceMin ?? ""}
         />
         <Field
           label={t("priceMax")}
           name="priceMax"
           type="number"
           min={0}
-          defaultValue={product?.priceMax ?? ""}
+          defaultValue={product?.priceMax ?? draft?.priceMax ?? ""}
         />
       </div>
 
-      <TextareaField
-        label={t("warrantyFreeText")}
-        name="warrantyText"
-        defaultValue={product?.warrantyText ?? ""}
-        rows={2}
-        placeholder={t("warrantyPlaceholder")}
-      />
+      <div key={draftVersion}>
+        <TextareaField
+          label={t("warrantyFreeText")}
+          name="warrantyText"
+          defaultValue={product?.warrantyText ?? draft?.warrantyText ?? ""}
+          rows={2}
+          placeholder={t("warrantyPlaceholder")}
+        />
+      </div>
 
-      <SpecEditor initial={product?.spec} />
+      <SpecEditor key={draftVersion} initial={product?.spec ?? draft?.specs} />
 
       {state.error && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">

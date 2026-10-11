@@ -6,6 +6,21 @@ import type { Product } from "@/lib/catalog-types";
 
 export type ProductFormState = { ok: boolean; error?: string; id?: string };
 
+export type AiProductDraft = {
+  name?: string;
+  brand?: string;
+  modelNo?: string;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  warrantyText?: string;
+  specs?: Record<string, string>;
+  sources: { title: string; url: string }[];
+};
+export type AiLookupState =
+  | { ok: true; draft: AiProductDraft }
+  | { ok: false; error: string };
+
 const LIST = "/dashboard/catalog";
 
 function str(fd: FormData, k: string) {
@@ -86,6 +101,17 @@ export async function addImage(productId: string, url: string): Promise<ProductF
     return { ok: true };
   } catch (e) {
     return fail(e);
+  }
+}
+
+export async function aiLookupProduct(query: string): Promise<AiLookupState> {
+  try {
+    const draft = await apiSend<AiProductDraft>("/api/v1/admin/ai-assist/product-lookup", "POST", {
+      query,
+    });
+    return { ok: true, draft };
+  } catch (e) {
+    return { ok: false, error: e instanceof ApiError ? e.message : "Something went wrong." };
   }
 }
 

@@ -354,13 +354,25 @@
       "selectCategory": "Select category",
       "brand": "Brand",
       "selectBrand": "Select brand",
+      "searchBrand": "Search brands…",
+      "noBrandFound": "No brand found",
       "priceMin": "Price min (৳)",
       "priceMax": "Price max (৳)",
       "warrantyFreeText": "Warranty (free text)",
       "warrantyPlaceholder": "2 years on compressor, 1 year comprehensive",
       "saveChanges": "Save changes",
       "createProduct": "Create product",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "aiSuggested": "AI suggested"
+    },
+    "ai": {
+      "title": "AI assist",
+      "subtitle": "Describe the product — we'll search the web and draft the fields below for you to review.",
+      "placeholder": "e.g. Walton WFA-2A3-GDEL-XX refrigerator",
+      "fetch": "Fetch with AI",
+      "filled": "Draft filled in — review before saving.",
+      "noConfidentMatch": "Couldn't confidently match a product. Try a more specific name or model number.",
+      "sources": "Sources"
     },
     "crud": {
       "actions": "Actions",
