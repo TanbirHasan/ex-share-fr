@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import {
@@ -76,7 +77,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-primary/[0.08] to-background">
         <div className="brand-grid pointer-events-none absolute inset-0 opacity-35" />
         <div className="pointer-events-none absolute -top-32 right-0 size-96 rounded-full bg-primary/[0.14] blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-20">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
               <Sparkles className="size-3.5 text-primary" />
@@ -113,34 +114,48 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
+
+            <Card className="card-elevated mt-6 border-border/80 bg-card/95 backdrop-blur">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xs font-semibold text-foreground">
+                    {t("communityGlance")}
+                  </h2>
+                  <Badge variant="secondary" className="h-5 gap-1 px-1.5 text-[10px]">
+                    <span className="size-1 rounded-full bg-emerald-500" />
+                    {t("live")}
+                  </Badge>
+                </div>
+                <dl className="mt-3 grid grid-cols-4 gap-2">
+                  {statCards.map(({ key, icon: Icon }) => (
+                    <div
+                      key={key}
+                      className="rounded-lg border border-border/80 bg-card px-2 py-2.5 text-center"
+                    >
+                      <span className="mx-auto flex size-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Icon className="size-3" />
+                      </span>
+                      <dd className="mt-1.5 text-base font-bold text-foreground tabular-nums">
+                        {stats[key].toLocaleString()}
+                      </dd>
+                      <dt className="truncate text-[10px] text-muted-foreground">{tStats(key)}</dt>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
           </div>
 
-          <Card className="card-elevated self-start border-border/80 bg-card/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground">
-                  {t("communityGlance")}
-                </h2>
-                <Badge variant="secondary" className="gap-1">
-                  <span className="size-1.5 rounded-full bg-emerald-500" />
-                  {t("live")}
-                </Badge>
-              </div>
-              <dl className="mt-5 grid grid-cols-2 gap-4">
-                {statCards.map(({ key, icon: Icon }) => (
-                  <div key={key} className="card-elevated rounded-xl border border-border/80 bg-card p-4">
-                    <span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Icon className="size-4" />
-                    </span>
-                    <dd className="mt-3 text-2xl font-bold text-foreground tabular-nums">
-                      {stats[key].toLocaleString()}
-                    </dd>
-                    <dt className="text-xs text-muted-foreground">{tStats(key)}</dt>
-                  </div>
-                ))}
-              </dl>
-            </CardContent>
-          </Card>
+          <div className="card-elevated relative hidden overflow-hidden rounded-2xl border border-border/80 lg:block lg:self-stretch">
+            <Image
+              src="/images/hero-illustration.png"
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </section>
 
