@@ -1,12 +1,19 @@
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { ImageOff } from "lucide-react";
 import { CompareButton } from "@/components/site/compare-button";
 import { RatingStars } from "@/components/site/rating-stars";
 import { SaveButton } from "@/components/site/save-button";
 import { formatPrice } from "@/lib/format";
+import { categoryIcon } from "@/lib/category-icons";
+import { localizedName } from "@/lib/i18n-content";
+import type { Locale } from "@/i18n/config";
 import type { ProductListItem } from "@/lib/catalog-types";
 
 export function ProductCard({ product }: { product: ProductListItem }) {
+  const locale = useLocale() as Locale;
+  const CategoryIcon = categoryIcon(product.category.slug);
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border bg-card transition-colors hover:border-primary/40">
       <div className="absolute top-2 right-2 z-10 flex gap-1">
@@ -14,7 +21,11 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         <CompareButton slug={product.slug} name={product.name} className="backdrop-blur" />
       </div>
       <Link href={`/products/${product.slug}`} className="flex flex-1 flex-col">
-        <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-muted">
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-muted">
+          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground shadow-sm backdrop-blur">
+            <CategoryIcon className="size-3" />
+            {localizedName(locale, product.category)}
+          </span>
           {product.primaryImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
