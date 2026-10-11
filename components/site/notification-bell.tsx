@@ -16,7 +16,7 @@ import { notificationHref, useNotificationText } from "@/components/site/notific
 import type { NotificationItem, NotificationList } from "@/lib/notification-types";
 import { cn } from "@/lib/utils";
 
-const POLL_MS = 60_000;
+const POLL_MS = 15_000;
 
 export function NotificationBell({ className }: { className?: string }) {
   const { status } = useSession();

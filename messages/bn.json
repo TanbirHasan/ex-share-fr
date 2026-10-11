@@ -136,7 +136,8 @@
     "kind": {
       "review": "রিভিউ",
       "solution": "সমাধান",
-      "problem": "সমস্যা"
+      "problem": "সমস্যা",
+      "service": "সার্ভিস অভিজ্ঞতা"
     },
     "text": {
       "answer_received": "{actor} আপনার প্রশ্নের উত্তর দিয়েছেন",
@@ -149,7 +150,9 @@
       "followed_new_review": "{title}-এ নতুন রিভিউ",
       "followed_new_problem": "নতুন সমস্যা: {title}",
       "followed_new_solution": "{title}-এর জন্য নতুন সমাধান",
-      "price_drop": "{title} এর দাম {price} হয়েছে"
+      "price_drop": "{title} এর দাম {price} হয়েছে",
+      "pending_content_submitted": "নতুন {kind} পর্যালোচনার অপেক্ষায়: {title}",
+      "product_request_submitted": "নতুন পণ্যের অনুরোধ: {title}"
     },
     "bell": {
       "title": "নোটিফিকেশন",

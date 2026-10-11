@@ -136,7 +136,8 @@
     "kind": {
       "review": "review",
       "solution": "solution",
-      "problem": "problem"
+      "problem": "problem",
+      "service": "service experience"
     },
     "text": {
       "answer_received": "{actor} answered your question",
@@ -149,7 +150,9 @@
       "followed_new_review": "New review on {title}",
       "followed_new_problem": "New problem: {title}",
       "followed_new_solution": "New solution for {title}",
-      "price_drop": "{title} dropped to {price}"
+      "price_drop": "{title} dropped to {price}",
+      "pending_content_submitted": "New {kind} awaiting review: {title}",
+      "product_request_submitted": "New product request: {title}"
     },
     "bell": {
       "title": "Notifications",

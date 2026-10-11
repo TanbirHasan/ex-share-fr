@@ -8,7 +8,10 @@ export type NotificationType =
   | "content_removed"
   | "followed_new_review"
   | "followed_new_problem"
-  | "followed_new_solution";
+  | "followed_new_solution"
+  | "price_drop"
+  | "pending_content_submitted"
+  | "product_request_submitted";
 
 export type NotificationItem = {
   id: string;
