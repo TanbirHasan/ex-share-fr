@@ -18,7 +18,6 @@ const columns = [
     links: [
       ["shareExperience", "/contribute"],
       ["reportProblem", "/contribute/problem"],
-      ["addSolution", "/contribute/solution"],
       ["requestProduct", "/contribute/request"],
     ],
   },
