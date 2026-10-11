@@ -50,7 +50,7 @@ export async function submitProductRequest(
   const categoryGuess = rawCategory && rawCategory !== "__none__" ? rawCategory : "";
 
   if (rawText.length < 3) {
-    return { ok: false, error: "Tell us which product you're looking for." };
+    return { ok: false, error: "Tell us which product you're adding." };
   }
 
   const contentType = str(fd, "contentType");
@@ -146,7 +146,7 @@ export async function submitProductRequest(
   } catch (e) {
     return {
       ok: false,
-      error: e instanceof ApiError ? e.message : "Could not send your request.",
+      error: e instanceof ApiError ? e.message : "Could not add the product.",
     };
   }
 }

@@ -469,10 +469,10 @@
     }
   },
   "requestForm": {
-    "metaTitle": "Request a product",
+    "metaTitle": "Add a product",
     "back": "Products",
-    "title": "Request a product",
-    "lede": "Can't find something? Tell us and we'll look at adding it.",
+    "title": "Add a product",
+    "lede": "Can't find it? Add it yourself — tell us about the product.",
     "whatProduct": "Which product?",
     "whatProductHint": "Brand and model help — e.g. \"Vision 190L refrigerator\".",
     "placeholder": "e.g. Singer 1.5 ton inverter AC",
@@ -482,15 +482,15 @@
     "shareExperience": {
       "title": "Do you already own it?",
       "lede": "Add your review, problem, or service experience now — it goes live the moment we add the product, so you won't need to come back.",
-      "none": "Just request it",
+      "none": "Just add it",
       "review": "Add a review",
       "problem": "Report a problem",
       "service": "Share a service experience"
     },
-    "submit": "Send request",
-    "thanks": "Request sent",
-    "alreadyRequested": "You've already asked for this",
-    "thanksBody": "We review these regularly. Thanks for the pointer.",
+    "submit": "Add product",
+    "thanks": "Product added!",
+    "alreadyRequested": "You've already added this",
+    "thanksBody": "It'll appear on the site shortly. Thanks for growing the catalogue.",
     "browseProducts": "Browse products"
   },
   "reviewForm": {
@@ -811,8 +811,8 @@
     "resultsFor": "Results for “{query}”",
     "matches": "{count, plural, one {# match} other {# matches}}",
     "noProductsMatch": "No products match “{query}”.",
-    "tellUs": "If we should be tracking this product, let us know and we’ll add it.",
-    "requestThisProduct": "Request this product"
+    "tellUs": "If we don't have it yet, add it yourself.",
+    "requestThisProduct": "Add this product"
   },
   "stats": {
     "reviews": "Reviews",
@@ -837,7 +837,7 @@
       "solutions": "Solutions",
       "shareExperience": "Share an experience",
       "reportProblem": "Report a problem",
-      "requestProduct": "Request a product",
+      "requestProduct": "Add a product",
       "howItWorks": "How it works",
       "contentPolicy": "Content policy",
       "terms": "Terms",
