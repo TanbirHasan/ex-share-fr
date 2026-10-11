@@ -62,18 +62,42 @@ export function ProductForm({
   const tEnum = useTranslations("enums");
   const locale = useLocale() as Locale;
   const [state, formAction, pending] = useActionState(saveProduct, { ok: false });
-  const [draft, setDraft] = useState<AiProductDraft | null>(null);
-  const [draftVersion, setDraftVersion] = useState(0);
+
+  const [name, setName] = useState(product?.name ?? "");
+  const [slug, setSlug] = useState(product?.slug ?? "");
+  const [modelNo, setModelNo] = useState(product?.modelNo ?? "");
+  const [status, setStatus] = useState<string>(product?.status ?? "active");
+  const [categoryId, setCategoryId] = useState(product?.categoryId ?? "");
+  const [brandId, setBrandId] = useState(product?.brandId ?? "");
+  const [priceMin, setPriceMin] = useState(product?.priceMin?.toString() ?? "");
+  const [priceMax, setPriceMax] = useState(product?.priceMax?.toString() ?? "");
+  const [warrantyText, setWarrantyText] = useState(product?.warrantyText ?? "");
+  const [spec, setSpec] = useState<Record<string, string>>(() => {
+    const entries = Object.entries(product?.spec ?? {});
+    return Object.fromEntries(entries.map(([k, v]) => [k, String(v)]));
+  });
+  const [categoryHint, setCategoryHint] = useState<string | undefined>(undefined);
+  const [brandHint, setBrandHint] = useState<string | undefined>(undefined);
 
   function applyDraft(d: AiProductDraft) {
-    setDraft(d);
-    setDraftVersion((v) => v + 1);
-  }
+    if (d.name) {
+      setName(d.name);
+      setSlug(slugify(d.name));
+    }
+    if (d.modelNo) setModelNo(d.modelNo);
+    if (d.priceMin != null) setPriceMin(String(d.priceMin));
+    if (d.priceMax != null) setPriceMax(String(d.priceMax));
+    if (d.warrantyText) setWarrantyText(d.warrantyText);
+    if (d.specs && Object.keys(d.specs).length > 0) setSpec(d.specs);
 
-  const matchedCategoryId = draft
-    ? findByName(categories, (c) => c.nameEn, draft.category)?.id
-    : undefined;
-  const matchedBrandId = draft ? findByName(brands, (b) => b.name, draft.brand)?.id : undefined;
+    const matchedCategory = findByName(categories, (c) => c.nameEn, d.category);
+    if (matchedCategory) setCategoryId(matchedCategory.id);
+    setCategoryHint(matchedCategory ? undefined : d.category);
+
+    const matchedBrand = findByName(brands, (b) => b.name, d.brand);
+    if (matchedBrand) setBrandId(matchedBrand.id);
+    setBrandHint(matchedBrand ? undefined : d.brand);
+  }
 
   useEffect(() => {
     if (!state.ok) return;
@@ -99,30 +123,33 @@ export function ProductForm({
 
       {!product && <AiAssist onApply={applyDraft} />}
 
-      <div key={draftVersion} className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label={t("name")}
           name="name"
-          defaultValue={product?.name ?? draft?.name ?? ""}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Walton Smart Fridge WNM-2A3"
           required
         />
         <Field
           label={t("slug")}
           name="slug"
-          defaultValue={product?.slug ?? (draft?.name ? slugify(draft.name) : "")}
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
           placeholder="walton-wnm-2a3"
           required
         />
         <Field
           label={t("modelNumber")}
           name="modelNo"
-          defaultValue={product?.modelNo ?? draft?.modelNo ?? ""}
+          value={modelNo}
+          onChange={(e) => setModelNo(e.target.value)}
           placeholder="WNM-2A3"
         />
         <div className="space-y-1.5">
           <Label htmlFor="status">{t("status")}</Label>
-          <Select name="status" defaultValue={product?.status ?? "active"}>
+          <Select name="status" value={status} onValueChange={setStatus}>
             <SelectTrigger id="status" className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -138,7 +165,7 @@ export function ProductForm({
 
         <div className="space-y-1.5">
           <Label htmlFor="categoryId">{t("category")}</Label>
-          <Select name="categoryId" defaultValue={product?.categoryId ?? matchedCategoryId} required>
+          <Select name="categoryId" value={categoryId} onValueChange={setCategoryId} required>
             <SelectTrigger id="categoryId" className="w-full">
               <SelectValue placeholder={t("selectCategory")} />
             </SelectTrigger>
@@ -150,9 +177,9 @@ export function ProductForm({
               ))}
             </SelectContent>
           </Select>
-          {draft && draft.category && !matchedCategoryId && (
+          {categoryHint && (
             <p className="text-xs text-amber-600 dark:text-amber-500">
-              {t("aiSuggested")}: {draft.category}
+              {t("aiSuggested")}: {categoryHint}
             </p>
           )}
         </div>
@@ -160,14 +187,15 @@ export function ProductForm({
           <Label htmlFor="brandId">{t("brand")}</Label>
           <BrandSelect
             brands={brands}
-            defaultValue={product?.brandId ?? matchedBrandId}
+            value={brandId}
+            onChange={(id) => setBrandId(id)}
             placeholder={t("selectBrand")}
             searchPlaceholder={t("searchBrand")}
             emptyLabel={t("noBrandFound")}
           />
-          {draft && draft.brand && !matchedBrandId && (
+          {brandHint && (
             <p className="text-xs text-amber-600 dark:text-amber-500">
-              {t("aiSuggested")}: {draft.brand}
+              {t("aiSuggested")}: {brandHint}
             </p>
           )}
         </div>
@@ -177,28 +205,29 @@ export function ProductForm({
           name="priceMin"
           type="number"
           min={0}
-          defaultValue={product?.priceMin ?? draft?.priceMin ?? ""}
+          value={priceMin}
+          onChange={(e) => setPriceMin(e.target.value)}
         />
         <Field
           label={t("priceMax")}
           name="priceMax"
           type="number"
           min={0}
-          defaultValue={product?.priceMax ?? draft?.priceMax ?? ""}
+          value={priceMax}
+          onChange={(e) => setPriceMax(e.target.value)}
         />
       </div>
 
-      <div key={draftVersion}>
-        <TextareaField
-          label={t("warrantyFreeText")}
-          name="warrantyText"
-          defaultValue={product?.warrantyText ?? draft?.warrantyText ?? ""}
-          rows={2}
-          placeholder={t("warrantyPlaceholder")}
-        />
-      </div>
+      <TextareaField
+        label={t("warrantyFreeText")}
+        name="warrantyText"
+        value={warrantyText}
+        onChange={(e) => setWarrantyText(e.target.value)}
+        rows={2}
+        placeholder={t("warrantyPlaceholder")}
+      />
 
-      <SpecEditor key={draftVersion} initial={product?.spec ?? draft?.specs} />
+      <SpecEditor value={spec} onChange={setSpec} />
 
       {state.error && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">

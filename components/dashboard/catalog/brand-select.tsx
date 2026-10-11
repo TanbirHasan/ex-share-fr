@@ -5,23 +5,39 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { Brand } from "@/lib/catalog-types";
 
+/**
+ * `value`/`onChange` make this controlled (used when the parent form needs to
+ * push in an AI-matched brand); omit both to keep it self-contained, seeded
+ * once from `defaultValue`, as on the edit page.
+ */
 export function BrandSelect({
   brands,
   defaultValue,
+  value,
+  onChange,
   placeholder,
   searchPlaceholder,
   emptyLabel,
 }: {
   brands: Brand[];
   defaultValue?: string;
+  value?: string;
+  onChange?: (id: string) => void;
   placeholder: string;
   searchPlaceholder: string;
   emptyLabel: string;
 }) {
   const boxRef = useRef<HTMLDivElement>(null);
-  const [selectedId, setSelectedId] = useState(defaultValue ?? "");
+  const controlled = value !== undefined;
+  const [internalId, setInternalId] = useState(defaultValue ?? "");
+  const selectedId = controlled ? value : internalId;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+
+  function select(id: string) {
+    if (controlled) onChange?.(id);
+    else setInternalId(id);
+  }
 
   const selected = useMemo(
     () => brands.find((b) => b.id === selectedId),
@@ -77,7 +93,7 @@ export function BrandSelect({
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedId(b.id);
+                    select(b.id);
                     setOpen(false);
                     setQuery("");
                   }}

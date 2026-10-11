@@ -9,14 +9,44 @@ import { Label } from "@/components/ui/label";
 
 type Row = { key: string; value: string };
 
-export function SpecEditor({ initial }: { initial?: Record<string, unknown> }) {
+function rowsFrom(spec: Record<string, unknown> | undefined): Row[] {
+  const entries = Object.entries(spec ?? {});
+  return entries.length
+    ? entries.map(([key, value]) => ({ key, value: String(value) }))
+    : [{ key: "", value: "" }];
+}
+
+/**
+ * `value`/`onChange` make this controlled (used when the parent form needs to
+ * push in AI-drafted specs); omit both to keep it self-contained, seeded once
+ * from `initial`, as on the edit page.
+ */
+export function SpecEditor({
+  initial,
+  value,
+  onChange,
+}: {
+  initial?: Record<string, unknown>;
+  value?: Record<string, string>;
+  onChange?: (value: Record<string, string>) => void;
+}) {
   const t = useTranslations("catalog.spec");
-  const [rows, setRows] = useState<Row[]>(() => {
-    const entries = Object.entries(initial ?? {});
-    return entries.length
-      ? entries.map(([key, value]) => ({ key, value: String(value) }))
-      : [{ key: "", value: "" }];
-  });
+  const controlled = value !== undefined;
+  const [internalRows, setInternalRows] = useState<Row[]>(() => rowsFrom(initial));
+  const rows = controlled ? rowsFrom(value) : internalRows;
+
+  function setRows(next: Row[]) {
+    if (controlled) {
+      const obj: Record<string, string> = {};
+      for (const r of next) {
+        const k = r.key.trim();
+        if (k) obj[k] = r.value;
+      }
+      onChange?.(obj);
+    } else {
+      setInternalRows(next);
+    }
+  }
 
   const json = useMemo(() => {
     const obj: Record<string, string> = {};
@@ -38,21 +68,21 @@ export function SpecEditor({ initial }: { initial?: Record<string, unknown> }) {
               placeholder={t("keyPlaceholder")}
               value={row.key}
               onChange={(e) =>
-                setRows((r) => r.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))
+                setRows(rows.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))
               }
             />
             <Input
               placeholder={t("valuePlaceholder")}
               value={row.value}
               onChange={(e) =>
-                setRows((r) => r.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))
+                setRows(rows.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)))
               }
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => setRows((r) => (r.length > 1 ? r.filter((_, j) => j !== i) : r))}
+              onClick={() => setRows(rows.length > 1 ? rows.filter((_, j) => j !== i) : rows)}
               aria-label={t("removeRow")}
             >
               <X className="size-4" />
@@ -60,12 +90,7 @@ export function SpecEditor({ initial }: { initial?: Record<string, unknown> }) {
           </div>
         ))}
       </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setRows((r) => [...r, { key: "", value: "" }])}
-      >
+      <Button type="button" variant="outline" size="sm" onClick={() => setRows([...rows, { key: "", value: "" }])}>
         <Plus className="size-4" /> {t("addSpec")}
       </Button>
     </div>
