@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
@@ -59,8 +59,10 @@ export function ServiceForm({
   const [warranty, setWarranty] = useState(existing?.warranty ?? "");
   const [tech, setTech] = useState(existing?.technicianRating ?? 0);
 
+  const handledStateRef = useRef<typeof state | null>(null);
   useEffect(() => {
-    if (!state.ok) return;
+    if (!state.ok || state === handledStateRef.current) return;
+    handledStateRef.current = state;
     if (state.pending) {
       toast.success(t("pending"), { description: t("pendingHint"), duration: 8000 });
       router.push("/dashboard/service");

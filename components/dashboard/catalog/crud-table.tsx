@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, useTransition, type ReactNode } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
@@ -70,12 +70,17 @@ export function CrudTable<T>({
   const [state, formAction, pending] = useActionState(saveAction, { ok: false });
   const [deletingId, startDelete] = useTransition();
 
+  // Guard against re-firing for a `state` already handled — `t`/`router`
+  // aren't guaranteed stable across renders, and this effect stays on the
+  // same page (router.refresh(), not a navigate-away), so an unguarded
+  // re-run would toast and refresh repeatedly.
+  const handledStateRef = useRef<typeof state | null>(null);
   useEffect(() => {
-    if (state.ok) {
-      toast.success(editing ? t("updated", { title }) : t("created", { title }));
-      setOpen(false);
-      router.refresh();
-    }
+    if (!state.ok || state === handledStateRef.current) return;
+    handledStateRef.current = state;
+    toast.success(editing ? t("updated", { title }) : t("created", { title }));
+    setOpen(false);
+    router.refresh();
   }, [state, editing, title, router, t]);
 
   function openNew() {

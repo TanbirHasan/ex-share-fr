@@ -11,7 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Suggestion } from "@/lib/catalog-types";
 
-export function RequestActions({ requestId }: { requestId: string }) {
+export function RequestActions({
+  requestId,
+  rawText,
+}: {
+  requestId: string;
+  rawText: string;
+}) {
   const router = useRouter();
   const t = useTranslations("dashboard.requests");
   const [pending, start] = useTransition();
@@ -80,7 +86,9 @@ export function RequestActions({ requestId }: { requestId: string }) {
   return (
     <div ref={boxRef} className="relative flex flex-wrap items-center gap-2">
       <Button size="sm" variant="outline" disabled={pending} asChild>
-        <Link href={`/dashboard/catalog/new?requestId=${requestId}`}>
+        <Link
+          href={`/dashboard/catalog/new?requestId=${requestId}&name=${encodeURIComponent(rawText)}`}
+        >
           <Plus className="size-4" />
           {t("createProduct")}
         </Link>

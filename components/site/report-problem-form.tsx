@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
@@ -44,8 +44,10 @@ export function ReportProblemForm({
     label: tEnum(`warrantyCovered.${o.value}`),
   }));
 
+  const handledStateRef = useRef<typeof state | null>(null);
   useEffect(() => {
-    if (!state.ok || !state.slug) return;
+    if (!state.ok || !state.slug || state === handledStateRef.current) return;
+    handledStateRef.current = state;
     if (state.pending) {
       toast.success(t("problemPending"), { description: t("problemPendingHint"), duration: 8000 });
       router.push("/dashboard/problems");

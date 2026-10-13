@@ -38,7 +38,7 @@ export function NotificationBell({ className }: { className?: string }) {
   }, []);
 
   const loadList = useCallback(() => {
-    fetch("/api/notifications?limit=12")
+    return fetch("/api/notifications?limit=12")
       .then((r) => (r.ok ? r.json() : null))
       .then((d: NotificationList | null) => {
         if (d) {
@@ -63,15 +63,17 @@ export function NotificationBell({ className }: { className?: string }) {
 
   if (status !== "authenticated") return null;
 
-  function onOpenChange(next: boolean) {
-    setOpen(next);
-    if (next) loadList();
-  }
-
   function markAllRead() {
     setCount(0);
     setItems((prev) => prev?.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })) ?? null);
     fetch("/api/notifications", { method: "POST", body: "{}" }).catch(() => {});
+  }
+
+  function onOpenChange(next: boolean) {
+    setOpen(next);
+    // Load first, then mark read, so the optimistic "read" update isn't
+    // clobbered by the list response landing after it.
+    if (next) loadList().then(markAllRead);
   }
 
   return (

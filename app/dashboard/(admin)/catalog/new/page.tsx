@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 export default async function NewProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ requestId?: string }>;
+  searchParams: Promise<{ requestId?: string; name?: string }>;
 }) {
-  const [{ requestId }, t, categories, brands] = await Promise.all([
+  const [{ requestId, name }, t, categories, brands] = await Promise.all([
     searchParams,
     getTranslations("dashboard.admin"),
     apiGet<Category[]>("/api/v1/categories"),
@@ -37,7 +37,12 @@ export default async function NewProductPage({
           .
         </p>
       ) : (
-        <ProductForm categories={categories} brands={brands} requestId={requestId} />
+        <ProductForm
+          categories={categories}
+          brands={brands}
+          requestId={requestId}
+          initialName={name}
+        />
       )}
     </div>
   );

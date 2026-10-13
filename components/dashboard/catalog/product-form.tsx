@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
@@ -51,11 +51,13 @@ export function ProductForm({
   categories,
   brands,
   requestId,
+  initialName,
 }: {
   product?: Product;
   categories: Category[];
   brands: Brand[];
   requestId?: string;
+  initialName?: string;
 }) {
   const router = useRouter();
   const t = useTranslations("catalog.form");
@@ -63,8 +65,8 @@ export function ProductForm({
   const locale = useLocale() as Locale;
   const [state, formAction, pending] = useActionState(saveProduct, { ok: false });
 
-  const [name, setName] = useState(product?.name ?? "");
-  const [slug, setSlug] = useState(product?.slug ?? "");
+  const [name, setName] = useState(product?.name ?? initialName ?? "");
+  const [slug, setSlug] = useState(product?.slug ?? (initialName ? slugify(initialName) : ""));
   const [modelNo, setModelNo] = useState(product?.modelNo ?? "");
   const [status, setStatus] = useState<string>(product?.status ?? "active");
   const [categoryId, setCategoryId] = useState(product?.categoryId ?? "");
@@ -99,8 +101,14 @@ export function ProductForm({
     setBrandHint(matchedBrand ? undefined : d.brand);
   }
 
+  // `t`/`router` aren't guaranteed to keep a stable reference across
+  // renders, so this effect can re-fire for a `state` it already handled —
+  // guard with a ref so each successful submit triggers the toast/redirect
+  // exactly once instead of repeating on every unrelated re-render.
+  const handledStateRef = useRef<typeof state | null>(null);
   useEffect(() => {
-    if (!state.ok) return;
+    if (!state.ok || state === handledStateRef.current) return;
+    handledStateRef.current = state;
     if (!product && state.id) {
       if (requestId) {
         fulfillRequest(requestId, state.id).then((res) => {
@@ -121,7 +129,7 @@ export function ProductForm({
     <form action={formAction} className="space-y-5">
       {product && <input type="hidden" name="id" value={product.id} />}
 
-      {!product && <AiAssist onApply={applyDraft} />}
+      {!product && <AiAssist initialQuery={initialName} onApply={applyDraft} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
@@ -63,8 +63,10 @@ export function ReviewForm({
     Boolean(existing?.purchasePrice || existing?.purchaseStore),
   );
 
+  const handledStateRef = useRef<typeof state | null>(null);
   useEffect(() => {
-    if (!state.ok) return;
+    if (!state.ok || state === handledStateRef.current) return;
+    handledStateRef.current = state;
     if (state.pending) {
       toast.success(t("reviewPending"), { description: t("reviewPendingHint"), duration: 8000 });
       router.push("/dashboard/reviews");

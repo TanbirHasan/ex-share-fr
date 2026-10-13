@@ -8,9 +8,15 @@ import { aiLookupProduct, type AiProductDraft } from "@/app/dashboard/(admin)/ca
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function AiAssist({ onApply }: { onApply: (draft: AiProductDraft) => void }) {
+export function AiAssist({
+  initialQuery,
+  onApply,
+}: {
+  initialQuery?: string;
+  onApply: (draft: AiProductDraft) => void;
+}) {
   const t = useTranslations("catalog.ai");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery ?? "");
   const [pending, start] = useTransition();
   const [draft, setDraft] = useState<AiProductDraft | null>(null);
 

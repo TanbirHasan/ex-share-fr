@@ -113,7 +113,7 @@ export default async function RequestsPage({
 
               {status === "open" && (
                 <div className="mt-3">
-                  <RequestActions requestId={req.id} />
+                  <RequestActions requestId={req.id} rawText={req.rawText} />
                 </div>
               )}
             </li>
